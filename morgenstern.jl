@@ -91,9 +91,9 @@ function morgenstern_generators(l,i)
     if length(SL₂qⁱ)>100_000
         error("The group is too big, we refuse to even try to proceed.")
     end
-    # The Center is a single element, so PSL and SL are the same,
+    # The Center is a single element when p=2, so PSL and SL are the same,
     # therefore the computations below are not necessary. VERIFY
-    #CSL₂qⁱ, Cₘₒᵣₚₕ = center(SL₂qⁱ) # TODO very slow, there must be a better way to find PSL₂qⁱ
+    #CSL₂qⁱ, Cₘₒᵣₚₕ = center(SL₂qⁱ) # seems to take time that scales with the size of SL₂qⁱ even though it is either 1 or 2 element group.
     #@info "|Center of SL₂(𝔽(qⁱ))| = $(length(CSL₂qⁱ))"
     #PSL₂qⁱ, Pₘₒᵣₚₕ = quo(SL₂qⁱ,CSL₂qⁱ)
     #@info "|PSL₂(𝔽(qⁱ))| = $(length(PSL₂qⁱ))"
@@ -103,14 +103,38 @@ function morgenstern_generators(l,i)
     B = typeof(slunit)[]
     for sol in Bsols
         γ,δ = morph.(sol)
-        γ+δ*𝕚 ∈ 𝔽qⁱ
-        (γ+δ*𝕚+δ)*morph(unit) ∈ 𝔽qⁱ
+        #γ+δ*𝕚 ∈ 𝔽qⁱ
+        #(γ+δ*𝕚+δ)*morph(unit) ∈ 𝔽qⁱ
         _mat = 𝔽qⁱ[1 γ+δ*𝕚; (γ+δ*𝕚+δ)*punit 1]
         _matp = _mat / sqrt(det(_mat)) # XXX This seems implicit in the papers, VERIFY
         b = SL₂qⁱ(_matp)
-        slunit = one(SL₂qⁱ)
         @assert b^2==slunit
         push!(B,b)
     end
     SL₂qⁱ, B
+end
+
+"""
+Given a set of Morgenstern generators B, create a new set A,
+such that A and B obey Total No-Counjugacy.
+
+Introduced in Sec. 6.1 of [dinur2022locally](@cite).
+Building upon [morgenstern1994existence](@cite).
+"""
+function alternative_morgenstern_generators(B)
+    throw("alternative_morgenstern_generators is broken")
+    A = eltype(B)[]
+    N = length(B)
+    unit = one(B[1])
+    for i in 1:N
+        for j in 1:N
+            if i!=j
+                a = B[i]*B[j]
+                #if a^2 == unit
+                    push!(A,a)
+                #end
+            end
+        end
+    end
+    return A
 end

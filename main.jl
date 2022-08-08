@@ -22,7 +22,10 @@ l=2
 i=2
 @time SL₂qⁱ, B = morgenstern_generators(l,i)
 @time graphB = cayley_right(SL₂qⁱ, B)
-@time evals = adjacency_spectrum(graphB) # slow, dense, there should be a better way to do it, especially if we care about only two eigvals
+@time evalsB = adjacency_spectrum(graphB) # slow, dense, there should be a better way to do it, especially if we care about only two eigvals
+@time A = alternative_morgenstern_generators(B)
+
+@time @assert is_self_nonconjugate(SL₂qⁱ, B)
 
 # Checks from [morgenstern1994existence](@cite). TODO
 q = 2^l
@@ -49,3 +52,17 @@ using GraphMakie    # To plot graphs
 using NetworkLayout # To do spectral layout
 
 graphplot(graphB, layout=Spectral(dim=2)) # slow and not really useful
+
+##
+
+p = 5
+l = 3
+q = p^l
+𝔽q , unit = FiniteField(p,l)
+@time SL₂q = special_linear_group(2,𝔽q);
+length(SL₂q)
+@time CSL₂q, Cₘₒᵣₚₕ = Oscar.center(SL₂q); # GETTING SLOWER AND SLOWER
+length(CSL₂q)
+@time PSL₂q, Pₘₒᵣₚₕ = quo(SL₂q,CSL₂q);
+length(PSL₂q)
+#@time collect(PSL₂q);
