@@ -42,15 +42,16 @@ function morgenstern_solutions(R)
     f = morgenstern_f(R) # random sampler
     ε = coefficients(f)[0]
     sols = [(one(F),zero(F))]
-    for sexp in 0:(q-1)
-        s = unit^sexp
+    for s in F
         fs = f(s)
         sfs = sqrt(fs)
-        α = s/sfs
-        β = 1/sfs
+        α = s*inv(sfs)
+        @assert s*inv(sfs) == inv(sfs)*s
+        β = inv(sfs)
         @assert α^2 + α*β + ε*β^2 == 1
         push!(sols, (α,β))
     end
+    @assert length(unique(sols))==q+1
     return ε, sols
 end
 
@@ -88,7 +89,7 @@ function morgenstern_generators(l,i)
     if length(SL₂qⁱ)>10_000
         @warn "We are working with a very big group, this will take a long time."
     end
-    if length(SL₂qⁱ)>100_000
+    if length(SL₂qⁱ)>300_000
         error("The group is too big, we refuse to even try to proceed.")
     end
     # The Center is a single element when p=2, so PSL and SL are the same,
@@ -106,7 +107,8 @@ function morgenstern_generators(l,i)
         #γ+δ*𝕚 ∈ 𝔽qⁱ
         #(γ+δ*𝕚+δ)*morph(unit) ∈ 𝔽qⁱ
         _mat = 𝔽qⁱ[1 γ+δ*𝕚; (γ+δ*𝕚+δ)*punit 1]
-        _matp = _mat / sqrt(det(_mat)) # XXX This seems implicit in the papers, VERIFY
+        _matp = _mat * inv(sqrt(det(_mat))) # XXX This seems implicit in the papers, VERIFY
+        @assert _mat * inv(sqrt(det(_mat))) == inv(sqrt(det(_mat))) * _mat
         b = SL₂qⁱ(_matp)
         @assert b^2==slunit
         push!(B,b)
