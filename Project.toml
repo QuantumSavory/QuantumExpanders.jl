@@ -1,0 +1,6 @@
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+Nemo = "2edaba10-b0f1-5616-af89-8c11ac63239a"
+Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
