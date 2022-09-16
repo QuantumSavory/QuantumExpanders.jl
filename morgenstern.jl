@@ -124,19 +124,53 @@ Introduced in Sec. 6.1 of [dinur2022locally](@cite).
 Building upon [morgenstern1994existence](@cite).
 """
 function alternative_morgenstern_generators(B)
-    throw("alternative_morgenstern_generators is broken")
     A = eltype(B)[]
     N = length(B)
-    unit = one(B[1])
     for i in 1:N
         for j in 1:N
             if i!=j
                 a = B[i]*B[j]
-                #if a^2 == unit
-                    push!(A,a)
-                #end
+                push!(A,a)
             end
         end
+    end
+    return A
+end
+
+"""
+Given a set of Morgenstern generators B, create a new set A,
+such that A and B obey Total No-Counjugacy.
+
+Introduced in Sec. 6.1 of [dinur2022locally](@cite).
+Building upon [morgenstern1994existence](@cite).
+"""
+function alternative_long_morgenstern_generators(B)
+    A = eltype(B)[]
+    N = length(B)
+    for i in 1:N
+        for j in 1:N
+            if i!=j
+                a = B[i]*B[j]
+                push!(A,a)
+            end
+        end
+    end
+    return A
+end
+
+"""
+Given a set of Morgenstern generators B, create a new set A,
+such that A and B obey Total No-Counjugacy.
+
+Introduced as the "better" alternative in Sec. 6.1 of [dinur2022locally](@cite).
+Building upon [morgenstern1994existence](@cite).
+"""
+function alternative_morgenstern_generators(B)
+    A = eltype(B)[]
+    N = length(B)
+    for i in 2:N
+        push!(A,B[1]*B[i])
+        push!(A,B[i]*B[1])
     end
     return A
 end

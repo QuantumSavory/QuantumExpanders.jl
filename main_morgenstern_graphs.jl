@@ -1,4 +1,5 @@
-# This file contains a "scratch pad" of various tests and demos.
+# This file contains a "scratch pad" of various tests and demos related to generating
+# expander graphs based on the Morgenstern construction.
 #
 # Not particularly careful with what is getting imported where, would clean up when
 # turning it into a package.
@@ -31,8 +32,8 @@ q = 2^l
 d = q+1
 N = size(graphB,1)
 @assert evalsB[end-1] <= 2 * sqrt(q) # is Ramanujan
-@assert evalsB[end] ≈ q+1 # q+1 regular
-N == q^(3i)-q^i
+@assert evalsB[end] ≈ d # q+1 regular
+@assert N == q^(3i)-q^i
 # @assert is not bipartite
 # @assert girth >= 2/3 * log(q,N)
 @assert diameter(graphB) <= 2*log(q,N)+2
@@ -40,8 +41,16 @@ N == q^(3i)-q^i
 # @assert independence number <= 2*N*sqrt(q) / (q+1)
 
 # Make the second set of generators for the Cayley complex
+@time Al = alternative_long_morgenstern_generators(B)
+@assert is_nonconjugate(SL₂qⁱ, Al, B)
+@assert length(unique(Al)) == length(Al)
+@assert all(Al.^2 .!= (one(Al[1]),))
+
+# Make the second set of generators for the Cayley complex
 @time A = alternative_morgenstern_generators(B)
 @assert is_nonconjugate(SL₂qⁱ, A, B)
+@assert length(unique(A)) == length(A)
+@assert all(A.^2 .!= (one(A[1]),))
 
 ##
 # Compare spectral properties of Morgenstern vs Random graphs
@@ -51,7 +60,8 @@ l=2 # 1 or 2
 i=2 # 2 or 4
 q = 2^l
 d = q+1
-dₐ = q^2+q
+dₐₗ = q^2+q
+dₐ = 2q
 N = q^(3i)-q^i
 
 second_eval(graph) = adjacency_spectrum(graph)[end-1]
@@ -61,19 +71,25 @@ function morg_alt_graph(l,i)
     A = alternative_morgenstern_generators(B)
     cayley_left(SL₂qⁱ,A)
 end
+function morg_alt_long_graph(l,i)
+    SL₂qⁱ, B = morgenstern_generators(l,i)
+    A = alternative_long_morgenstern_generators(B)
+    cayley_left(SL₂qⁱ,A)
+end
+
+##
 
 samples = 3
-
-##
-
 morg_spec = [second_eval(morg_graph(l,i)) for _ in 1:samples]
 morg_alt_spec = [second_eval(morg_alt_graph(l,i)) for _ in 1:samples]
+morg_alt_long_spec = [second_eval(morg_alt_long_graph(l,i)) for _ in 1:samples]
 rand_spec = [second_eval(random_regular_graph(N,d)) for _ in 1:samples]
 rand_alt_spec = [second_eval(random_regular_graph(N,dₐ)) for _ in 1:samples]
+rand_alt_long_spec = [second_eval(random_regular_graph(N,dₐₗ)) for _ in 1:samples]
 
 ##
 
-fig = Figure()
+fig = Figure(resolution=(1000,300))
 ax1 = Axis(fig[1,1],
     title="Morgenstern vs Random graphs\n N=$(N) deg=$(d)", ylabel="λ₂",
     xticksvisible = false,
@@ -82,8 +98,13 @@ ax2 = Axis(fig[1,2],
     title="Alternative\nMorgenstern vs Random graphs\n N=$(N) deg=$(dₐ)", ylabel="λ₂",
     xticksvisible = false,
     xticks=([1,2],["Morgenstern", "Random"]))
+ax3 = Axis(fig[1,3],
+    title="Alternative long\nMorgenstern vs Random graphs\n N=$(N) deg=$(dₐₗ)", ylabel="λ₂",
+    xticksvisible = false,
+    xticks=([1,2],["Morgenstern", "Random"]))
 ramabound = 2 * sqrt(d-1)
 ramaboundₐ = 2 * sqrt(dₐ-1)
+ramaboundₐₗ = 2 * sqrt(dₐₗ-1)
 scatter!(ax1, one.(morg_spec),morg_spec, label="Morgenstern")
 scatter!(ax1, one.(rand_spec)*2,rand_spec, label="Random")
 hdeg = hlines!(ax1, [d], label="degree", color=:black)
@@ -96,7 +117,13 @@ hdeg = hlines!(ax2, [dₐ], label="degree", color=:black)
 hram = hlines!(ax2, [ramaboundₐ], label="Ramanujan gap", color=:black, linestyle=:dash)
 ylims!(ax2, ramaboundₐ/2, dₐ*1.05)
 xlims!(ax2, 0.5, 2.5)
-Legend(fig[1,3], [hdeg,hram], ["degree", "Ramanujan gap"])
+scatter!(ax3, one.(morg_alt_long_spec),morg_alt_long_spec, label="Morgenstern")
+scatter!(ax3, one.(rand_alt_long_spec)*2,rand_alt_long_spec, label="Random")
+hdeg = hlines!(ax3, [dₐₗ], label="degree", color=:black)
+hram = hlines!(ax3, [ramaboundₐₗ], label="Ramanujan gap", color=:black, linestyle=:dash)
+ylims!(ax3, ramaboundₐₗ/2, dₐₗ*1.05)
+xlims!(ax3, 0.5, 2.5)
+Legend(fig[1,4], [hdeg,hram], ["degree", "Ramanujan gap"])
 display(fig)
 
 ##

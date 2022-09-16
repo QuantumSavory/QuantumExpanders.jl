@@ -23,9 +23,32 @@ function uniformly_random_CᴬCᴮ(ρ, Δ)
     Hᴬ, Hᴮ
 end
 
+function uniformly_random_code(ρ, Δ)
+    @assert 0<ρ<1
+    r = Int(floor(ρ*Δ))
+    space = MatrixSpace(ResidueRing(ZZ,2), r, Δ)
+    local H
+    while true
+        H = rand(space)
+        r == rank(H) && break
+    end
+    H
+end
+
 function dual_code(H)
+    #r, Δ = size(H)
+    #H = MatrixSpace(ResidueRing(ZZ,2), r, Δ)(H)
     null = nullspace(H)[2]
-    @assert all(a*null .== 0)
-    @assert size(a,1) + size(null,2) == size(a,2)
+    @assert all(H*null .== 0)
+    @assert size(H,1) + size(null,2) == size(H,2)
     transpose(null)
+end
+
+using LinearAlgebra
+function LinearAlgebra.kron(l::nmod_mat,r::nmod_mat)
+    l1,l2 = size(l)
+    r1,r2 = size(r)
+    s1 = l1*r1
+    s2 = l2*r2
+    MatrixSpace(l.base_ring,s1,s2)(kron(Matrix(l),Matrix(r)))
 end
