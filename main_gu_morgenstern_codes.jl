@@ -22,7 +22,7 @@ include("tensor_codes.jl")
 
 ##
 
-Random.seed!(2)
+Random.seed!(42)
 l=1
 i=2
 @time SL₂qⁱ, B = morgenstern_generators(l,i)
@@ -41,6 +41,7 @@ i=2
 # while also using codes and their dual codes.
 # This can lead to confusion as
 # the parity check matrix of a code is the generator matrix of its dual code.
+Random.seed!(42)
 Hᴬ = uniformly_random_code_checkmatrix(2,length(A))
 Hᴮ = uniformly_random_code_checkmatrix(2,length(B))
 Cᴬ = dual_code(Hᴬ)
@@ -59,8 +60,8 @@ C₁⁺ = dual_code(C₁)
 𝒞ˣ = tanner_code(𝒢₁□,edge₁_q_idx,edge₁_ab_idx,C₁)
 r1 = rank(𝒞ᶻ)
 r2 = rank(𝒞ˣ)
-good_css(dual_code(𝒞ˣ),dual_code(𝒞ᶻ))
-good_css(𝒞ˣ,𝒞ᶻ)
+@assert good_css(dual_code(𝒞ˣ),dual_code(𝒞ᶻ))
+@assert good_css(𝒞ˣ,𝒞ᶻ)
 
 ##
 
