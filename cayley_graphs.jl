@@ -162,13 +162,13 @@ function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph
         ab_count = 0
         for (jᵃ,a) in pairs(A)
             ag = a*g
-            iᵃᵍ = mat_to_idx[ag]
+            iᵃᵍ = mat_to_idx[ag] + N # we add N so that iᵃᵍ is shifted from V₀₁ to V₁₀ 
             for (jᵇ,b) in pairs(B)
                 ab_count += 1
                 agb = a*g*b
                 iᵃᵍᵇ = mat_to_idx[agb] + N # we add N so that iᵃᵍᵇ is shifted from V₀₀ to V₁₁ 
                 gb = g*b
-                iᵍᵇ = mat_to_idx[gb] + N # we add N so that iᵍᵇ is shifted from V₀₁ to V₁₀ 
+                iᵍᵇ = mat_to_idx[gb]
                 q = (iᵍ,iᵃᵍᵇ,iᵍᵇ,iᵃᵍ) # note each q is unique due to the quadripartite construction
                 q_count+=1
                 e₀ = iᵍ,iᵃᵍᵇ # the order is important
@@ -211,6 +211,31 @@ function tanner_code(mgraph,edge_q_index,edge_ab_index,local_code)
         @assert length(q_indices) == Δ
         @assert length(Set(ab_indices)) == Δ
         for row in 1:r
+            code[(v-1)*r+row,indices] .= [e.data for e in local_code[row,:]][1,:] # TODO there must be a neater way to write this
+        end
+    end
+    code
+end
+
+"""Construct the Tanner code for a given multigraph, edge numbering and local code.
+
+The edge numbering is a map from (vertex, vertex, multiplicity) to index.
+Most convenient when used with [`cayley_complex_square_graphs_quadripartite`](@ref).
+
+As depicted in [dinur2022locally](@cite), [leverrier2022quantum](@cite), and [gu2022efficient](@cite)."""
+function tanner_code_quadripartite(mgraph,edge_q_index,edge_ab_index,local_code)
+    V = nv(mgraph)
+    E = ne(mgraph, count_mul=true) # edges are not double counted here
+    r, Δ = size(local_code)
+    code = zeros(Bool, r*V÷2, E)
+    for v in sort!(Graphs.vertices(mgraph))[1:V÷2] # only first half of vertices have outgoing edges
+        neigh = Graphs.neighbors(mgraph,v)
+        q_indices = rem.([edge_q_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
+        ab_indices = rem.([edge_ab_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
+        indices = q_indices[sortperm(ab_indices)] # crucial to ensure consistent local view
+        @assert length(q_indices) == Δ
+        @assert length(Set(ab_indices)) == Δ
+        for row in 1:r 
             code[(v-1)*r+row,indices] .= [e.data for e in local_code[row,:]][1,:] # TODO there must be a neater way to write this
         end
     end
