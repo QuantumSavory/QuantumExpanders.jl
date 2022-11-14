@@ -117,6 +117,81 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
 
+
+
+"""Construct the Cayley complex square graphs 𝒢₀□ and 𝒢₁□ using the quadripartite construction as presented in [leverrier2022quantum](@cite).
+
+The quadripartite construction removes the TNC and symmetric generator set conditions.
+
+It is more convenient to count the edges as directional (i.e. double counting them),
+as that makes it much easier to track how edge indices correspond to indices in A×B.
+"""
+function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph)
+    # Mappings between group element as a matrix and as an integer enumerator
+    idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
+    mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
+
+    # |Q| = |G||A||B| indexed by the `count` variable below.
+    # |V₀₀| = |V₀₁| = |V₁₀| = |V₁₁| = |G|
+
+    # It is convenient if the V₀₀, V₀₁, V₁₀, and V₁₁ indexing are consistent,
+    # i.e. the index for (v,00)∈V₀₀, (v,01)∈V₀₁, (v,10)∈V₁₀, and (v,11)∈V₁₁ should be the same.
+    # The indexing function is the `mat_to_idx` map.
+
+    # The indexing of the edges has to be consistent with
+    # the indexing of Q, i.e., the indexing of |G||A||B|.
+    # In other words, each edge should know the value of the `q_count` variable
+    # for which it was generated. That is stored in the `edgeᵢ_index` maps.
+
+    # Even more subtly, the indexing of each neighborhood of a vertex v,
+    # needs to be consistent with the indexing of A×B.
+    # This is why we provide two indices:
+    # - an A×B index useful for ordering
+    # - a larger Q index useful for assigning qubits
+
+    N = length(G)
+    𝒢₀□ = GraphType(2*N) # vertices V₀₀=G×{00} ∪ V₁₁=G×{11}, edges Q, |A||B|-regular multigraph
+    𝒢₁□ = GraphType(2*N) # vertices V₀₁=G×{01} ∪ V₁₀=G×{10}, edges Q, |A||B|-regular multigraph
+    edge₀_q_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to Q qubit/square index
+    edge₁_q_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to Q qubit/square index
+    edge₀_ab_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to AB index
+    edge₁_ab_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to AB index
+    q_count = 0
+    @showprogress for (iᵍ,g) in pairs(idx_to_mat)
+        iᵍ = mat_to_idx[g]
+        ab_count = 0
+        for (jᵃ,a) in pairs(A)
+            ag = a*g
+            iᵃᵍ = mat_to_idx[ag] + N # we add N so that iᵃᵍ is shifted from V₀₁ to V₁₀ 
+            for (jᵇ,b) in pairs(B)
+                ab_count += 1
+                agb = a*g*b
+                iᵃᵍᵇ = mat_to_idx[agb] + N # we add N so that iᵃᵍᵇ is shifted from V₀₀ to V₁₁ 
+                gb = g*b
+                iᵍᵇ = mat_to_idx[gb]
+                q = (iᵍ,iᵃᵍᵇ,iᵍᵇ,iᵃᵍ) # note each q is unique due to the quadripartite construction
+                q_count+=1
+                e₀ = iᵍ,iᵃᵍᵇ # the order is important
+                add_edge!(𝒢₀□,e₀...)
+                edge₀_q_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = q_count
+                edge₀_ab_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = ab_count
+                e₁ = iᵍᵇ,iᵃᵍ # the order is important
+                add_edge!(𝒢₁□,e₁...)
+                edge₁_q_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = q_count
+                edge₁_ab_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = ab_count
+            end
+        end
+    end
+    @info "|Q| = |G||A||B| = $(q_count)"
+    @assert q_count==N*length(A)*length(B)
+    @assert sort!(unique(values(Graphs.indegree(𝒢₀□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(Graphs.indegree(𝒢₁□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(Graphs.outdegree(𝒢₀□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(Graphs.outdegree(𝒢₁□)))) == [0, length(A)*length(B)]
+
+    𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
+end
+
 """Construct the Tanner code for a given multigraph, edge numbering and local code.
 
 The edge numbering is a map from (vertex, vertex, multiplicity) to index.
@@ -136,6 +211,31 @@ function tanner_code(mgraph,edge_q_index,edge_ab_index,local_code)
         @assert length(q_indices) == Δ
         @assert length(Set(ab_indices)) == Δ
         for row in 1:r
+            code[(v-1)*r+row,indices] .= [e.data for e in local_code[row,:]][1,:] # TODO there must be a neater way to write this
+        end
+    end
+    code
+end
+
+"""Construct the Tanner code for a given multigraph, edge numbering and local code.
+
+The edge numbering is a map from (vertex, vertex, multiplicity) to index.
+Most convenient when used with [`cayley_complex_square_graphs_quadripartite`](@ref).
+
+As depicted in [dinur2022locally](@cite), [leverrier2022quantum](@cite), and [gu2022efficient](@cite)."""
+function tanner_code_quadripartite(mgraph,edge_q_index,edge_ab_index,local_code)
+    V = nv(mgraph)
+    E = ne(mgraph, count_mul=true) # edges are not double counted here
+    r, Δ = size(local_code)
+    code = zeros(Bool, r*V÷2, E)
+    for v in sort!(Graphs.vertices(mgraph))[1:V÷2] # only first half of vertices have outgoing edges
+        neigh = Graphs.neighbors(mgraph,v)
+        q_indices = rem.([edge_q_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
+        ab_indices = rem.([edge_ab_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
+        indices = q_indices[sortperm(ab_indices)] # crucial to ensure consistent local view
+        @assert length(q_indices) == Δ
+        @assert length(Set(ab_indices)) == Δ
+        for row in 1:r 
             code[(v-1)*r+row,indices] .= [e.data for e in local_code[row,:]][1,:] # TODO there must be a neater way to write this
         end
     end
