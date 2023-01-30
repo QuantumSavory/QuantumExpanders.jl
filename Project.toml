@@ -1,6 +1,14 @@
+name = "QuantumExpanders"
+uuid = "144928dd-1f60-4b66-8c4c-f5ae7409097b"
+authors = ["Vaishnavi Addala<vaddala9@mit.edu>"]
+version = "0.1.0"
+
 [deps]
-CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Multigraphs = "7ebac608-6c66-46e6-9856-b5f43e107bac"
 Nemo = "2edaba10-b0f1-5616-af89-8c11ac63239a"
 Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+QuantumClifford = "0525e862-1e90-11e9-3e4d-1b39d7109de1"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"

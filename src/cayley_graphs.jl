@@ -110,10 +110,10 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     end
     @info "|Q| = |G||A||B|/2 = $(q_count)"
     @assert q_count==N*length(A)*length(B)÷2
-    @assert unique(values(Graphs.indegree(𝒢₀□))) == [length(A)*length(B)]
-    @assert unique(values(Graphs.indegree(𝒢₁□))) == [length(A)*length(B)]
-    @assert unique(values(Graphs.outdegree(𝒢₀□))) == [length(A)*length(B)]
-    @assert unique(values(Graphs.outdegree(𝒢₁□))) == [length(A)*length(B)]
+    @assert unique(values(indegree(𝒢₀□))) == [length(A)*length(B)]
+    @assert unique(values(indegree(𝒢₁□))) == [length(A)*length(B)]
+    @assert unique(values(outdegree(𝒢₀□))) == [length(A)*length(B)]
+    @assert unique(values(outdegree(𝒢₁□))) == [length(A)*length(B)]
     𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
 
@@ -184,10 +184,10 @@ function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph
     end
     @info "|Q| = |G||A||B| = $(q_count)"
     @assert q_count==N*length(A)*length(B)
-    @assert sort!(unique(values(Graphs.indegree(𝒢₀□)))) == [0, length(A)*length(B)]
-    @assert sort!(unique(values(Graphs.indegree(𝒢₁□)))) == [0, length(A)*length(B)]
-    @assert sort!(unique(values(Graphs.outdegree(𝒢₀□)))) == [0, length(A)*length(B)]
-    @assert sort!(unique(values(Graphs.outdegree(𝒢₁□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(indegree(𝒢₀□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(indegree(𝒢₁□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(outdegree(𝒢₀□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(outdegree(𝒢₁□)))) == [0, length(A)*length(B)]
 
     𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
@@ -204,7 +204,7 @@ function tanner_code(mgraph,edge_q_index,edge_ab_index,local_code)
     r, Δ = size(local_code)
     code = zeros(Bool, r*V, E)
     for v in Graphs.vertices(mgraph)
-        neigh = Graphs.neighbors(mgraph,v)
+        neigh = neighbors(mgraph,v)
         q_indices = rem.([edge_q_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
         ab_indices = rem.([edge_ab_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
         indices = q_indices[sortperm(ab_indices)] # crucial to ensure consistent local view
@@ -229,7 +229,7 @@ function tanner_code_quadripartite(mgraph,edge_q_index,edge_ab_index,local_code)
     r, Δ = size(local_code)
     code = zeros(Bool, r*V÷2, E)
     for v in sort!(Graphs.vertices(mgraph))[1:V÷2] # only first half of vertices have outgoing edges
-        neigh = Graphs.neighbors(mgraph,v)
+        neigh = neighbors(mgraph,v)
         q_indices = rem.([edge_q_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
         ab_indices = rem.([edge_ab_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
         indices = q_indices[sortperm(ab_indices)] # crucial to ensure consistent local view
