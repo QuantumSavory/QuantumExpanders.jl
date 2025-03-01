@@ -1,0 +1,158 @@
+using Oscar
+using LinearAlgebra
+using Graphs
+using Graphs: nv, add_edge!, adjacency_matrix
+
+"""Compute the Legendre symbol (a/p) for an odd prime p."""
+function legendre_symbol(a::Int, p::Int)
+    @assert is_prime(p) "p must be prime"
+    ls = powermod(a, (p - 1) ÷ 2, p)
+    return ls == p - 1 ? -1 : ls
+end
+
+"""Scalar matrices for GL(2,F): every nonzero scalar gives a valid scalar matrix."""
+function scalar_matrices_GL(GL2)
+    F = base_ring(GL2)
+    return [GL2([x 0; 0 x]) for x in F if x != 0]
+end
+
+"""Scalar matrices for SL(2,F): only those with x^2 == 1 have determinant 1."""
+function scalar_matrices_SL(SL2)
+    F = base_ring(SL2)
+    return [SL2([x 0; 0 x]) for x in F if x^2 == one(F)]
+end
+
+"""Solve p = a² + b² + c² + d² (over the integers)"""
+function solve_four_squares(p::Int)
+    solutions = Tuple{Int,Int,Int,Int}[]
+    max_val = isqrt(p)
+    for w in 0:max_val, x in 0:max_val, y in 0:max_val
+        rem = p - (w^2 + x^2 + y^2)
+        rem ≥ 0 || continue
+        z = isqrt(rem)
+        z^2 == rem || continue
+        # Generate sign permutations for nonzero components.
+        signs_w = w == 0 ? [0] : [1, -1]
+        signs_x = x == 0 ? [0] : [1, -1]
+        signs_y = y == 0 ? [0] : [1, -1]
+        signs_z = z == 0 ? [0] : [1, -1]
+        for sw in signs_w, sx in signs_x, sy in signs_y, sz in signs_z
+            push!(solutions, (sw*w, sx*x, sy*y, sz*z))
+        end
+    end
+    return unique(solutions)
+end
+
+"""Filter solutions: select those with a > 0 and b, c, d even."""
+function process_solutions(solutions, p)
+    filtered = filter(sol -> sol[1] > 0 && all(iseven, sol[2:4]), solutions)
+    @assert length(filtered) == p + 1 "Incorrect number of solutions"
+    return filtered
+end
+
+"""Create generator matrices over F from four–square solutions.
+Each matrix has determinant equal to F(p)."""
+function create_generators(solutions, F, p)
+    u = sqrt(F(-1))  # Find u such that u² = -1 in F.
+    generators = MatrixElem{typeof(F(0))}[]
+    for (a, b, c, d) in solutions
+        mat = matrix(F, [a + u*b   c + u*d;
+                         -c + u*d   a - u*b])
+        @assert det(mat) == F(p) "Generator matrix must have determinant p"
+        push!(generators, mat)
+    end
+    return generators
+end
+
+""" Construct the Cayley graph from a given group quotient PG,
+a list of generators (as group elements), and the canonical morphism."""
+function construct_cayley_graph(PG, generators, morphism)
+    element_dict = Dict{eltype(PG), Int}()
+    elements = [one(PG)]
+    element_dict[elements[1]] = 1
+    queue = copy(elements)
+    
+    while !isempty(queue)
+        current = popfirst!(queue)
+        for gen in generators
+            # Ensure gen is interpreted as a group element.
+            gen_elem = parent(gen)(gen)
+            new_elem = morphism(gen_elem) * current
+            if !haskey(element_dict, new_elem)
+                push!(elements, new_elem)
+                element_dict[new_elem] = length(elements)
+                push!(queue, new_elem)
+            end
+        end
+    end
+
+    g = SimpleGraph(length(elements))
+    for (idx, elem) in enumerate(elements)
+        for gen in generators
+            gen_elem = parent(gen)(gen)
+            neighbor = morphism(gen_elem) * elem
+            neighbor_idx = element_dict[neighbor]
+            add_edge!(g, idx, neighbor_idx)
+        end
+    end
+    return g
+end
+
+"""
+Check the Ramanujan property:
+- For a (p+1)-regular graph, the trivial eigenvalue is p+1.
+- All other eigenvalues should have absolute value ≤ 2√p.
+"""
+function is_ramanujan(g::SimpleGraph, p::Int)
+    A = adjacency_matrix(g)
+    λ = sort(eigvals(Matrix(A)), rev=true)
+    bound = 2 * sqrt(p)
+    non_trivial = filter(x -> abs(x - (p+1)) > 1e-6, λ)
+    return all(v -> abs(v) ≤ bound + 1e-6, non_trivial)
+end
+
+
+"""
+Construct the Ramanujan graph X^(p,q).
+Chooses the group quotient based on the Legendre symbol (p/q):
+- If (p/q) = -1, use PGL₂(F).
+- If (p/q) = 1, use PSL₂(F) (scaling generators so their determinant becomes 1).
+"""
+function ramanujan_graph(p::Int, q::Int)
+    @assert is_prime(p) && is_prime(q) "p and q must be primes."
+    @assert p % 4 == 1 && q % 4 == 1 "p and q must be ≡ 1 mod 4."
+    
+    F = GF(q)
+    symbol = legendre_symbol(p, q)  # Compute (p/q)
+    
+    if symbol == -1
+        # Use GL(2,F) → PGL₂(F)
+        GL2 = GL(2, F)
+        center = scalar_matrices_GL(GL2)
+        PG, morphism = quo(GL2, center)
+        solutions = solve_four_squares(p)
+        solutions_processed = process_solutions(solutions, p)
+        generators = create_generators(solutions_processed, F, p)
+        gl_gens = [GL2(mat) for mat in generators]
+        return construct_cayley_graph(PG, gl_gens, morphism)
+    elseif symbol == 1
+        # Use SL(2,F) → PSL₂(F)
+        SL2 = SL(2, F)
+        center = scalar_matrices_SL(SL2)
+        PG, morphism = quo(SL2, center)
+        solutions = solve_four_squares(p)
+        solutions_processed = process_solutions(solutions, p)
+        generators = create_generators(solutions_processed, F, p)
+        # In these generators, det(mat) == F(p). Since (p/q)=1, p is a square in F.
+        # Let s be a square root of F(p) (note F(p) means the image of p in GF(q)).
+        s = sqrt(F(p))
+        s_inv = inv(s)
+        # Scale each generator so that its determinant becomes 1:
+        # (s_inv)^2 * p = 1.
+        generators_scaled = [s_inv * mat for mat in generators]
+        sl_gens = [SL2(mat) for mat in generators_scaled]
+        return construct_cayley_graph(PG, sl_gens, morphism)
+    else
+        error("Unexpected Legendre symbol value.")
+    end
+end

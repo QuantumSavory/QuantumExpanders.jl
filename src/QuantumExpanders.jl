@@ -14,9 +14,13 @@ using Graphs:add_edge!,nv,ne,neighbors,Graphs
 
 include("morgenstern.jl")
 include("cayley_graphs.jl")
-include("tensor_codes.jl")
+include("ramanujan.jl")
 
-export gen_code, gen_good_code, tanner_code, tanner_code_quadripartite, cayley_complex_square_graphs, cayley_complex_square_graphs_quadripartite, morgenstern_generators, alternative_morgenstern_generators
+export gen_code, gen_good_code, tanner_code, tanner_code_quadripartite,
+cayley_complex_square_graphs, cayley_complex_square_graphs_quadripartite,
+morgenstern_generators, alternative_morgenstern_generators, scalar_matrices_GL,
+scalar_matrices_SL, solve_four_squares, process_solutions, create_generators,
+construct_cayley_graph, ramanujan_graph, is_ramanujan, legendre_symbol
 
 ##
 
