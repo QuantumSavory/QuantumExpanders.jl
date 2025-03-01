@@ -7,7 +7,7 @@
 
     @testset "Ramanujan Graph Extended Tests" begin
         # Define a list of valid (p, q) pairs: both p and q are primes, p,q ≡ 1 (mod 4), and p ≠ q.
-        test_pairs = [(13, 17), (13, 29), (17, 13), (29, 13)]
+        test_pairs = [(13, 17), (29, 17), (17, 13), (29, 13)]
         for (p, q) in test_pairs
             @info "Testing with p = $p, q = $q"
             @test is_prime(p) && p % 4 == 1
