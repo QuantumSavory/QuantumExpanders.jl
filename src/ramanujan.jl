@@ -156,3 +156,100 @@ function ramanujan_graph(p::Int, q::Int)
         error("Unexpected Legendre symbol value.")
     end
 end
+
+
+"""
+Constructs the edge-vertex incidence graph of a given graph G.
+Let G = (V, E) be a graph with vertex set V and edge set E. The
+edge-vertex incidence graph of G is a bipartite graph with vertex
+set E ∪ V and edge set {(e, v) ∈ E × V : v is an endpoint of e}.
+
+# Example
+```jldoctest
+julia> G = ramanujan_graph(5, 13);
+
+julia> B = edge_vertex_incidence_graph(G);
+
+julia> is_unbalanced_bipartite(B)
+true
+```
+"""
+function edge_vertex_incidence_graph(G)
+    n = nv(G)
+    m = ne(G)
+    B = SimpleGraph(n + m)
+    edge_to_index = Dict{Graphs.Edge, Int}()
+    for (i, e) in enumerate(edges(G))
+        edge_to_index[e] = n + i
+    end
+    for (e, idx) in edge_to_index
+        add_edge!(B, src(e), idx)
+        add_edge!(B, dst(e), idx)
+    end
+    return B
+end
+
+"""Verify that the edge-vertex incidence graph B is an unbalanced bipartite graph."""
+function is_unbalanced_bipartite(B)
+    # The first n vertices in B correspond to the vertices of G
+    n = 0
+    while n + 1 <= nv(B) && degree(B, n + 1) > 2
+        n += 1
+    end
+    # If no vertices satisfy degree > 2, return false
+    if n == 0
+        return false
+    end
+    # The degree of any vertex in the first n vertices of B is d
+    d = degree(B, 1)
+    # The remaining vertices in B correspond to the edges of G
+    m = nv(B) - n
+    for v in 1:n
+        if degree(B, v) != d
+            return false
+        end
+    end
+    for v in (n + 1):(n + m)
+        if degree(B, v) != 2
+            return false
+        end
+    end
+    if n * d != m * 2
+        return false
+    end
+    return true
+end
+
+"""
+Test Alon–Chung Lemma, which states that for a `d`-regular graph `G` with `n`
+vertices and second-largest eigenvalue `λ`, the number of edges in the subgraph
+induced by any subset `X` of size `γ*n` is at most:
+- (d * n / 2) * (γ² + (λ / d) * γ * (1 - γ))
+
+# Example
+```jldoctest
+julia> G = ramanujan_graph(5, 13);
+
+julia> B = edge_vertex_incidence_graph(G);
+
+julia> alon_chung_lemma(B, 0.1)
+(true, 143, 1520.6609615130378)
+```
+"""
+function alon_chung_lemma(g, γ)
+    n = nv(g)
+    d = degree(g, 1)
+    A = adjacency_matrix(g)
+    Λ = eigvals(Matrix(A))
+    λ = sort(Λ, rev=true)[2]
+    # Select a random subset X of size γ * n
+    subset_size = Int(round(γ * n))
+    X = randperm(n)[1:subset_size]
+    # Count the number of edges in the subgraph induced by X
+    induced_subgraph_result = induced_subgraph(g, X)
+    induced_subgraph_g = induced_subgraph_result[1]
+    num_edges_in_subgraph = ne(induced_subgraph_g)
+    bound = (d * n / 2) * (γ^2 + (λ / d) * γ * (1 - γ))
+    satisfies_bound = num_edges_in_subgraph ≤ bound
+    return satisfies_bound, num_edges_in_subgraph, bound
+end
