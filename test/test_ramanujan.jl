@@ -2,8 +2,45 @@
     using Oscar
     using LinearAlgebra
     using Graphs
-    using Graphs: nv
+    using Graphs: nv, neighbors, AbstractGraph, degree
     using QuantumExpanders
+    using LogExpFunctions
+
+    function binary_entropy(α)
+        if α == 0.0 || α == 1.0
+            return 0.0
+        else
+            return -α * log(α) - (1 - α) * log(1 - α)
+        end
+    end
+
+    function expansion_bound(α, c, d)
+        term1 = (c / d) * (1 - (1 - α)^d)
+        term2 = (2 * c * α * binary_entropy(α)) / log(2)
+        return term1 - term2
+    end
+
+    function verify_expansion_property(B, α)
+        @assert is_unbalanced_bipartite(B)
+        n = div(nv(B), 2)
+        m = nv(B) - n
+        d = maximum(degree(B))
+        max_S_size = floor(Int, α * m)
+        for _ in 1:100
+            S = rand((n + 1):(n + m), rand(1:max_S_size))
+            N_S = Set{Int}()
+            for v in S
+                for u in Graphs.neighbors(B, v)
+                    push!(N_S, u)
+                end
+            end
+            bound = expansion_bound(α, 2, d) * length(S)
+            if length(N_S) < bound
+                return false
+            end
+        end
+        return true
+    end
 
     @testset "Ramanujan Graph Extended Tests" begin
         # Define a list of valid (p, q) pairs: both p and q are primes, p,q ≡ 1 (mod 4), and p ≠ q.
@@ -50,6 +87,7 @@
                 @test nv(ram_graph) == expected_order
                 B = edge_vertex_incidence_graph(ram_graph)
                 @test is_unbalanced_bipartite(B)
+                @test verify_expansion_property(B, 0.1)
             elseif symbol == 1
                 # Use SL(2,F) for PSL₂(F)
                 SL2 = SL(2, F)
@@ -80,6 +118,7 @@
                 @test nv(ram_graph) == expected_order
                 B = edge_vertex_incidence_graph(ram_graph)
                 @test is_unbalanced_bipartite(B)
+                @test verify_expansion_property(B, 0.1)
             end
         end
     end
