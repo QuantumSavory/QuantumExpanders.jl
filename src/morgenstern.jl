@@ -116,21 +116,27 @@ function morgenstern_generators(l,i)
     SL₂qⁱ, B
 end
 
+abstract type MorgensternAlgorithm end
+
+struct AllPairs <: MorgensternAlgorithm end
+struct FirstOnly <: MorgensternAlgorithm end
+
 """
-Given a set of Morgenstern generators B, create a new set A,
-such that A and B obey Total No-Counjugacy.
+    alternative_morgenstern_generators(B::AbstractVector, ::AllPairs)
+
+Create alternative Morgenstern generators using all pairwise products (i≠j).
 
 Introduced in Sec. 6.1 of [dinur2022locally](@cite).
 Building upon [morgenstern1994existence](@cite).
 """
-function alternative_morgenstern_generators(B)
+function alternative_morgenstern_generators(B::AbstractVector, ::AllPairs)
     A = eltype(B)[]
     N = length(B)
     for i in 1:N
         for j in 1:N
-            if i!=j
-                a = B[i]*B[j]
-                push!(A,a)
+            if i ≠ j
+                a = B[i] * B[j]
+                push!(A, a)
             end
         end
     end
@@ -138,39 +144,22 @@ function alternative_morgenstern_generators(B)
 end
 
 """
-Given a set of Morgenstern generators B, create a new set A,
-such that A and B obey Total No-Counjugacy.
+    alternative_morgenstern_generators(B::AbstractVector, ::FirstOnly)
 
-Introduced in Sec. 6.1 of [dinur2022locally](@cite).
-Building upon [morgenstern1994existence](@cite).
-"""
-function alternative_long_morgenstern_generators(B)
-    A = eltype(B)[]
-    N = length(B)
-    for i in 1:N
-        for j in 1:N
-            if i!=j
-                a = B[i]*B[j]
-                push!(A,a)
-            end
-        end
-    end
-    return A
-end
-
-"""
-Given a set of Morgenstern generators B, create a new set A,
-such that A and B obey Total No-Counjugacy.
+Create alternative Morgenstern generators using products with first element only.
 
 Introduced as the "better" alternative in Sec. 6.1 of [dinur2022locally](@cite).
 Building upon [morgenstern1994existence](@cite).
 """
-function alternative_morgenstern_generators(B)
+function alternative_morgenstern_generators(B::AbstractVector, ::FirstOnly)
     A = eltype(B)[]
     N = length(B)
     for i in 2:N
-        push!(A,B[1]*B[i])
-        push!(A,B[i]*B[1])
+        push!(A, B[1] * B[i])
+        push!(A, B[i] * B[1])
     end
     return A
 end
+
+# Convenience methods
+alternative_morgenstern_generators(B) = alternative_morgenstern_generators(B, FirstOnly())
