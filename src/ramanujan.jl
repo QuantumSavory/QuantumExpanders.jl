@@ -1,7 +1,7 @@
 using Oscar
 using LinearAlgebra
 using Graphs
-using Graphs: nv, add_edge!, adjacency_matrix, degree, vertices, ne, edges, nv
+using Graphs: nv, add_edge!, adjacency_matrix, degree, vertices, edges, Edge, nv, ne, src, dst
 
 """Compute the Legendre symbol (a/p) for an odd prime p."""
 function legendre_symbol(a::Int, p::Int)
@@ -260,18 +260,17 @@ end
 Construct the parity-check matrix for a classical expander code (a type of Tanner code).
 
 An expander code is defined by:
-1. A **regular base graph** `g` (typically a good expander graph like a Ramanujan graph)
-2. A **short inner code** specified by its parity-check matrix `H`
+- A **regular base graph** `g` (typically a good expander graph like a Ramanujan graph)
+- A **short inner code** specified by its parity-check matrix `H`
 
 The resulting code has:
 - Variables corresponding to edges of `g`
 - Constraints enforcing the inner code at each vertex of `g`
 
 The construction follows Sipser-Spielman expander codes:
-1. Each edge in `g` becomes a variable in the code
-2. Each vertex enforces its incident edges to satisfy the inner code
-3. The code has rate ≥ 1 - (1 - r) * (n_edges/n_vertices)
-   where r is the rate of the inner code
+- Each edge in `g` becomes a variable in the code
+- Each vertex enforces its incident edges to satisfy the inner code
+- The code has rate ≥ 1 - (1 - r) * (n_edges/n_vertices) where r is the rate of the inner code.
 """
 function expander_code_parity_matrix(g::AbstractGraph, H_inner::AbstractMatrix{<:Integer})
     H_inner = sparse(H_inner)

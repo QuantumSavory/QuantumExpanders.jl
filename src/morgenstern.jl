@@ -1,5 +1,6 @@
 using Nemo
 using Oscar
+using Oscar: embed
 using LinearAlgebra
 using Random
 
@@ -38,7 +39,7 @@ See [morgenstern1994existence](@cite).
 function morgenstern_solutions(R)
     F = base_ring(R)
     unit = gen(F)
-    q = size(F)
+    q = order(F)
     f = morgenstern_f(R) # random sampler
     ε = coefficients(f)[0]
     sols = [(one(F),zero(F))]
@@ -69,11 +70,11 @@ function morgenstern_generators(l,i)
     qⁱ = q^i
     @info "q = 2^$(l) = $(q)"
     @info "qⁱ = $(q)^$(i) = $(qⁱ)"
-    𝔽q , unit = FiniteField(p,l)
-    𝔽qⁱ, punit = FiniteField(p,l*i)
+    𝔽q , unit = finite_field(p,l)
+    𝔽qⁱ, punit = finite_field(p,l*i)
     morph = embed(𝔽q,𝔽qⁱ)
-    R𝔽q, x = PolynomialRing(𝔽q, "x")
-    R𝔽qⁱ, y = PolynomialRing(𝔽qⁱ, "y")
+    R𝔽q, x = polynomial_ring(𝔽q, "x")
+    R𝔽qⁱ, y = polynomial_ring(𝔽qⁱ, "y")
     ε, Bsols = morgenstern_solutions(R𝔽q)
     @assert length(Bsols) == q+1
     @info "|B| = q+1 = $(length(Bsols))"

@@ -8,11 +8,10 @@ using ProgressMeter
 
 """Construct the Cayleyʳⁱᵍʰᵗ graph for a given group and set of generators."""
 function cayley_right(group,generators)
-    idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
+    idx_to_mat = collect(group)
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
-
     N = length(group)
-    graph = SimpleGraph(N)
+    graph = SimpleDiGraph(N)
     for (i,g) in pairs(idx_to_mat)
         for b in generators
             j = mat_to_idx[g*b]
@@ -24,11 +23,10 @@ end
 
 """Construct the Cayleyˡᵉᶠᵗ graph for a given group and set of generators."""
 function cayley_left(group,generators)
-    idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
+    idx_to_mat = collect(group)
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
-
     N = length(group)
-    graph = SimpleGraph(N)
+    graph = SimpleDiGraph(N)
     for (i,g) in pairs(idx_to_mat)
         for b in generators
             j = mat_to_idx[b*g]
@@ -257,3 +255,13 @@ end
 
 """Check the generating set is symmetric."""
 is_symmetric_gen(gens) = Set(inv.(gens)) == Set(gens)
+
+"""Check if a graph is Ramanujan by verifying the eigenvalue condition."""
+function is_ramanujan(g, q)
+    A = adjacency_matrix(g)
+    λ = eigvals(Matrix(A))
+    λ_sorted = sort(λ, rev=true)
+    r = q + 1
+    λ_second = λ_sorted[2]
+    return λ_second <= 2 * sqrt(q)
+end

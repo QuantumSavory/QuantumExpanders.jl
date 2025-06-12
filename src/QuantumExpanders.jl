@@ -10,18 +10,20 @@ using LinearAlgebra
 using Random
 using Graphs
 using Oscar:coefficients
-using Graphs:add_edge!,nv,ne,neighbors,Graphs, edges, Edge, src, dst, degree, adjacency_matrix
+using Graphs:add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix
 
-include("morgenstern.jl")
 include("cayley_graphs.jl")
+include("morgenstern.jl")
 include("ramanujan.jl")
+include("tensor_codes.jl")
 
 export gen_code, gen_good_code, tanner_code, tanner_code_quadripartite,
 cayley_complex_square_graphs, cayley_complex_square_graphs_quadripartite,
 morgenstern_generators, alternative_morgenstern_generators, scalar_matrices_GL,
 scalar_matrices_SL, solve_four_squares, process_solutions, create_generators,
 construct_cayley_graph, ramanujan_graph, is_ramanujan, legendre_symbol,
-edge_vertex_incidence_graph, is_unbalanced_bipartite, alon_chung_lemma
+edge_vertex_incidence_graph, is_unbalanced_bipartite, alon_chung_lemma,
+expander_code_parity_matrix
 
 ##
 
