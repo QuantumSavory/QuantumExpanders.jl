@@ -7,11 +7,39 @@ using Multigraphs
 using ProgressMeter
 
 """Construct the Cayleyʳⁱᵍʰᵗ graph for a given group and set of generators."""
+function cayley_right(generators::Vector{Matrix{FqFieldElem}}, group_order::Int)
+    identity_mat = [one(generators[1][1,1]) zero(generators[1][1,1]);
+                   zero(generators[1][1,1]) one(generators[1][1,1])]
+    graph = SimpleGraph(1)
+    mat_to_idx = Dict{typeof(identity_mat), Int}()
+    mat_to_idx[identity_mat] = 1
+    queue = [identity_mat]
+    while !isempty(queue)
+        current_mat = popfirst!(queue)
+        current_idx = mat_to_idx[current_mat]
+        for gen in generators
+            new_mat = current_mat * gen
+            if !haskey(mat_to_idx, new_mat)
+                new_idx = length(mat_to_idx) + 1
+                mat_to_idx[new_mat] = new_idx
+                add_vertex!(graph)
+                push!(queue, new_mat)
+            end
+            target_idx = mat_to_idx[new_mat]
+            add_edge!(graph, current_idx, target_idx)
+        end
+    end
+    @assert nv(graph) == group_order "Graph size doesn't match expected group order"
+    return graph
+end
+
+"""Construct the Cayleyʳⁱᵍʰᵗ graph for a given group and set of generators."""
 function cayley_right(group,generators)
-    idx_to_mat = collect(group)
+    idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
+
     N = length(group)
-    graph = SimpleDiGraph(N)
+    graph = SimpleGraph(N)
     for (i,g) in pairs(idx_to_mat)
         for b in generators
             j = mat_to_idx[g*b]
@@ -22,11 +50,39 @@ function cayley_right(group,generators)
 end
 
 """Construct the Cayleyˡᵉᶠᵗ graph for a given group and set of generators."""
-function cayley_left(group,generators)
-    idx_to_mat = collect(group)
+function cayley_left(generators::Vector{Matrix{FqFieldElem}}, group_order::Int)
+    identity_mat = [one(generators[1][1,1]) zero(generators[1][1,1]);
+                   zero(generators[1][1,1]) one(generators[1][1,1])]
+    graph = SimpleDiGraph(1)
+    mat_to_idx = Dict{typeof(identity_mat), Int}()
+    mat_to_idx[identity_mat] = 1
+    queue = [identity_mat]
+    while !isempty(queue)
+        current_mat = popfirst!(queue)
+        current_idx = mat_to_idx[current_mat]
+        for gen in generators
+            new_mat = gen * current_mat
+            if !haskey(mat_to_idx, new_mat)
+                new_idx = length(mat_to_idx) + 1
+                mat_to_idx[new_mat] = new_idx
+                add_vertex!(graph)
+                push!(queue, new_mat)
+            end
+            target_idx = mat_to_idx[new_mat]
+            add_edge!(graph, current_idx, target_idx)
+        end
+    end
+    @assert nv(graph) == group_order "Graph size doesn't match expected group order"
+    return graph
+end
+
+"""Construct the Cayleyˡᵉᶠᵗ graph for a given group and set of generators."""
+function cayley_left(group, generators)
+    idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
+
     N = length(group)
-    graph = SimpleDiGraph(N)
+    graph = SimpleGraph(N)
     for (i,g) in pairs(idx_to_mat)
         for b in generators
             j = mat_to_idx[b*g]

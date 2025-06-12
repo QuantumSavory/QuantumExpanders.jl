@@ -10,7 +10,7 @@ using LinearAlgebra
 using Random
 using Graphs
 using Oscar:coefficients
-using Graphs:add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix
+using Graphs:add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix, add_vertex!
 
 include("cayley_graphs.jl")
 include("morgenstern.jl")

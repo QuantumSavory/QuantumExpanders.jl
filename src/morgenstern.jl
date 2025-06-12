@@ -57,64 +57,48 @@ function morgenstern_solutions(R)
 end
 
 """
-Give all Morgenstern generators over PSL₂qⁱ, where i is even, q=2ˡ, and p is prime.
+    morgenstern_generators(l::Int, i::Int)
 
-Returns (SL₂qⁱ, B), where B is the list of generators. As PSL₂qⁱ=SL₂qⁱ, we keep in SL₂qⁱ.
+Compute generators for the Morgenstern construction of expander graphs over PSL₂(𝔽_{qⁱ}), where
+`q = 2ˡ` and `i` is even. Returns:
+- `generators`: List of `q+1` matrices in PSL₂(𝔽_{qⁱ}) (note PSL₂=SL₂ in characteristic 2)
+- `group_order`: The size of PSL₂(𝔽_{qⁱ}) = qⁱ(qⁱ²-1)
+
+The `morgenstern_generators` is optimized for Cayley graph construction via BFS traversal
+without full group enumeration. For graph construction, use `cayley_left(generators, group_order)`
+or `cayley_right(generators, group_order)`.
 
 See [morgenstern1994existence](@cite).
 """
-function morgenstern_generators(l,i)
+function morgenstern_generators(l, i)
     @assert iseven(i)
     p = 2
     q = p^l
     qⁱ = q^i
-    @info "q = 2^$(l) = $(q)"
-    @info "qⁱ = $(q)^$(i) = $(qⁱ)"
-    𝔽q , unit = finite_field(p,l)
-    𝔽qⁱ, punit = finite_field(p,l*i)
-    morph = embed(𝔽q,𝔽qⁱ)
-    R𝔽q, x = polynomial_ring(𝔽q, "x")
-    R𝔽qⁱ, y = polynomial_ring(𝔽qⁱ, "y")
-    ε, Bsols = morgenstern_solutions(R𝔽q)
-    @assert length(Bsols) == q+1
-    @info "|B| = q+1 = $(length(Bsols))"
-    @info "ε = $(ε)"
-    𝕚s = roots(y^2+y+morph(ε))
-    𝕚 = rand(𝕚s) # selecting one of the two roots at random
-    @info "𝕚 = $(𝕚)"
-    # PSL₂qⁱ and PGL₂qⁱ are the same, so we are not going to try to work with the larger GL₂qⁱ
-    #GL₂qⁱ = general_linear_group(2,𝔽qⁱ)
-    #@info "|GL₂(𝔽(qⁱ))| = $(length(GL₂qⁱ))"
-    SL₂qⁱ = special_linear_group(2,𝔽qⁱ)
-    @info "|SL₂(𝔽(qⁱ))| = $(length(SL₂qⁱ))"
-    if length(SL₂qⁱ)>10_000
-        @warn "We are working with a very big group, this will take a long time."
+    𝔽q = GF(q)
+    𝔽qⁱ = GF(qⁱ)
+    generators = Vector{Matrix{Nemo.FqFieldElem}}(undef, q+1)
+    # Find irreducible polynomial x² + x + ε and solutions
+    R, x = polynomial_ring(𝔽q, "x")
+    ε, Bsols = morgenstern_solutions(R)
+    # Find root i of x² + x + ε in 𝔽qⁱ
+    Ry, y = polynomial_ring(𝔽qⁱ, "y")
+    f = y^2 + y + 𝔽qⁱ(ε)
+    𝕚 = roots(f)[1]
+    # Generate the q+1 generators
+    for (idx, (γ, δ)) in enumerate(Bsols)
+        γⁱ = 𝔽qⁱ(γ)
+        δⁱ = 𝔽qⁱ(δ)
+        a = γⁱ + δⁱ*𝕚
+        b = (γⁱ + δⁱ*𝕚 + δⁱ)*gen(𝔽qⁱ)
+        mat = [one(𝔽qⁱ) a; b one(𝔽qⁱ)]
+        det_mat = one(𝔽qⁱ) - a*b
+        sqrt_det = sqrt(det_mat)
+        mat_normalized = mat ./ sqrt_det
+        generators[idx] = mat_normalized
     end
-    if length(SL₂qⁱ)>300_000
-        error("The group is too big, we refuse to even try to proceed.")
-    end
-    # The Center is a single element when p=2, so PSL and SL are the same,
-    # therefore the computations below are not necessary. VERIFY
-    #CSL₂qⁱ, Cₘₒᵣₚₕ = center(SL₂qⁱ) # seems to take time that scales with the size of SL₂qⁱ even though it is either 1 or 2 element group.
-    #@info "|Center of SL₂(𝔽(qⁱ))| = $(length(CSL₂qⁱ))"
-    #PSL₂qⁱ, Pₘₒᵣₚₕ = quo(SL₂qⁱ,CSL₂qⁱ)
-    #@info "|PSL₂(𝔽(qⁱ))| = $(length(PSL₂qⁱ))"
-    #@assert length(GL₂qⁱ) == length(SL₂qⁱ) == length(PSL₂qⁱ)
-
-    slunit = one(SL₂qⁱ)
-    B = typeof(slunit)[]
-    for sol in Bsols
-        γ,δ = morph.(sol)
-        #γ+δ*𝕚 ∈ 𝔽qⁱ
-        #(γ+δ*𝕚+δ)*morph(unit) ∈ 𝔽qⁱ
-        _mat = 𝔽qⁱ[1 γ+δ*𝕚; (γ+δ*𝕚+δ)*punit 1]
-        _matp = _mat * inv(sqrt(det(_mat))) # XXX This seems implicit in the papers, VERIFY
-        @assert _mat * inv(sqrt(det(_mat))) == inv(sqrt(det(_mat))) * _mat
-        b = SL₂qⁱ(_matp)
-        @assert b^2==slunit
-        push!(B,b)
-    end
-    SL₂qⁱ, B
+    group_order = qⁱ * (qⁱ^2 - 1)
+    return generators, group_order
 end
 
 abstract type MorgensternAlgorithm end
