@@ -45,4 +45,33 @@ using QuantumExpanders: morgenstern_generators, morgenstern_solutions, FirstOnly
             end
         end
     end
+
+    @testset "Non-conjugate condition verification" begin
+        test_cases = [
+            (1, 2), # PSL(2,4)
+            (1, 4), # PSL(2,16)
+          # (1, 6), # PSL(2,64)
+            (2, 2), # PSL(2,16)
+          # (3, 2)  # PSL(2,64)
+        ]
+        for (l, i) in test_cases
+            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+                group_generators, group_order = morgenstern_generators(l, i)
+                B = group_generators[1:end-1]
+                A = alternative_morgenstern_generators(B, FirstOnly())
+                Al = alternative_morgenstern_generators(B, AllPairs())
+                @test length(unique(A)) == length(A)
+                @test length(unique(Al)) == length(Al)
+                @test all(x -> x^2 != one(parent(x[1,1])), A)
+                @test all(x -> x^2 != one(parent(x[1,1])), Al)
+                @test is_nonconjugate(group_generators, group_order, A, B)
+                @test is_nonconjugate(group_generators, group_order, Al, B)
+                @test !is_nonconjugate(group_generators, group_order, A, A)
+                @test !is_nonconjugate(group_generators, group_order, B, B)
+                q = 2^(l*i)
+                expected_order = q * (q^2 - 1) ÷ gcd(2, q - 1)
+                @test group_order == expected_order
+            end
+        end
+    end
 end

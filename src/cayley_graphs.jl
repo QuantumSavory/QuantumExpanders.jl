@@ -295,17 +295,85 @@ function tanner_code_quadripartite(mgraph,edge_q_index,edge_ab_index,local_code)
     code
 end
 
-"""Check the TNC condition of [dinur2022locally](@cite)."""
-function is_nonconjugate(group,genA,genB)
-    genset = Set(genB)
-    for g in group
-        for b in genA
-            if inv(g)*b*g ∈ genset
+"""
+    is_nonconjugate(group_generators, group_order, genA, genB)
+
+Check the Totally Non-Conjugate (TNC) condition from [`dinur2022locally`](@cite) using lazy group enumeration.
+
+The TNC condition requires that no element of `genA` is conjugate to any element of `genB` under the group action.
+
+# Example
+
+```jldoctest
+julia> using QuantumExpanders; using Oscar
+
+julia> using QuantumExpanders: FirstOnly, AllPairs
+
+julia> generators, order = morgenstern_generators(1, 4)
+(Matrix{FqFieldElem}[[o^3 + o^2 + 1 o^3 + o^2 + 1; o^3 + 1 o^3 + o^2 + 1], [o^3 + o^2 + 1 o^3; o^3 + o o^3 + o^2 + 1], [o^3 + o^2 + 1 o^2 + 1; o + 1 o^3 + o^2 + 1]], 4080)
+
+julia> B = generators[1:end-1]
+2-element Vector{Matrix{FqFieldElem}}:
+ [o^3 + o^2 + 1 o^3 + o^2 + 1; o^3 + 1 o^3 + o^2 + 1]
+ [o^3 + o^2 + 1 o^3; o^3 + o o^3 + o^2 + 1]
+
+julia> A = alternative_morgenstern_generators(B, FirstOnly())
+2-element Vector{Matrix{FqFieldElem}}:
+ [o^2 + 1 o^3 + o^2; o^2 o^3 + o]
+ [o^3 + o o^3 + o^2; o^2 o^2 + 1]
+
+julia> Al = alternative_morgenstern_generators(B, AllPairs())
+2-element Vector{Matrix{FqFieldElem}}:
+ [o^2 + 1 o^3 + o^2; o^2 o^3 + o]
+ [o^3 + o o^3 + o^2; o^2 o^2 + 1]
+
+julia> is_nonconjugate(generators, order, A, B)
+true
+
+julia> is_nonconjugate(generators, order, Al, B)
+true
+
+julia> !is_nonconjugate(generators, order, A, A)
+true
+```
+function is_nonconjugate(
+    group_generators::Vector{Matrix{FqFieldElem}},
+    group_order::Int,
+    genA::Vector{Matrix{FqFieldElem}},
+    genB::Vector{Matrix{FqFieldElem}}
+)
+    F = parent(group_generators[1][1,1])
+    MS = matrix_space(F, 2, 2)
+    identity_mat = MS(1)
+    group_gens_nemo = [MS(g) for g in group_generators]
+    genA_nemo = [MS(a) for a in genA]
+    genB_nemo = [MS(b) for b in genB]
+    genset = Set(genB_nemo)
+    discovered = Set([identity_mat])
+    queue = [identity_mat]
+    while !isempty(queue)
+        g = popfirst!(queue)
+        for a in genA_nemo
+            inv_g = inv(g)
+            conjugated = inv_g * a * g
+            if conjugated ∈ genset
                 return false
             end
         end
+        for gen in group_gens_nemo
+            new_elem = g * gen
+            if new_elem ∉ discovered
+                push!(discovered, new_elem)
+                push!(queue, new_elem)
+                
+                if length(discovered) > group_order
+                    error("Discovered more elements than group order")
+                end
+            end
+        end
     end
-    true
+    @assert length(discovered) == group_order "Group enumeration incomplete"
+    return true
 end
 
 """Check the generating set is symmetric."""
