@@ -92,86 +92,81 @@ function cayley_left(group, generators)
     graph
 end
 
-"""Construct the Cayley complex square graphs 𝒢₀□ and 𝒢₁□ as presented in [gu2022efficient](@cite).
-
-It is more convenient to count the edges as directional (i.e. double counting them),
-as that makes it much easier to track how edge indices correspond to indices in A×B.
-"""
-function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
-    # Mappings between group element as a matrix and as an integer enumerator
-    idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
-    mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
-
-    # |Q| = |G||A||B|/2 indexed by the `count` variable below.
-    # |V₀| = |V₁| = |G|
-
-    # It is convenient if the V₀ and V₁ indexing is consistent,
-    # i.e. the index for (v,0)∈V₀ and for (v,1)∈V₁ should be the same.
-    # The indexing function is the `mat_to_idx` map.
-
-    # The indexing of the edges has to be consistent with
-    # the indexing of Q, i.e., the indexing of |G||A||B|/2.
-    # In other words, each edge should know the value of the `q_count` variable
-    # for which it was generated. That is stored in the `edgeᵢ_index` maps.
-
-    # Even more subtly, the indexing of each neighborhood of a vertex v,
-    # needs to be consistent with the indexing of A×B.
-    # This is why we provide two indices:
-    # - an A×B index useful for ordering
-    # - a larger Q index useful for assigning qubits
-
-    N = length(G)
-    𝒢₀□ = GraphType(N) # vertices V₀=G×{0}, edges Q, |A||B|-regular multigraph
-    𝒢₁□ = GraphType(N) # vertices V₁=G×{1}, edges Q, |A||B|-regular multigraph
-    edge₀_q_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to Q qubit/square index
-    edge₁_q_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to Q qubit/square index
-    edge₀_ab_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to AB index
-    edge₁_ab_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to AB index
+"""Construct the Cayley complex square graphs 𝒢₀□ and 𝒢₁□ using group generators."""
+function cayley_complex_square_graphs(
+    A::Vector{Matrix{FqFieldElem}},
+    B::Vector{Matrix{FqFieldElem}},
+    group_order::Int,
+    GraphType=DiMultigraph
+)
+    identity_mat = [one(A[1][1,1]) zero(A[1][1,1]);
+                  zero(A[1][1,1]) one(A[1][1,1])]
+    # First construct the entire group using BFS with generators A
+    mat_to_idx = Dict{typeof(identity_mat), Int}()
+    mat_to_idx[identity_mat] = 1
+    queue = [identity_mat]
+    idx_to_mat = [identity_mat]
+    while !isempty(queue)
+        current_mat = popfirst!(queue)
+        for a in A
+            new_mat = current_mat * a
+            if !haskey(mat_to_idx, new_mat)
+                new_idx = length(mat_to_idx) + 1
+                mat_to_idx[new_mat] = new_idx
+                push!(idx_to_mat, new_mat)
+                push!(queue, new_mat)
+            end
+        end
+    end
+    @assert length(mat_to_idx) == group_order "Constructed group doesn't match expected order"
+    # Now build the square graphs
+    N = group_order
+    𝒢₀□ = GraphType(N)
+    𝒢₁□ = GraphType(N)
+    edge₀_q_idx = Dict{Tuple{Int,Int,Int},Int}()
+    edge₁_q_idx = Dict{Tuple{Int,Int,Int},Int}()
+    edge₀_ab_idx = Dict{Tuple{Int,Int,Int},Int}()
+    edge₁_ab_idx = Dict{Tuple{Int,Int,Int},Int}()
     q_count = 0
-    donedict = Dict{Tuple{Int,Int,Int,Int},Int}() # used to avoid double counting
-    @showprogress for (iᵍ,g) in pairs(idx_to_mat)
-        iᵍ = mat_to_idx[g]
+    donedict = Dict{Tuple{Int,Int,Int,Int},Int}()
+    for (iᵍ, g) in enumerate(idx_to_mat)
         ab_count = 0
-        for (jᵃ,a) in pairs(A)
-            ag = a*g
+        for a in A
+            ag = a * g
             iᵃᵍ = mat_to_idx[ag]
-            for (jᵇ,b) in pairs(B)
+            for b in B
                 ab_count += 1
-                agb = a*g*b
-                @assert agb != g
+                agb = a * g * b
                 iᵃᵍᵇ = mat_to_idx[agb]
-                gb = g*b
-                @assert ag != gb
+                gb = g * b
                 iᵍᵇ = mat_to_idx[gb]
                 # Check for double counting
-                # There are squares that share one of the two diagonals, but are otherwise not the same square
-                q = (minmax(iᵍ,iᵃᵍᵇ)...,minmax(iᵍᵇ,iᵃᵍ)...)
-                #q = NTuple{4,Int}(sort([iᵍ,iᵃᵍᵇ,iᵍᵇ,iᵃᵍ]))
-                if !haskey(donedict,q)# TODO there should be a better way to avoid double counting
-                    q_count+=1
+                q = (minmax(iᵍ, iᵃᵍᵇ)..., minmax(iᵍᵇ, iᵃᵍ)...)
+                if !haskey(donedict, q)
+                    q_count += 1
                     donedict[q] = q_count
                 end
-                e₀ = iᵍ,iᵃᵍᵇ # the order is important
-                add_edge!(𝒢₀□,e₀...)
-                edge₀_q_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = donedict[q]
-                edge₀_ab_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = ab_count
-                e₁ = iᵍᵇ,iᵃᵍ # the order is important
-                add_edge!(𝒢₁□,e₁...)
-                edge₁_q_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = donedict[q]
-                edge₁_ab_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = ab_count
+                # Add edges to 𝒢₀□
+                e₀ = (iᵍ, iᵃᵍᵇ)
+                add_edge!(𝒢₀□, e₀...)
+                edge₀_q_idx[(e₀..., Multigraphs.mul(𝒢₀□, e₀...))] = donedict[q]
+                edge₀_ab_idx[(e₀..., Multigraphs.mul(𝒢₀□, e₀...))] = ab_count
+                # Add edges to 𝒢₁□
+                e₁ = (iᵍᵇ, iᵃᵍ)
+                add_edge!(𝒢₁□, e₁...)
+                edge₁_q_idx[(e₁..., Multigraphs.mul(𝒢₁□, e₁...))] = donedict[q]
+                edge₁_ab_idx[(e₁..., Multigraphs.mul(𝒢₁□, e₁...))] = ab_count
             end
         end
     end
     @info "|Q| = |G||A||B|/2 = $(q_count)"
-    @assert q_count==N*length(A)*length(B)÷2
-    @assert unique(values(indegree(𝒢₀□))) == [length(A)*length(B)]
-    @assert unique(values(indegree(𝒢₁□))) == [length(A)*length(B)]
-    @assert unique(values(outdegree(𝒢₀□))) == [length(A)*length(B)]
-    @assert unique(values(outdegree(𝒢₁□))) == [length(A)*length(B)]
-    𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
+    @assert q_count == group_order * length(A) * length(B) ÷ 2
+    @assert unique(values(indegree(𝒢₀□))) == [length(A) * length(B)]
+    @assert unique(values(indegree(𝒢₁□))) == [length(A) * length(B)]
+    @assert unique(values(outdegree(𝒢₀□))) == [length(A) * length(B)]
+    @assert unique(values(outdegree(𝒢₁□))) == [length(A) * length(B)]
+    return 𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
-
-
 
 """Construct the Cayley complex square graphs 𝒢₀□ and 𝒢₁□ using the quadripartite construction as presented in [leverrier2022quantum](@cite).
 
@@ -180,70 +175,74 @@ The quadripartite construction removes the TNC and symmetric generator set condi
 It is more convenient to count the edges as directional (i.e. double counting them),
 as that makes it much easier to track how edge indices correspond to indices in A×B.
 """
-function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph)
-    # Mappings between group element as a matrix and as an integer enumerator
-    idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
-    mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
-
-    # |Q| = |G||A||B| indexed by the `count` variable below.
-    # |V₀₀| = |V₀₁| = |V₁₀| = |V₁₁| = |G|
-
-    # It is convenient if the V₀₀, V₀₁, V₁₀, and V₁₁ indexing are consistent,
-    # i.e. the index for (v,00)∈V₀₀, (v,01)∈V₀₁, (v,10)∈V₁₀, and (v,11)∈V₁₁ should be the same.
-    # The indexing function is the `mat_to_idx` map.
-
-    # The indexing of the edges has to be consistent with
-    # the indexing of Q, i.e., the indexing of |G||A||B|.
-    # In other words, each edge should know the value of the `q_count` variable
-    # for which it was generated. That is stored in the `edgeᵢ_index` maps.
-
-    # Even more subtly, the indexing of each neighborhood of a vertex v,
-    # needs to be consistent with the indexing of A×B.
-    # This is why we provide two indices:
-    # - an A×B index useful for ordering
-    # - a larger Q index useful for assigning qubits
-
-    N = length(G)
-    𝒢₀□ = GraphType(2*N) # vertices V₀₀=G×{00} ∪ V₁₁=G×{11}, edges Q, |A||B|-regular multigraph
-    𝒢₁□ = GraphType(2*N) # vertices V₀₁=G×{01} ∪ V₁₀=G×{10}, edges Q, |A||B|-regular multigraph
-    edge₀_q_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to Q qubit/square index
-    edge₁_q_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to Q qubit/square index
-    edge₀_ab_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to AB index
-    edge₁_ab_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to AB index
+function cayley_complex_square_graphs_quadripartite(
+    A::Vector{Matrix{FqFieldElem}},
+    B::Vector{Matrix{FqFieldElem}},
+    group_order::Int,
+    GraphType=DiMultigraph
+)
+    identity_mat = [one(A[1][1,1]) zero(A[1][1,1]);
+                  zero(A[1][1,1]) one(A[1][1,1])]
+    # Lazy group construction using BFS with generators A
+    mat_to_idx = Dict{typeof(identity_mat), Int}()
+    mat_to_idx[identity_mat] = 1
+    queue = [identity_mat]
+    idx_to_mat = [identity_mat]
+    while !isempty(queue)
+        current_mat = popfirst!(queue)
+        for a in A
+            new_mat = current_mat * a
+            if !haskey(mat_to_idx, new_mat)
+                new_idx = length(mat_to_idx) + 1
+                mat_to_idx[new_mat] = new_idx
+                push!(idx_to_mat, new_mat)
+                push!(queue, new_mat)
+            end
+        end
+    end
+    @assert length(mat_to_idx) == group_order "Constructed group doesn't match expected order"
+    # Build quadripartite graphs
+    N = group_order
+    𝒢₀□ = GraphType(2*N)  # V₀₀ ∪ V₁₁
+    𝒢₁□ = GraphType(2*N)  # V₀₁ ∪ V₁₀
+    edge₀_q_idx = Dict{Tuple{Int,Int,Int},Int}()
+    edge₁_q_idx = Dict{Tuple{Int,Int,Int},Int}()
+    edge₀_ab_idx = Dict{Tuple{Int,Int,Int},Int}()
+    edge₁_ab_idx = Dict{Tuple{Int,Int,Int},Int}()
     q_count = 0
-    @showprogress for (iᵍ,g) in pairs(idx_to_mat)
-        iᵍ = mat_to_idx[g]
+    @showprogress for (iᵍ, g) in enumerate(idx_to_mat)
         ab_count = 0
-        for (jᵃ,a) in pairs(A)
-            ag = a*g
-            iᵃᵍ = mat_to_idx[ag] + N # we add N so that iᵃᵍ is shifted from V₀₁ to V₁₀ 
-            for (jᵇ,b) in pairs(B)
+        for a in A
+            ag = a * g
+            iᵃᵍ = mat_to_idx[ag] + N  # Shift to V₁₀
+            for b in B
                 ab_count += 1
-                agb = a*g*b
-                iᵃᵍᵇ = mat_to_idx[agb] + N # we add N so that iᵃᵍᵇ is shifted from V₀₀ to V₁₁ 
-                gb = g*b
+                agb = a * g * b
+                iᵃᵍᵇ = mat_to_idx[agb] + N  # Shift to V₁₁
+                gb = g * b
                 iᵍᵇ = mat_to_idx[gb]
-                q = (iᵍ,iᵃᵍᵇ,iᵍᵇ,iᵃᵍ) # note each q is unique due to the quadripartite construction
-                q_count+=1
-                e₀ = iᵍ,iᵃᵍᵇ # the order is important
-                add_edge!(𝒢₀□,e₀...)
-                edge₀_q_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = q_count
-                edge₀_ab_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = ab_count
-                e₁ = iᵍᵇ,iᵃᵍ # the order is important
-                add_edge!(𝒢₁□,e₁...)
-                edge₁_q_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = q_count
-                edge₁_ab_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = ab_count
+                # Each q is unique in quadripartite construction
+                q_count += 1
+                # Add edges to 𝒢₀□ (V₀₀ → V₁₁)
+                e₀ = (iᵍ, iᵃᵍᵇ)
+                add_edge!(𝒢₀□, e₀...)
+                edge₀_q_idx[(e₀..., Multigraphs.mul(𝒢₀□, e₀...))] = q_count
+                edge₀_ab_idx[(e₀..., Multigraphs.mul(𝒢₀□, e₀...))] = ab_count
+                # Add edges to 𝒢₁□ (V₀₁ → V₁₀)
+                e₁ = (iᵍᵇ, iᵃᵍ)
+                add_edge!(𝒢₁□, e₁...)
+                edge₁_q_idx[(e₁..., Multigraphs.mul(𝒢₁□, e₁...))] = q_count
+                edge₁_ab_idx[(e₁..., Multigraphs.mul(𝒢₁□, e₁...))] = ab_count
             end
         end
     end
     @info "|Q| = |G||A||B| = $(q_count)"
-    @assert q_count==N*length(A)*length(B)
+    @assert q_count == N * length(A) * length(B)
     @assert sort!(unique(values(indegree(𝒢₀□)))) == [0, length(A)*length(B)]
     @assert sort!(unique(values(indegree(𝒢₁□)))) == [0, length(A)*length(B)]
     @assert sort!(unique(values(outdegree(𝒢₀□)))) == [0, length(A)*length(B)]
     @assert sort!(unique(values(outdegree(𝒢₁□)))) == [0, length(A)*length(B)]
-
-    𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
+    return 𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
 
 """Construct the Tanner code for a given multigraph, edge numbering and local code.
