@@ -33,22 +33,6 @@ function cayley_right(generators::Vector{Matrix{FqFieldElem}}, group_order::Int)
     return graph
 end
 
-"""Construct the Cayleyʳⁱᵍʰᵗ graph for a given group and set of generators."""
-function cayley_right(group,generators)
-    idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
-    mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
-
-    N = length(group)
-    graph = SimpleGraph(N)
-    for (i,g) in pairs(idx_to_mat)
-        for b in generators
-            j = mat_to_idx[g*b]
-            add_edge!(graph,i,j)
-        end
-    end
-    graph
-end
-
 """Construct the Cayleyˡᵉᶠᵗ graph for a given group and set of generators."""
 function cayley_left(generators::Vector{Matrix{FqFieldElem}}, group_order::Int)
     identity_mat = [one(generators[1][1,1]) zero(generators[1][1,1]);
@@ -76,22 +60,6 @@ function cayley_left(generators::Vector{Matrix{FqFieldElem}}, group_order::Int)
     return graph
 end
 
-"""Construct the Cayleyˡᵉᶠᵗ graph for a given group and set of generators."""
-function cayley_left(group, generators)
-    idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
-    mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
-
-    N = length(group)
-    graph = SimpleGraph(N)
-    for (i,g) in pairs(idx_to_mat)
-        for b in generators
-            j = mat_to_idx[b*g]
-            add_edge!(graph,i,j)
-        end
-    end
-    graph
-end
-
 """Construct the Cayley complex square graphs 𝒢₀□ and 𝒢₁□ using group generators."""
 function cayley_complex_square_graphs(
     A::Vector{Matrix{FqFieldElem}},
@@ -109,7 +77,7 @@ function cayley_complex_square_graphs(
     while !isempty(queue)
         current_mat = popfirst!(queue)
         for a in A
-            new_mat = current_mat * a
+            new_mat = a * current_mat
             if !haskey(mat_to_idx, new_mat)
                 new_idx = length(mat_to_idx) + 1
                 mat_to_idx[new_mat] = new_idx
@@ -119,6 +87,10 @@ function cayley_complex_square_graphs(
         end
     end
     @assert length(mat_to_idx) == group_order "Constructed group doesn't match expected order"
+    # Total no-conjugacy verification
+    for g in idx_to_mat, a in A, b in B
+        @assert !exact_equal(a*g, g*b) "TNC violation: a*g = g*b for a=$a, b=$b, g=$g"
+    end
     # Now build the square graphs
     N = group_order
     𝒢₀□ = GraphType(N)
@@ -191,7 +163,7 @@ function cayley_complex_square_graphs_quadripartite(
     while !isempty(queue)
         current_mat = popfirst!(queue)
         for a in A
-            new_mat = current_mat * a
+            new_mat = a * current_mat
             if !haskey(mat_to_idx, new_mat)
                 new_idx = length(mat_to_idx) + 1
                 mat_to_idx[new_mat] = new_idx
@@ -378,6 +350,47 @@ end
 
 """Check the generating set is symmetric."""
 is_symmetric_gen(gens) = Set(inv.(gens)) == Set(gens)
+
+"""Exact equality check for matrices over finite fields"""
+function exact_equal(a::Nemo.FqMatrix, b::Nemo.FqMatrix)
+    n = size(a, 1)
+    return all(a[i,j] == b[i,j] for i in 1:n, j in 1:n)
+end
+function exact_equal(a::Matrix{Nemo.FqFieldElem}, b::Matrix{Nemo.FqFieldElem})
+    n = size(a, 1)
+    return all(a[i,j] == b[i,j] for i in 1:n, j in 1:n)
+end
+
+"""Check if a generating set is symmetric (closed under inversion)"""
+function is_symmetric_gen(gens::Vector{Matrix{Nemo.FqFieldElem}})
+    # Convert all matrices to FqMatrix type first
+    R = parent(gens[1][1,1])
+    n = size(gens[1], 1)
+    M = matrix_space(R, n, n)
+    gens_fq = [M(g) for g in gens]  # Convert to FqMatrix
+    
+    inv_gens = [Nemo.inv(g) for g in gens_fq]
+    
+    for g_inv in inv_gens
+        if !any(exact_equal(g_inv, g) for g in gens_fq)
+            return false
+        end
+    end
+    return true
+end
+
+"""Create symmetric generating sets of equal size"""
+function equalize_generators(A, B)
+    Δ_A = length(A)
+    Δ_B = length(B)
+    if Δ_A == Δ_B
+        return A, B
+    elseif Δ_A < Δ_B
+         return [A; A[1:Δ_B-Δ_A]], B
+    else
+         return A, [B; B[1:Δ_A-Δ_B]]
+    end
+end
 
 """Check if a graph is Ramanujan by verifying the eigenvalue condition."""
 function is_ramanujan(g, q)
