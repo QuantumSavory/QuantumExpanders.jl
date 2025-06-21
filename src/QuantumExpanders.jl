@@ -12,11 +12,12 @@ using Graphs
 using Oscar:coefficients
 using Graphs:add_edge!,nv,ne,neighbors,Graphs
 
+include("classical_expander_code.jl")
 include("morgenstern.jl")
 include("cayley_graphs.jl")
 include("tensor_codes.jl")
 
-export gen_code, gen_good_code, tanner_code, tanner_code_quadripartite, cayley_complex_square_graphs, cayley_complex_square_graphs_quadripartite, morgenstern_generators, alternative_morgenstern_generators
+export gen_code, gen_good_code, tanner_code, tanner_code_quadripartite, cayley_complex_square_graphs, cayley_complex_square_graphs_quadripartite, morgenstern_generators, alternative_morgenstern_generators, expander_code_parity_matrix
 
 ##
 
