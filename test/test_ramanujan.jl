@@ -6,6 +6,42 @@
     using QuantumExpanders
     using LogExpFunctions
 
+    function binary_entropy(α)
+        if α == 0.0 || α == 1.0
+            return 0.0
+        else
+            return -α * log(α) - (1 - α) * log(1 - α)
+        end
+    end
+
+    function expansion_bound(α, c, d)
+        term1 = (c / d) * (1 - (1 - α)^d)
+        term2 = (2 * c * α * binary_entropy(α)) / log(2)
+        return term1 - term2
+    end
+
+    function verify_expansion_property(B, α)
+        @assert is_unbalanced_bipartite(B)
+        n = div(nv(B), 2)
+        m = nv(B) - n
+        d = maximum(degree(B))
+        max_S_size = floor(Int, α * m)
+        for _ in 1:100
+            S = rand((n + 1):(n + m), rand(1:max_S_size))
+            N_S = Set{Int}()
+            for v in S
+                for u in Graphs.neighbors(B, v)
+                    push!(N_S, u)
+                end
+            end
+            bound = expansion_bound(α, 2, d) * length(S)
+            if length(N_S) < bound
+                return false
+            end
+        end
+        return true
+    end
+
     function verify_expansion_property(B, α)
         @assert is_unbalanced_bipartite(B)
         n = div(nv(B), 2)
