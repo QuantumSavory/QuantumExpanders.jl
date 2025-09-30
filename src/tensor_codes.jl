@@ -119,7 +119,7 @@ true
 function dual_code(H)
     r, Δ = size(H)
     R, _ = residue_ring(ZZ, 2)
-    H = matrix_space(R, r, Δ)(R.(H))
+    H = matrix_space(R, r, Δ)(R.(H)) # TODO there must be a cleaner way to write this
     null = nullspace(H)[2]
     @assert all(iszero, H*null)
     return transpose(null)
