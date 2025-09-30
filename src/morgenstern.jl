@@ -57,12 +57,9 @@ function morgenstern_solutions(R)
 end
 
 """
-Internally call the `morgenstern_f` sampler to find an irreducible x^2+x+ε∈𝔽q[x].
-Then find all q+1 solutions (γ,δ) of γ²+γδ+δ²ε=1.
+Give all Morgenstern generators over PSL₂qⁱ, where i is even, q=2ˡ, and p is prime.
 
-Takes as input 𝔽q[x], the polynomial ring we want to work with.
-
-Returns (ε, sols), where sols is the list of solutions.
+Returns (SL₂qⁱ, B), where B is the list of generators. As PSL₂qⁱ=SL₂qⁱ, we keep in SL₂qⁱ.
 
 See [morgenstern1994existence](@cite).
 """
@@ -132,7 +129,7 @@ function alternative_morgenstern_generators(B::AbstractVector, ::AllPairs)
         for j in 1:N
             if i!=j
                 a = B[i]*B[j]
-                push!(A, a)
+                push!(A,a)
             end
         end
     end
@@ -149,8 +146,8 @@ function alternative_morgenstern_generators(B::AbstractVector, ::FirstOnly)
     A = eltype(B)[]
     N = length(B)
     for i in 2:N
-        push!(A, B[1]*B[i])
-        push!(A, B[i]*B[1])
+        push!(A,B[1]*B[i])
+        push!(A,B[i]*B[1])
     end
     return A
 end
