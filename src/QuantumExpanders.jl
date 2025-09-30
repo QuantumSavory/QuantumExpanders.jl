@@ -4,7 +4,6 @@ A module for constructing quantum LDPC codes
 
 module QuantumExpanders
 
-using Nemo
 using Oscar
 using LinearAlgebra
 using Random
