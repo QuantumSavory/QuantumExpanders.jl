@@ -9,8 +9,11 @@ using Oscar
 using LinearAlgebra
 using Random
 using Graphs
-using Oscar:coefficients
 using Graphs: add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix, add_vertex!, has_edge
+using Oscar: coefficients, zzModRingElem, MatSpace, zero_matrix, base_ring, lift, matrix_space, zzModMatrix,
+residue_ring, ZZ, nullspace, transpose, base_ring, kron, Matrix, embed
+using Multigraphs
+using ProgressMeter
 
 include("cayley_graphs.jl")
 include("quantum_tanner_code.jl")

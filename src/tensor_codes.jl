@@ -1,11 +1,3 @@
-using Nemo
-using Nemo: zzModRingElem, MatSpace, zero_matrix, base_ring, lift
-using Oscar
-using LinearAlgebra
-using Random
-
-using QuantumClifford
-
 const Z2Matrix = zzModMatrix
 
 """
@@ -22,7 +14,7 @@ requires choosing ``C_A`` via a random uniform ``r \\times \\Delta`` generator m
 ``C_B`` via a random uniform ``r \\times \\Delta`` parity-check matrix, where``r = \\lfloor \\rho \\Delta \\rfloor``.
 
 !!! note
-    The parameters satisfy ``-\\delta \\log_2 \\delta - (1-\\delta) \\log_2 (1-\\delta) < \\rho``
+    The parameters must satisfy ``-\\delta \\log_2 \\delta - (1-\\delta) \\log_2 (1-\\delta) < \\rho``
     (*Gilbert-Varshamov* bound). This condition ensures that random codes of rate ``\\rho`` can
     achieve relative minimum distance ``\\delta``, which is necessary for all four codes ``C_A``,
     ``C_B``, ``C_A^{\\perp}``, ``C_B^{\\perp}`` to have minimum distances ``\\geq \\delta\\Delta``
@@ -54,7 +46,7 @@ julia> H = uniformly_random_code_checkmatrix(0.5, 10)
 [0   0   0   1   1   1   0   0   1   0]
 ```
 
-### Fields
+### Arguments
 - `ρ::Real`: Target rate of the classical component code, determining the code's dimension relative to its block length.
 - `Δ::Integer`: Block length of the classical component code, corresponding to the size of the generating sets in the underlying Cayley graph structure.
 """
@@ -113,7 +105,7 @@ julia> G * transpose(H) == zero_matrix(base_ring(G), size(G, 1), size(H, 1))
 true
 ```
 
-### Fields
+### Arguments
 - `H::zzModMatrix`: Parity check matrix of a classical linear code, typically one of the component codes ``C_A`` or ``C_B``.
 """
 function dual_code(H)
@@ -153,7 +145,7 @@ julia> kron(A, B)
 [1   1   0   0]
 [0   0   1   1]
 
-### Fields
+### Arguments
 
 - `l::zzModMatrix`: Left matrix in the Kronecker product, typically a generator or parity check matrix of a component code.
 - `r::zzModMatrix`: Right matrix in the Kronecker product, typically a generator or parity check matrix of the other component code.

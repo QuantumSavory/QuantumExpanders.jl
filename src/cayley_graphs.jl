@@ -1,11 +1,3 @@
-using Nemo
-using Oscar
-using LinearAlgebra
-using Random
-using Graphs
-using Multigraphs
-using ProgressMeter
-
 """Construct the Cayleyʳⁱᵍʰᵗ graph for a given group and set of generators."""
 function cayley_right(group,generators)
     idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
