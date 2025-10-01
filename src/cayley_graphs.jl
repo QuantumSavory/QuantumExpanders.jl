@@ -256,4 +256,4 @@ function is_nonconjugate(group,genA,genB)
 end
 
 """Check the generating set is symmetric."""
-is_symmetric_gen(gens) = Set(inv.(gens)) == Set(gens)
+is_symmetric_gen(gens) = Set(Nemo.inv.(gens)) == Set(gens)
