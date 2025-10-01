@@ -1,5 +1,6 @@
 using Nemo
 using Oscar
+using Oscar: embed
 using LinearAlgebra
 using Random
 
@@ -38,7 +39,7 @@ See [morgenstern1994existence](@cite).
 function morgenstern_solutions(R)
     F = base_ring(R)
     unit = gen(F)
-    q = size(F)
+    q = order(F)
     f = morgenstern_f(R) # random sampler
     ε = coefficients(f)[0]
     sols = [(one(F),zero(F))]
@@ -67,20 +68,15 @@ function morgenstern_generators(l,i)
     p = 2
     q = p^l
     qⁱ = q^i
-    @info "q = 2^$(l) = $(q)"
-    @info "qⁱ = $(q)^$(i) = $(qⁱ)"
     𝔽q , unit = finite_field(p,l)
     𝔽qⁱ, punit = finite_field(p,l*i)
     morph = embed(𝔽q,𝔽qⁱ)
-    R𝔽q, x = polynomial_ring(𝔽q, "x")
-    R𝔽qⁱ, y = polynomial_ring(𝔽qⁱ, "y")
+    R𝔽q, x = polynomial_ring(𝔽q, :x)
+    R𝔽qⁱ, y = polynomial_ring(𝔽qⁱ, :y)
     ε, Bsols = morgenstern_solutions(R𝔽q)
     @assert length(Bsols) == q+1
-    @info "|B| = q+1 = $(length(Bsols))"
-    @info "ε = $(ε)"
     𝕚s = roots(y^2+y+morph(ε))
     𝕚 = rand(𝕚s) # selecting one of the two roots at random
-    @info "𝕚 = $(𝕚)"
     # PSL₂qⁱ and PGL₂qⁱ are the same, so we are not going to try to work with the larger GL₂qⁱ
     #GL₂qⁱ = general_linear_group(2,𝔽qⁱ)
     #@info "|GL₂(𝔽(qⁱ))| = $(length(GL₂qⁱ))"
@@ -99,7 +95,6 @@ function morgenstern_generators(l,i)
     #PSL₂qⁱ, Pₘₒᵣₚₕ = quo(SL₂qⁱ,CSL₂qⁱ)
     #@info "|PSL₂(𝔽(qⁱ))| = $(length(PSL₂qⁱ))"
     #@assert length(GL₂qⁱ) == length(SL₂qⁱ) == length(PSL₂qⁱ)
-
     slunit = one(SL₂qⁱ)
     B = typeof(slunit)[]
     for sol in Bsols
@@ -122,8 +117,6 @@ struct AllPairs <: MorgensternAlgorithm end
 struct FirstOnly <: MorgensternAlgorithm end
 
 """
-    alternative_morgenstern_generators(B::AbstractVector, ::AllPairs)
-
 Create alternative Morgenstern generators using all pairwise products (i≠j).
 
 Introduced in Sec. 6.1 of [dinur2022locally](@cite).
@@ -134,9 +127,9 @@ function alternative_morgenstern_generators(B::AbstractVector, ::AllPairs)
     N = length(B)
     for i in 1:N
         for j in 1:N
-            if i ≠ j
-                a = B[i] * B[j]
-                push!(A, a)
+            if i!=j
+                a = B[i]*B[j]
+                push!(A,a)
             end
         end
     end
@@ -144,8 +137,6 @@ function alternative_morgenstern_generators(B::AbstractVector, ::AllPairs)
 end
 
 """
-    alternative_morgenstern_generators(B::AbstractVector, ::FirstOnly)
-
 Create alternative Morgenstern generators using products with first element only.
 
 Introduced as the "better" alternative in Sec. 6.1 of [dinur2022locally](@cite).
@@ -155,11 +146,10 @@ function alternative_morgenstern_generators(B::AbstractVector, ::FirstOnly)
     A = eltype(B)[]
     N = length(B)
     for i in 2:N
-        push!(A, B[1] * B[i])
-        push!(A, B[i] * B[1])
+        push!(A,B[1]*B[i])
+        push!(A,B[i]*B[1])
     end
     return A
 end
 
-# Convenience methods
 alternative_morgenstern_generators(B) = alternative_morgenstern_generators(B, FirstOnly())
