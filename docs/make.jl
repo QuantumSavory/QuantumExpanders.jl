@@ -12,7 +12,7 @@ ENV["COLUMNS"] = 80
 bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"),style=:authoryear)
 
 makedocs(
-#bib,
+plugins = [bib],
 doctest = false,
 clean = true,
 warnonly = :missing_docs,
