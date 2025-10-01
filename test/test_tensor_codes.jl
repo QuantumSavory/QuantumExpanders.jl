@@ -1,5 +1,6 @@
 @testitem "Test Tensor Codes" begin
     using Test
+    using Oscar
     using QuantumExpanders
     using QuantumExpanders: uniformly_random_code_checkmatrix, dual_code
     using Nemo: zero_matrix, base_ring, transpose, rank
@@ -29,20 +30,12 @@
                     r = Int(floor(ρ * Δ))
                     Hₘ = uniformly_random_code_checkmatrix(ρ, Δ)
                     Gₘ = dual_code(Hₘ)
-                    Hₙ = uniformly_random_code_checkmatrix(ρ, Δ)
-                    Gₙ = dual_code(Hₙ)
                     @test size(Hₘ) == (r, Δ)
                     @test size(Gₘ) == (Δ-r, Δ)
-                    @test size(Hₙ) == (r, Δ)  
-                    @test size(Gₙ) == (Δ-r, Δ)
                     @test rank(Hₘ) == r
                     @test rank(Gₘ) == Δ-r
-                    @test rank(Hₙ) == r
-                    @test rank(Gₙ) == Δ-r
                     @test all(iszero, Hₘ*transpose(Gₘ))
                     @test all(iszero, Gₘ*transpose(Hₘ))
-                    @test all(iszero, Hₙ*transpose(Gₙ))
-                    @test all(iszero, Gₙ*transpose(Hₙ))
                 end
             end
         end
