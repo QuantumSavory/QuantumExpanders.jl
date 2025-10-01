@@ -19,7 +19,7 @@ warnonly = :missing_docs,
 sitename = "QuantumExpanders.jl",
 format = Documenter.HTML(),
 authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
-pages = ["API" => "API.md",]
+pages = ["API" => "API.md"]
 linkcheck = true,
 )
 
