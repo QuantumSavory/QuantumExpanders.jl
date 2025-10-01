@@ -18,7 +18,7 @@ clean = true,
 warnonly = :missing_docs,
 sitename = "QuantumExpanders.jl",
 format = Documenter.HTML(),
-authors = "Feroz Ahmed Mian",
+authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
 linkcheck = true,
 )
 
