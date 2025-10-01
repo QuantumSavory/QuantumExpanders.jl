@@ -1,7 +1,7 @@
 push!(LOAD_PATH,"../src/")
 
 using Documenter
-#using DocumenterCitations
+using DocumenterCitations
 using QuantumExpanders
 
 #bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"))
