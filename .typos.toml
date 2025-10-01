@@ -1,4 +1,6 @@
 [default.extend-words]
+mor = "mor"
+morg = "morg"
 
 [type.ipynb]
 # It detects false possitives in the base64 encoded images inside notebooks
