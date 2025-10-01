@@ -1,11 +1,3 @@
-using Nemo
-using Nemo: zzModRingElem, MatSpace, zero_matrix, base_ring, lift
-using Oscar
-using LinearAlgebra
-using Random
-
-using QuantumClifford
-
 const Z2Matrix = zzModMatrix
 
 """

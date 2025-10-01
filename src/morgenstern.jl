@@ -1,9 +1,3 @@
-using Nemo
-using Oscar
-using Oscar: embed
-using LinearAlgebra
-using Random
-
 """
 Randomly sample for ε∈𝔽q until you find one such that x^2+x+ε∈𝔽q[x] is irreducible.
 
