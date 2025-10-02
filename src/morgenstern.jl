@@ -1,11 +1,112 @@
 """
-Randomly sample for ε∈𝔽q until you find one such that x^2+x+ε∈𝔽q[x] is irreducible.
+Finds an irreducible polynomial of the form ``f(x) = x^2 + x + \\varepsilon`` over
+the finite field ``\\mathbb{F}_q``.
 
-Takes as input 𝔽q[x], the polynomial ring we want to work with.
+For quadratic polynomials, irreducibility is equivalent to having no roots in the base field:
 
-Returns x^2+x+ε.
+```jldoctest
+julia> using Oscar
 
-See [morgenstern1994existence](@cite).
+julia> 𝔽₂, _ = finite_field(2, 1, "a");
+
+julia> R, x = polynomial_ring(𝔽₂, "x");
+
+julia> f = x^2 + x + 𝔽₂(1);
+
+julia> is_irreducible(f) && isempty(roots(f))
+true
+
+julia> g = x^2 + x + 𝔽₂(0);
+
+julia> is_irreducible(g) || !isempty(roots(g))
+true
+```
+
+In characteristic 2, the standard quadratic form ``x^2 + \\varepsilon`` is insufficient because
+its derivative is zero, making it inseparable if it has a root. The form ``x^2 + x + \\varepsilon``
+is used instead, as its derivative is 1, ensuring separability. Its irreducibility over ``\\mathbb{F}_q``
+is equivalent to it having no roots in ``\\mathbb{F}_q``.
+
+```jldoctest
+julia> using Oscar
+
+julia> 𝔽₂, _ = finite_field(2, 1, "a");
+
+julia> R, x = polynomial_ring(𝔽₂, "x");
+
+julia> f = x^2 + 𝔽₂(1);
+
+julia> derivative(f) == 0 && !is_separable(f)
+true
+
+julia> 𝔽₄, _ = finite_field(2, 2, "b");
+
+julia> R₄, y = polynomial_ring(𝔽₄, "y");
+
+julia> factor(y^2 + 𝔽₄(1))
+1 * (y + 1)^2
+```
+
+The form ``x^2 + x + \\varepsilon`` works correctly in characteristic 2, making it
+essential for applications like the construction of optimal expander graphs:
+
+```jldoctest
+julia> using Oscar
+
+julia> 𝔽₂, _ = finite_field(2, 1, "a");
+
+julia> R, x = polynomial_ring(𝔽₂, "x");
+
+julia> f = x^2 + x + 𝔽₂(1);
+
+julia> is_irreducible(f) && is_separable(f) && derivative(f) == 1
+true
+```
+
+# Morgenstern's construction of Ramanujan graphs
+
+The construction requires a [quaternion algebra](https://en.wikipedia.org/wiki/Quaternion_algebra)
+over ``\\mathbb{F}_q(x)`` of the form [morgenstern1994existence](@cite):
+
+```math
+\\mathcal{A} = k\\mathbf{1} + k\\mathbf{i} + k\\mathbf{j} + k\\mathbf{ij}, \\quad
+\\mathbf{i}^2 = \\mathbf{i} + \\varepsilon, \\quad \\mathbf{j}^2 = x, \\quad \\mathbf{ij} = \\mathbf{ji} + \\mathbf{j}
+```
+
+where ``k = \\mathbb{F}_q(x)`` and ``f(x) = x^2 + x + \\varepsilon`` is irreducible over ``\\mathbb{F}_q``.
+
+The norm in this algebra is given by:
+
+```math
+N(a + b\\mathbf{i} + c\\mathbf{j} + d\\mathbf{ij}) = a^2 + b^2\\varepsilon + ab + (c^2 + d^2\\varepsilon + cd)x
+```
+
+The "basic norm" elements that generate the Ramanujan graphs are exactly those of the form [morgenstern1994existence](@cite):
+
+```math
+\\xi = 1 + \\gamma\\mathbf{j} + \\delta\\mathbf{ij}, \\quad \\text{where } \\gamma, \\delta \\in \\mathbb{F}_q \\text{ satisfy } \\gamma^2 + \\gamma\\delta + \\delta^2\\varepsilon = 1
+```
+
+This equation has exactly ``q+1`` solutions in ``\\mathbb{F}_q``, providing the ``q+1`` generators needed 
+for ``(q+1)``-regular Ramanujan graphs.
+
+Under the isomorphism ``\\theta: \\mathcal{A} \\to M_2(k)``, these generators map to matrices [morgenstern1994existence](@cite):
+
+```math
+\\begin{pmatrix}
+1 & \\gamma + \\delta i \\\\
+(\\gamma + \\delta i + \\delta)x & 1
+\\end{pmatrix}
+```
+
+where ``i`` is a root of ``x^2 + x + \\varepsilon = 0``.
+
+In characteristic 2, the polynomial ``x^2 + \\varepsilon`` is inseparable because its derivative is
+zero. As a result, it cannot be used to define a separable quadratic field extension, which is necessary
+for constructing a division quaternion algebra in Morgenstern’s Ramanujan graph construction. In contrast, 
+``x^2 + x + \\varepsilon``, being both irreducible and separable, yields a proper non-split quaternion algebra.
+Without separability, the resulting graphs do not attain the Ramanujan eigenvalue bound ``2\\sqrt{q}``,
+violating the optimality of the construction.
 """
 function morgenstern_f(R::FqPolyRing)
     x = gen(R)
