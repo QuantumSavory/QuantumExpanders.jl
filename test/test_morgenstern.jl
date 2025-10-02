@@ -42,7 +42,7 @@
             (1, 4), # PSL(2,16)
             # (1, 6), # PSL(2,64) # take long time
             (2, 2), # PSL(2,16)
-            # (3, 2)  # PSL(2,64) # take long time
+            # (3, 2) # PSL(2,64) # take long time
         ]
         for (l, i) in test_cases
             @testset "l=$l, i=$i (q=$(2^l), |Γ|=$(2^(3l*i) - 2^(l*i)))" begin
@@ -83,7 +83,7 @@
                 # All generators should have order 2.
                 @test all(matrix(gen^2) == identity_matrix(base_ring(gen), 2) for gen in gens)
                 @test is_connected(graph)
-                # Property 6: Independence Number
+                # Property VI: Independence number
                 ind_set = independent_set(graph, MaximalIndependentSet())
                 independenceₙᵤₘ = length(ind_set)
                 # Theorem: i(Γ_g) ≤ (2√q/(q+1)) |Γ_g|
