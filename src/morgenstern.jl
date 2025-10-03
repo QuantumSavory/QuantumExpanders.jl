@@ -69,8 +69,10 @@ The construction requires a [quaternion algebra](https://en.wikipedia.org/wiki/Q
 over ``\\mathbb{F}_q(x)`` of the form [morgenstern1994existence](@cite):
 
 ```math
+\\begin{aligned}
 \\mathcal{A} = k\\mathbf{1} + k\\mathbf{i} + k\\mathbf{j} + k\\mathbf{ij}, \\quad
 \\mathbf{i}^2 = \\mathbf{i} + \\varepsilon, \\quad \\mathbf{j}^2 = x, \\quad \\mathbf{ij} = \\mathbf{ji} + \\mathbf{j}
+\\end{aligned}
 ```
 
 where ``k = \\mathbb{F}_q(x)`` and ``f(x) = x^2 + x + \\varepsilon`` is irreducible over ``\\mathbb{F}_q``.
@@ -78,13 +80,25 @@ where ``k = \\mathbb{F}_q(x)`` and ``f(x) = x^2 + x + \\varepsilon`` is irreduci
 The norm in this algebra is given by:
 
 ```math
+\\begin{aligned}
 N(a + b\\mathbf{i} + c\\mathbf{j} + d\\mathbf{ij}) = a^2 + b^2\\varepsilon + ab + (c^2 + d^2\\varepsilon + cd)x
+\\end{aligned}
 ```
 
 The "basic norm" elements that generate the Ramanujan graphs are exactly those of the form [morgenstern1994existence](@cite):
 
 ```math
-\\xi = 1 + \\gamma\\mathbf{j} + \\delta\\mathbf{ij}, \\quad \\text{where } \\gamma, \\delta \\in \\mathbb{F}_q \\text{ satisfy } \\gamma^2 + \\gamma\\delta + \\delta^2\\varepsilon = 1
+\\begin{aligned}
+\\xi = 1 + \\gamma\\mathbf{j} + \\delta\\mathbf{ij}, \\quad \\text{where } \\gamma, \\delta \\in \\mathbb{F}_q
+\\end{aligned}
+```
+
+satisfy
+
+```math
+\\begin{aligned}
+\\gamma^2 + \\gamma\\delta + \\delta^2\\varepsilon = 1
+\\end{aligned}
 ```
 
 This equation has exactly ``q+1`` solutions in ``\\mathbb{F}_q``, providing the ``q+1`` generators needed 
@@ -107,6 +121,10 @@ for constructing a division quaternion algebra in Morgenstern’s Ramanujan grap
 ``x^2 + x + \\varepsilon``, being both irreducible and separable, yields a proper non-split quaternion algebra.
 Without separability, the resulting graphs do not attain the Ramanujan eigenvalue bound ``2\\sqrt{q}``,
 violating the optimality of the construction.
+
+# Arguments
+- `R`: Polynomial ring ``\\mathbb{F}_q[x]`` used to construct the irreducible polynomial for Morgenstern's quaternion algebra.
+
 """
 function morgenstern_f(R::FqPolyRing)
     x = gen(R)
@@ -123,14 +141,67 @@ function morgenstern_f(R::FqPolyRing)
 end
 
 """
-Internally call the `morgenstern_f` sampler to find an irreducible x^2+x+ε∈𝔽q[x].
-Then find all q+1 solutions (γ,δ) of γ²+γδ+δ²ε=1.
+Find all ``q + 1`` solutions ``(\\gamma, \\delta) \\in \\mathbb{F}_q^2`` to the
+``\\gamma^2 + \\gamma\\delta + \\delta^2\\varepsilon = 1``.
 
-Takes as input 𝔽q[x], the polynomial ring we want to work with.
+## Quaternion Algebra
 
-Returns (ε, sols), where sols is the list of solutions.
+A [quaternion algebra](https://en.wikipedia.org/wiki/Quaternion_algebra) over ``k = \\mathbb{F}_q(x)`` is
+a [skewfield](https://en.wikipedia.org/wiki/Division_ring) ``\\mathcal{A}`` with [center](https://en.wikipedia.org/wiki/Center_(group_theory))
+``k`` that has degree four as a vector space over ``k``. In Morgenstern's explicit construction of Ramanujan graphs
+for even characteristic ``q`` [morgenstern1994existence](@cite), a specific quaternion algebra is defined as
 
-See [morgenstern1994existence](@cite).
+```math
+\\begin{aligned}
+\\mathscr{A} = k\\mathbf{1} + k\\mathbf{i} + k\\mathbf{j} + k\\mathbf{ij}
+\\end{aligned}
+```
+
+with relations
+
+```math
+\\begin{aligned}
+\\mathbf{i}^2 = \\mathbf{i} + \\varepsilon, \\mathbf{j}^2 = x, \\mathbf{ij} = \\mathbf{ji} + \\mathbf{j}
+\\end{aligned}
+```
+
+The parameter ``\\varepsilon \\in \\mathbb{F}_q`` is chosen so that the polynomial ``f(x) = x^2 + x + \\varepsilon``
+is irreducible over ``\\mathbb{F}_q``. This ensures ``\\mathcal{A}`` is a skewfield. The algebra is [ramified](https://en.wikipedia.org/wiki/Ramification_(mathematics))
+at the finite place ``x`` and at ``1/x``.
+
+The connection to graph theory arises from studying elements in the integral set
+
+```math
+\\begin{aligned}
+\\mathscr{S} = \\mathbb{F}_q[x]\\mathbf{1} + \\mathbb{F}_q[x]\\mathbf{i} + \\mathbb{F}_q[x]\\mathbf{j} + \\mathbb{F}_q[x]\\mathbf{ij}
+\\end{aligned}
+```
+
+The "basic norm x+1" elements are defined as
+
+```math
+\\begin{aligned}
+\\xi = 1 + \\gamma\\mathbf{j} + \\delta\\mathbf{ij}, \\quad \\text{with} \\gamma, \\delta \\in \\mathbb{F}_q,
+\\end{aligned}
+```
+
+satisfying the norm equation ``N(\\xi) = \\gamma^2 + \\gamma\\delta + \\delta^2\varepsilon = 1``. This equation
+has exactly ``q+1`` solutions in ``\\mathbb{F}_q``, parameterizing generators ``\\xi_1, \\dots, \\xi_{q+1}``. These
+generators define a [free product](https://en.wikipedia.org/wiki/Free_product) group 
+
+```math
+\\begin{aligned}
+A(x) = \\langle \\xi_1 \\rangle * \\langle \\xi_2 \\rangle * \\cdots * \\langle \\xi_{q+1} \\rangle
+\\end{aligned}
+```
+
+which acts simply transitively on the ``q+1``-regular tree ``T_{x+1} = G'_{x+1}/G'_{O_{x+1}}``. Taking the
+quotient by a [congruence subgroup](https://en.wikipedia.org/wiki/Congruence_subgroup) ``A(g)``, where ``g(x)``
+is irreducible of even degree, yields a finite ``(q+1)``-regular graph ``\\Gamma_g = A(g) \\backslash T_{x+1}``.
+This graph is the Cayley graph of ``PSL_2(\\mathbb{F}_{q^d})`` with respect to the images of the ``q+1`` generators.
+
+# Arguments
+- `R`: Polynomial ring ``\\mathbb{F}_q[x]`` where `q` is a power of 2.
 """
 function morgenstern_solutions(R::FqPolyRing)
     F = base_ring(R)
