@@ -101,6 +101,38 @@
                 optimal_bound = 2*sqrt(r-1)
                 @test λ ≤ optimal_bound+1e-10
             end
-        end 
+        end
+    end
+
+    @testset "Morgenstern Spectral Expansion Bounds" begin
+        for (l, i) in test_cases
+            @testset "l=$l, i=$i (q=$(2^l))" begin
+                q = 2^l
+                G, B = morgenstern_generators(l, i)
+                @testset "Alternative AllPairs Generators" begin
+                    A = alternative_morgenstern_generators(B, AllPairs())
+                    graph = cayley_right(G, A)
+                    adj_mat = Matrix(adjacency_matrix(graph))
+                    # Normalize by degree: k₁ = q²+q
+                    adj_matₙₒᵣₘ = adj_mat/(q^2+q)
+                    eigenvals = sort(real.(eigvals(adj_matₙₒᵣₘ)), rev=true)
+                    λ = eigenvals[2]
+                    tbound = (3q-1)/(q^2+q) # Claim 6.1 (ii) of [dinur2022locally](@cite)
+                    @test λ < tbound
+                end
+
+                @testset "Alternative FirstOnly Generators" begin
+                    A = alternative_morgenstern_generators(B, FirstOnly())
+                    graph = cayley_right(G, A)
+                    adj_matrix = Matrix(adjacency_matrix(graph))
+                    # Normalize by degree: k₁ = 2q
+                    adj_matₙₒᵣₘ = adj_matrix/2q
+                    eigenvals = sort(real.(eigvals(adj_matₙₒᵣₘ)), rev=true)
+                    λ = eigenvals[2]
+                    tbound = (3*sqrt(2q-1))/(2q) # Claim 6.1 (ii) of [dinur2022locally](@cite)
+                    @test λ < tbound
+                end
+            end
+        end
     end
 end
