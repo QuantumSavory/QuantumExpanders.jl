@@ -254,6 +254,13 @@ a (q+1)-regular Ramanujan graph of order ``|\\Gamma_g| = q^{3d} - q^d`` and is n
 girth at least ``\\frac{2}{3}\\log_q|\\Gamma_g|`` and diameter at most ``2\\log_q|\\Gamma_g| + 2``. Furthermore,
 as per Theorem *5.11*, all eigenvalues ``\\mu`` of the adjacency matrix satisfy ``|\\mu| \\leq 2\\sqrt{q}`` for ``\\mu \\neq ``\\pm(q+1)``.
 
+!!! note
+    In the construction of Morgenstern Ramanujan graphs for even prime powers ``q = 2^l``, we utilize
+    the fact that in characteristic 2, the [projective special linear group](https://en.wikipedia.org/wiki/Projective_linear_group)
+    ``\\mathrm{PSL}_2(\mathbb{F}_q)`` is isomorphic to the [special linear group](https://en.wikipedia.org/wiki/Special_linear_group)
+    ``\\mathrm{SL}_2(\mathbb{F}_q)``. This isomorphism holds because the [center](https://en.wikipedia.org/wiki/Center_(group_theory))
+    of ``\\mathrm{SL}_2(\\mathbb{F}_q)`` is trivial in characteristic 2 when q is even as confirmed by identity ``Z \\cap SL(2, \\mathbb{F}) = I``. 
+
 # Arguments
 - `l`: A positive integer specifying that q = 2^l, where q is the size of the base field ``\\mathbb{F}_q``.
 - `i`: An *even* positive integer specifying the extension degree for the field ``\\mathbb{F}_{q^i}``. 
