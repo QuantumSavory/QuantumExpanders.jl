@@ -105,6 +105,14 @@
     end
 
     @testset "Morgenstern Spectral Expansion Bounds" begin
+        # Test cases: (l, i) pairs where q=2^l and i is even
+        test_cases = [
+            (1, 2), # PSL(2,4)
+            (1, 4), # PSL(2,16)
+            # (1, 6), # PSL(2,64) # take long time
+            (2, 2), # PSL(2,16)
+            # (3, 2) # PSL(2,64) # take long time
+        ]
         for (l, i) in test_cases
             @testset "l=$l, i=$i (q=$(2^l))" begin
                 q = 2^l
