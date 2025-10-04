@@ -257,8 +257,8 @@ as per Theorem *5.11*, all eigenvalues ``\\mu`` of the adjacency matrix satisfy 
 !!! note
     In the construction of Morgenstern Ramanujan graphs for even prime powers ``q = 2^l``, we utilize
     the fact that in characteristic 2, the [projective special linear group](https://en.wikipedia.org/wiki/Projective_linear_group)
-    ``\\mathrm{PSL}_2(\mathbb{F}_q)`` is isomorphic to the [special linear group](https://en.wikipedia.org/wiki/Special_linear_group)
-    ``\\mathrm{SL}_2(\mathbb{F}_q)``. This isomorphism holds because the [center](https://en.wikipedia.org/wiki/Center_(group_theory))
+    ``\\mathrm{PSL}_2(\\mathbb{F}_q)`` is isomorphic to the [special linear group](https://en.wikipedia.org/wiki/Special_linear_group)
+    ``\\mathrm{SL}_2(\\mathbb{F}_q)``. This isomorphism holds because the [center](https://en.wikipedia.org/wiki/Center_(group_theory))
     of ``\\mathrm{SL}_2(\\mathbb{F}_q)`` is trivial in characteristic 2 when q is even as confirmed by identity ``Z \\cap SL(2, \\mathbb{F}) = I``. 
 
 # Arguments
