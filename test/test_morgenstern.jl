@@ -129,7 +129,7 @@
                     adj_matₙₒᵣₘ = adj_matrix/2q
                     eigenvals = sort(real.(eigvals(adj_matₙₒᵣₘ)), rev=true)
                     λ = eigenvals[2]
-                    tbound = (3*sqrt(2q-1))/(2q) # Claim 6.1 (ii) of [dinur2022locally](@cite)
+                    tbound = (3*sqrt(2q-1))/(2q) # Claim 6.2 of [dinur2022locally](@cite)
                     @test λ < tbound
                 end
             end
