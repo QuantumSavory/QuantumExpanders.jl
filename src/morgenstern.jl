@@ -115,13 +115,6 @@ Under the isomorphism ``\\theta: \\mathcal{A} \\to M_2(k)``, these generators ma
 
 where ``i`` is a root of ``x^2 + x + \\varepsilon = 0``.
 
-In characteristic 2, the polynomial ``x^2 + \\varepsilon`` is inseparable because its derivative is
-zero. As a result, it cannot be used to define a separable quadratic field extension, which is necessary
-for constructing a division quaternion algebra in Morgenstern’s Ramanujan graph construction. In contrast, 
-``x^2 + x + \\varepsilon``, being both irreducible and separable, yields a proper non-split quaternion algebra.
-Without separability, the resulting graphs do not attain the Ramanujan eigenvalue bound ``2\\sqrt{q}``,
-violating the optimality of the construction.
-
 # Arguments
 - `R`: Polynomial ring ``\\mathbb{F}_q[x]`` used to construct the irreducible polynomial for Morgenstern's quaternion algebra.
 
@@ -169,7 +162,7 @@ The parameter ``\\varepsilon \\in \\mathbb{F}_q`` is chosen so that the polynomi
 is irreducible over ``\\mathbb{F}_q``. This ensures ``\\mathcal{A}`` is a skewfield. The algebra is [ramified](https://en.wikipedia.org/wiki/Ramification_(mathematics))
 at the finite place ``x`` and at ``1/x``.
 
-The connection to graph theory arises from studying elements in the integral set
+The connection to graph theory arises from studying elements in the *integral set*
 
 ```math
 \\begin{aligned}
