@@ -63,7 +63,7 @@ julia> is_irreducible(f) && is_separable(f) && derivative(f) == 1
 true
 ```
 
-# Morgenstern's construction of Ramanujan graphs
+# Morgenstern's construction of Ramanujan graphs for even prime power q
 
 The construction requires a [quaternion algebra](https://en.wikipedia.org/wiki/Quaternion_algebra)
 over ``\\mathbb{F}_q(x)`` of the form [morgenstern1994existence](@cite):
@@ -115,9 +115,15 @@ Under the isomorphism ``\\theta: \\mathcal{A} \\to M_2(k)``, these generators ma
 
 where ``i`` is a root of ``x^2 + x + \\varepsilon = 0``.
 
+The selection of an irreducible polynomial of the form ``x^2 + x + \\varepsilon`` is essential for
+defining the quaternion algebra ``\\mathcal{A}``. This algebra is constructed to be *ramified* at the
+place ``1/x`` (the infinite place) and *split* at a finite place p (where ``p \\neq 1/x``). The irreducibility
+of ``f(x)`` over ``\\mathbb{F}_q`` ensures that the algebra is a *skewfield* at the infinite place, a
+necessary condition for the construction of a *co-compact lattice* ``\\Gamma(g)`` (see Lemma 3.1 of
+[morgenstern1994existence](@cite)) via the *[strong approximation theorem](https://en.wikipedia.org/wiki/Approximation_in_algebraic_groups)*.
+
 # Arguments
 - `R`: Polynomial ring ``\\mathbb{F}_q[x]`` used to construct the irreducible polynomial for Morgenstern's quaternion algebra.
-
 """
 function morgenstern_f(R::FqPolyRing)
     x = gen(R)
@@ -142,7 +148,7 @@ Find all ``q + 1`` solutions ``(\\gamma, \\delta) \\in \\mathbb{F}_q^2`` to the
 A [quaternion algebra](https://en.wikipedia.org/wiki/Quaternion_algebra) over ``k = \\mathbb{F}_q(x)`` is
 a [skewfield](https://en.wikipedia.org/wiki/Division_ring) ``\\mathcal{A}`` with [center](https://en.wikipedia.org/wiki/Center_(group_theory))
 ``k`` that has degree four as a vector space over ``k``. In Morgenstern's explicit construction of Ramanujan graphs
-for even characteristic ``q`` [morgenstern1994existence](@cite), a specific quaternion algebra is defined as
+for even prime power ``q`` [morgenstern1994existence](@cite), a specific quaternion algebra is defined as
 
 ```math
 \\begin{aligned}
