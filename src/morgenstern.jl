@@ -22,10 +22,10 @@ julia> is_irreducible(g) || !isempty(roots(g))
 true
 ```
 
-In characteristic 2, the standard quadratic form ``x^2 + \\varepsilon`` is insufficient because
-its derivative is zero, making it inseparable if it has a root. The form ``x^2 + x + \\varepsilon``
-is used instead, as its derivative is 1, ensuring separability. Its irreducibility over ``\\mathbb{F}_q``
-is equivalent to it having no roots in ``\\mathbb{F}_q``.
+In [characteristic](https://en.wikipedia.org/wiki/Characteristic_(algebra)) 2, the standard quadratic form
+``x^2 + \\varepsilon`` is insufficient because its derivative is zero, making it inseparable if it has a root.
+The form ``x^2 + x + \\varepsilon`` is used instead, as its derivative is 1, ensuring separability. Its irreducibility
+over ``\\mathbb{F}_q`` is equivalent to it having no roots in ``\\mathbb{F}_q``.
 
 ```jldoctest
 julia> using Oscar
@@ -47,8 +47,7 @@ julia> factor(y^2 + 𝔽₄(1))
 1 * (y + 1)^2
 ```
 
-The form ``x^2 + x + \\varepsilon`` works correctly in characteristic 2, making it
-essential for applications like the construction of optimal expander graphs:
+The form ``x^2 + x + \\varepsilon`` works correctly in characteristic 2:
 
 ```jldoctest
 julia> using Oscar
@@ -116,10 +115,10 @@ Under the isomorphism ``\\theta: \\mathcal{A} \\to M_2(k)``, these generators ma
 where ``i`` is a root of ``x^2 + x + \\varepsilon = 0``.
 
 The selection of an irreducible polynomial of the form ``x^2 + x + \\varepsilon`` is essential for
-defining the quaternion algebra ``\\mathcal{A}``. This algebra is constructed to be *ramified* at the
-place ``1/x`` (the infinite place) and *split* at a finite place p (where ``p \\neq 1/x``). The irreducibility
-of ``f(x)`` over ``\\mathbb{F}_q`` ensures that the algebra is a *skewfield* at the infinite place, a
-necessary condition for the construction of a *co-compact lattice* ``\\Gamma(g)`` (see Lemma 3.1 of
+defining the quaternion algebra ``\\mathcal{A}``. This algebra is constructed to be *[ramified](https://en.wikipedia.org/wiki/Ramification_(mathematics))*
+at the place ``1/x`` (the infinite place) and *split* at a finite place p (where ``p \\neq 1/x``). The
+irreducibility of ``f(x)`` over ``\\mathbb{F}_q`` ensures that the algebra is a *skewfield* at the infinite
+place, a necessary condition for the construction of a *co-compact lattice* ``\\Gamma(g)`` (see Lemma 3.1 of
 [morgenstern1994existence](@cite)) via the *[strong approximation theorem](https://en.wikipedia.org/wiki/Approximation_in_algebraic_groups)*.
 
 # Arguments
