@@ -139,6 +139,8 @@ function morgenstern_f(R::FqPolyRing)
 end
 
 """
+Internally call the `morgenstern_f` sampler to find an irreducible ``x^2 + x + \\varepsilon \\in \\mathbb{F}_q[x]``.
+
 Find all ``q + 1`` solutions ``(\\gamma, \\delta) \\in \\mathbb{F}_q^2`` to the
 ``\\gamma^2 + \\gamma\\delta + \\delta^2\\varepsilon = 1``.
 
@@ -227,6 +229,8 @@ function morgenstern_solutions(R::FqPolyRing)
 end
 
 """
+Give all Morgenstern generators over ``PSL_2(q^i)``, where i is even, ``q=2^l``, and p is prime.
+
 The theorem *5.13* of [morgenstern1994existence](@cite) provides a method to construct families of
 (q+1)-regular Ramanujan graphs for **even prime** powers q. This explicit construction produces Cayley
 graphs of the *projective special linear group* ``\\mathrm{PSL}_2(\\mathbb{F}_{q^d})`` with respect to a
@@ -258,6 +262,9 @@ as per Theorem *5.11*, all eigenvalues ``\\mu`` of the adjacency matrix satisfy 
     ``\\mathrm{PSL}_2(\\mathbb{F}_q)`` is isomorphic to the [special linear group](https://en.wikipedia.org/wiki/Special_linear_group)
     ``\\mathrm{SL}_2(\\mathbb{F}_q)``. This isomorphism holds because the [center](https://en.wikipedia.org/wiki/Center_(group_theory))
     of ``\\mathrm{SL}_2(\\mathbb{F}_q)`` is trivial in characteristic 2 when q is even as confirmed by identity ``Z \\cap SL(2, \\mathbb{F}) = I``. 
+
+
+Returns ``(SL_2(q^i), B)``, where ``B`` is the list of generators. As ``PSL_2(q^i) = SL_2(q^i)``, we work in ``SL_2(q^i)``.
 
 # Arguments
 - `l`: A positive integer specifying that q = 2^l, where q is the size of the base field ``\\mathbb{F}_q``.
@@ -314,6 +321,8 @@ struct AllPairs <: MorgensternAlgorithm end
 struct FirstOnly <: MorgensternAlgorithm end
 
 """
+Create alternative Morgenstern generators using all pairwise products (i≠j).
+
 Morgenstern showed that for every prime q, there exist infinitely many groups
 ``\\G_i = \\mathrm{PGL}_2(q^i)`` or ``G_i = \\mathrm{PSL}_2(q^i)``, each with a
 symmetric generating set ``B_i`` of size ``q+1``, such that the Cayley graphs
@@ -387,6 +396,8 @@ function alternative_morgenstern_generators(B::AbstractVector, ::AllPairs)
 end
 
 """
+Create alternative Morgenstern generators using products with first element only.
+
 ## Generator Constructions
 
 ### First Element Construction
