@@ -2,30 +2,13 @@
 Finds an irreducible polynomial of the form ``f(x) = x^2 + x + \\varepsilon`` over
 the finite field ``\\mathbb{F}_q``.
 
-For quadratic polynomials, irreducibility is equivalent to having no roots in the base field:
+# Separability
 
-```jldoctest
-julia> using Oscar
+In characteristic 2, the quadratic form ``x^2 + \\varepsilon`` has derivative zero. A polynomial
+is separable if and only if it is relatively prime to its derivative [dummit2004abstract](@cite). When
+``(f, f') \\neq 1``, the polynomial is inseparable.
 
-julia> 𝔽₂, _ = finite_field(2, 1, "a");
-
-julia> R, x = polynomial_ring(𝔽₂, "x");
-
-julia> f = x^2 + x + 𝔽₂(1);
-
-julia> is_irreducible(f) && isempty(roots(f))
-true
-
-julia> g = x^2 + x + 𝔽₂(0);
-
-julia> is_irreducible(g) || !isempty(roots(g))
-true
-```
-
-In [characteristic](https://en.wikipedia.org/wiki/Characteristic_(algebra)) 2, the standard quadratic form
-``x^2 + \\varepsilon`` is insufficient because its derivative is zero, making it inseparable if it has a root.
-The form ``x^2 + x + \\varepsilon`` is used instead, as its derivative is 1, ensuring separability. Its irreducibility
-over ``\\mathbb{F}_q`` is equivalent to it having no roots in ``\\mathbb{F}_q``.
+When such polynomials are reducible, they have repeated roots:
 
 ```jldoctest
 julia> using Oscar
@@ -36,8 +19,11 @@ julia> R, x = polynomial_ring(𝔽₂, "x");
 
 julia> f = x^2 + 𝔽₂(1);
 
-julia> derivative(f) == 0 && !is_separable(f)
+julia> derivative(f) == 0
 true
+
+julia> gcd(f, derivative(f)) == 1
+false
 
 julia> 𝔽₄, _ = finite_field(2, 2, "b");
 
@@ -47,19 +33,30 @@ julia> factor(y^2 + 𝔽₄(1))
 1 * (y + 1)^2
 ```
 
-The form ``x^2 + x + \\varepsilon`` works correctly in characteristic 2:
+The form ``x^2 + x + \\varepsilon`` is used instead because its derivative is 1 (nonzero), ensuring that
+all roots are *distinct*.
 
 ```jldoctest
 julia> using Oscar
 
-julia> 𝔽₂, _ = finite_field(2, 1, "a");
+julia> 𝔽₂, _ = finite_field(2, 1, :a);
 
-julia> R, x = polynomial_ring(𝔽₂, "x");
+julia> R, x = polynomial_ring(𝔽₂, :x);
 
 julia> f = x^2 + x + 𝔽₂(1);
 
 julia> is_irreducible(f) && is_separable(f) && derivative(f) == 1
 true
+
+julia> gcd(f, derivative(f)) == 1
+true
+
+julia> g = x^2 + x + 𝔽₂(0);
+
+julia> roots(g)
+2-element Vector{FqFieldElem}:
+ 0
+ 1
 ```
 
 # Morgenstern's construction of Ramanujan graphs for even prime power q
