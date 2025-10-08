@@ -6,7 +6,7 @@
     using QuantumExpanders
     using SimpleGraphConverter
     using SimpleGraphAlgorithms: chromatic_number, UG
-    using QuantumExpanders: morgenstern_solutions, alternative_morgenstern_generators, FirstOnly, AllPairs, cayley_right
+    using QuantumExpanders: morgenstern_f, morgenstern_solutions, alternative_morgenstern_generators, FirstOnly, AllPairs, cayley_right
 
     @testset "Morgenstern Generators" begin
         # Test cases: (l, i) pairs where q=2^l and i is even
