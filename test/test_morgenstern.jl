@@ -1,8 +1,12 @@
 @testitem "Test Morgensterm generators properties" begin
     using Oscar
+    using Graphs
+    using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet
     using LinearAlgebra
     using QuantumExpanders
-    using QuantumExpanders: morgenstern_solutions, alternative_morgenstern_generators, FirstOnly, AllPairs
+    using SimpleGraphConverter
+    using SimpleGraphAlgorithms: chromatic_number, UG
+    using QuantumExpanders: morgenstern_f, morgenstern_solutions, alternative_morgenstern_generators, FirstOnly, AllPairs, cayley_right
 
     @testset "Morgenstern Generators" begin
         # Test cases: (l, i) pairs where q=2^l and i is even
@@ -18,8 +22,8 @@
                 _, gens = morgenstern_generators(l, i)
                 q = 2^l
                 @test length(gens) == q + 1
-                Fq = finite_field(2, l, "a")[1]
-                R, x = polynomial_ring(Fq, "x")
+                Fq = finite_field(2, l, :a)[1]
+                R, x = polynomial_ring(Fq, :x)
                 ε, sols = morgenstern_solutions(R)
                 @test length(sols) == q + 1
                 @test all(((γ,δ),) -> γ^2 + γ*δ + ε*δ^2 == one(Fq), sols)
@@ -28,6 +32,162 @@
                 A_pairs = alternative_morgenstern_generators(gens, AllPairs())
                 @test length(A_pairs) == q*(q+1)
             end
+        end
+    end
+
+    @testset "Morgenstern Ramanujan Graph Properties" begin
+        # Test cases: (l, i) pairs where q=2^l and i is even
+        test_cases = [
+            (1, 2), # PSL(2,4)
+            (1, 4), # PSL(2,16)
+            # (1, 6), # PSL(2,64) # take long time
+            (2, 2), # PSL(2,16)
+            # (3, 2) # PSL(2,64) # take long time
+        ]
+        for (l, i) in test_cases
+            @testset "l=$l, i=$i (q=$(2^l), |Γ|=$(2^(3l*i) - 2^(l*i)))" begin
+                q = 2^l
+                r = q + 1
+                expected_order = q^(3*i)-q^i
+                G, gens = morgenstern_generators(l, i)
+                graph = cayley_right(G, gens)
+                # Property I: Regularity
+                degrees = [degree(graph, v) for v in vertices(graph)]
+                @test all(deg == q+1 for deg in degrees)
+                @test maximum(degrees) == minimum(degrees)
+                # Order
+                @test nv(graph) == expected_order
+                # Property II: Non-bipartiteness
+                @test !is_bipartite(graph)
+                # Property III: Ramanujan bound
+                A = Matrix(adjacency_matrix(graph))
+                eigenvalues = eigvals(A)
+                sorted_evals = sort(real.(eigenvalues), rev=true)
+                # The largest eigenvalue should be q+1.
+                @test isapprox(sorted_evals[1], q+1, atol=1e-10)
+                # All other eigenvalues should satisfy |μ| ≤ 2√q
+                ramanujan_bound = 2*sqrt(q)
+                @test all(abs(μ) ≤ ramanujan_bound+1e-10 for μ in sorted_evals[2:end])
+                violating_eigenvalues = count(μ -> abs(μ) > ramanujan_bound+1e-10, sorted_evals[2:end])
+                @test violating_eigenvalues == 0
+                # Property IV: Diameter bound
+                diam = diameter(graph)
+                max_diameter = 2*log(q, expected_order)+2
+                @test diam ≤ ceil(Int, max_diameter)
+                # Property V: The chromatic number property
+                # @test chromatic_number(UG(graph)) <= 2*log(q)*expected_order+2 # silly slow test
+                # Properties of generator set B
+                @test length(gens) == q+1
+                # All generators should have determinant 1.
+                @test all(det(gen) == one(base_ring(gen)) for gen in gens)
+                # All generators should have order 2.
+                @test all(matrix(gen^2) == identity_matrix(base_ring(gen), 2) for gen in gens)
+                @test is_connected(graph)
+                # Property VI: Independence number
+                ind_set = independent_set(graph, MaximalIndependentSet())
+                independenceₙᵤₘ = length(ind_set)
+                # Theorem: i(Γ_g) ≤ (2√q/(q+1)) |Γ_g|
+                independenceₘₐₓₙᵤₘ = (2*sqrt(q)/(q+1))*nv(graph)
+                @test independenceₙᵤₘ ≤ ceil(Int, independenceₘₐₓₙᵤₘ)
+                @test all(u == v || !has_edge(graph, u, v) for u in ind_set, v in ind_set)
+                # Additional expander properties from Theorem [A1, M1]
+                n = nv(graph)
+                λ = maximum(abs.(sorted_evals[2:end]))
+                # Γ is an (n, r, 1 - λ²/r²)-expander
+                d_expander = 1-(λ^2)/(r^2)
+                @test d_expander > 0
+                # λ ≤ r - d²/8r with d = d_expander
+                @test λ ≤ r-(d_expander^2)/(8*r)+1e-10
+                optimal_bound = 2*sqrt(r-1)
+                @test λ ≤ optimal_bound+1e-10
+            end
+        end
+    end
+
+    @testset "Morgenstern Spectral Expansion Bounds" begin
+        # Test cases: (l, i) pairs where q=2^l and i is even
+        test_cases = [
+            (1, 2), # PSL(2,4)
+            (1, 4), # PSL(2,16)
+            # (1, 6), # PSL(2,64) # take long time
+            (2, 2), # PSL(2,16)
+            # (3, 2) # PSL(2,64) # take long time
+        ]
+        for (l, i) in test_cases
+            @testset "l=$l, i=$i (q=$(2^l))" begin
+                q = 2^l
+                G, B = morgenstern_generators(l, i)
+                @testset "Alternative AllPairs Generators" begin
+                    A = alternative_morgenstern_generators(B, AllPairs())
+                    graph = cayley_right(G, A)
+                    adj_mat = Matrix(adjacency_matrix(graph))
+                    # Normalize by degree: k₁ = q²+q
+                    adj_matₙₒᵣₘ = adj_mat/(q^2+q)
+                    eigenvals = sort(real.(eigvals(adj_matₙₒᵣₘ)), rev=true)
+                    λ = eigenvals[2]
+                    tbound = (3q-1)/(q^2+q) # Claim 6.1 (ii) of [dinur2022locally](@cite)
+                    @test λ < tbound
+                end
+
+                @testset "Alternative FirstOnly Generators" begin
+                    A = alternative_morgenstern_generators(B, FirstOnly())
+                    graph = cayley_right(G, A)
+                    adj_matrix = Matrix(adjacency_matrix(graph))
+                    # Normalize by degree: k₁ = 2q
+                    adj_matₙₒᵣₘ = adj_matrix/2q
+                    eigenvals = sort(real.(eigvals(adj_matₙₒᵣₘ)), rev=true)
+                    λ = eigenvals[2]
+                    tbound = (3*sqrt(2q-1))/(2q) # Claim 6.2 of [dinur2022locally](@cite)
+                    @test λ < tbound
+                end
+            end
+        end
+    end
+
+    function morgenstern_solutions_slow(R::FqPolyRing, ε)
+        F = base_ring(R)
+        sols = [(one(F), zero(F))]
+        for δ in F
+            iszero(δ) && continue
+            for γ in F
+                if γ^2+γ*δ+δ^2*ε == one(F)
+                    push!(sols, (γ, δ))
+                    other_γ = γ+δ
+                    push!(sols, (other_γ, δ))
+                    break
+                end
+            end
+        end
+        return unique(sols)
+    end
+
+    function morgenstern_solutions_fast(R::FqPolyRing, ε)
+        F = base_ring(R)
+        sols = [(one(F), zero(F))]
+        x = gen(R)
+        f = x^2+x+ε
+        for s in F
+            fs = f(s)
+            sfs = sqrt(fs)
+            α = s*inv(sfs)
+            β = inv(sfs)
+            push!(sols, (α, β))
+        end
+        return sols
+    end
+
+    @testset "Morgenstern solutions correctness" begin
+        for exp in [4, 6, 8, 10]
+            F = GF(2, exp)
+            R, x = polynomial_ring(F, :x)
+            f = morgenstern_f(R)
+            ε = coeff(f, 0)
+            sols_fast = morgenstern_solutions_fast(R, ε)
+            sols_slow = morgenstern_solutions_slow(R, ε)
+            @test Set(sols_fast) == Set(sols_slow)
+            @test length(sols_fast) == length(sols_slow) == order(F) + 1
+            @test all(((γ, δ),) -> γ^2+γ*δ+δ^2*ε == one(F), sols_fast)
+            @test all(((γ, δ),) -> γ^2+γ*δ+δ^2*ε == one(F), sols_slow)
         end
     end
 end
