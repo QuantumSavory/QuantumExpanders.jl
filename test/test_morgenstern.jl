@@ -143,4 +143,51 @@
             end
         end
     end
+
+    function morgenstern_solutions_slow(R::FqPolyRing, ε)
+        F = base_ring(R)
+        sols = [(one(F), zero(F))]
+        for δ in F
+            iszero(δ) && continue
+            for γ in F
+                if γ^2+γ*δ+δ^2*ε == one(F)
+                    push!(sols, (γ, δ))
+                    other_γ = γ + δ
+                    push!(sols, (other_γ, δ))
+                    break
+                end
+            end
+        end
+        return unique(sols)
+    end
+
+    function morgenstern_solutions_fast(R::FqPolyRing, ε)
+        F = base_ring(R)
+        sols = [(one(F), zero(F))]
+        x = gen(R)
+        f = x^2+x+ε
+        for s in F
+            fs = f(s)
+            sfs = sqrt(fs)
+            α = s*inv(sfs)
+            β = inv(sfs)
+            push!(sols, (α, β))
+        end
+        return sols
+    end
+
+    @testset "Morgenstern solutions correctness" begin
+        for exp in [4, 6, 8, 10]
+            F = GF(2, exp)
+            R, x = polynomial_ring(F, :x)
+            f = morgenstern_f(R)
+            ε = coeff(f, 0)
+            sols_fast = morgenstern_solutions_fast(R, ε)
+            sols_slow = morgenstern_solutions_slow(R, ε)
+            @test Set(sols_fast) == Set(sols_slow)
+            @test length(sols_fast) == length(sols_slow) == order(F) + 1
+            @test all(((γ, δ),) -> γ^2+γ*δ+δ^2*ε == one(F), sols_fast)
+            @test all(((γ, δ),) -> γ^2+γ*δ+δ^2*ε == one(F), sols_slow)
+        end
+    end
 end
