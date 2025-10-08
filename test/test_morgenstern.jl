@@ -152,7 +152,7 @@
             for γ in F
                 if γ^2+γ*δ+δ^2*ε == one(F)
                     push!(sols, (γ, δ))
-                    other_γ = γ + δ
+                    other_γ = γ+δ
                     push!(sols, (other_γ, δ))
                     break
                 end
