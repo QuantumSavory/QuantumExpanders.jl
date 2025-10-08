@@ -20,7 +20,7 @@ include("cayley_graphs.jl")
 include("quantum_tanner_code.jl")
 include("tensor_codes.jl")
 include("morgenstern.jl")
-include("ramanujan.jl")
+include("lubotzky_phillips_sarnak_ramanujan.jl")
 
 export
     gen_code, gen_good_code, tanner_code, tanner_code_quadripartite,

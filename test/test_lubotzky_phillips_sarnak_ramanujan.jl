@@ -1,4 +1,4 @@
-@testitem "Test Ramanujan Graph properties" begin
+@testitem "Test LPS Ramanujan Graph properties" begin
     using Oscar
     using LinearAlgebra
     using Graphs
