@@ -216,12 +216,13 @@ function morgenstern_solutions(R::FqPolyRing)
     for s in F
         fs = f(s)
         sfs = sqrt(fs)
-        γ = s*inv(sfs)
-        δ = inv(sfs)
-        @assert γ^2+γ*δ+ε*δ^2 == 1
-        push!(sols, (γ, δ))
+        α = s*inv(sfs) # γ
+        @assert s*inv(sfs) == inv(sfs)*s
+        β = inv(sfs) # δ
+        @assert α^2+α*β+ε*β^2==1
+        push!(sols, (α,β))
     end
-    @assert length(unique(sols)) == q+1
+    @assert length(unique(sols))==q+1
     return ε, unique(sols)
 end
 
