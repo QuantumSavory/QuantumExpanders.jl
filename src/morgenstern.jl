@@ -211,18 +211,15 @@ function morgenstern_solutions(R::FqPolyRing)
     ε = coeff(f, 0)
     # (1, 0) is always a solution: 1² + 1·0 + 0²·ε = 1
     sols = [(one(F),zero(F))]
-    # Theorem 5.13 of [morgenstern1994existence](@cite): find all solutions (γ, δ) ∈ 𝔽q² to γ² + γδ + δ²ε = 1
-    for δ in F
-        iszero(δ) && continue
-        for γ in F
-            if γ^2+γ*δ+δ^2*ε == one(F)
-                push!(sols, (γ, δ))
-                # in GF2, if (γ, δ) is solution, so is (γ+δ, δ)
-                other_γ = γ+δ
-                push!(sols, (other_γ, δ))
-                break
-            end
-        end
+    # For each s ∈ 𝔽_q, (γ, δ) = (s/√f(s), 1/√f(s)) is a solution to γ² + γδ + δ²ε = 1 [morgenstern1994existence](@cite).
+    # This yields q solutions, and with (1,0) gives all q+1 solutions.
+    for s in F
+        fs = f(s)
+        sfs = sqrt(fs)
+        γ = s*inv(sfs)
+        δ = inv(sfs)
+        @assert γ^2+γ*δ+ε*δ^2 == 1
+        push!(sols, (γ, δ))
     end
     @assert length(unique(sols)) == q+1
     return ε, unique(sols)
