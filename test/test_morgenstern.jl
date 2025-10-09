@@ -75,7 +75,10 @@
                 max_diameter = 2*log(q, expected_order)+2
                 @test diam ≤ ceil(Int, max_diameter)
                 # Property V: The chromatic number property
-                # @test chromatic_number(UG(graph)) <= 2*log(q)*expected_order+2 # silly slow test
+                # Theorem: χ(Γ_g) ≥ ((q+1)/2√q)+1
+                coloring = greedy_color(graph; sort_degree=false, reps=1000)
+                χ = coloring.num_colors
+                @test χ >= (q+1)/(2*sqrt(q))+1
                 # Properties of generator set B
                 @test length(gens) == q+1
                 # All generators should have determinant 1.
