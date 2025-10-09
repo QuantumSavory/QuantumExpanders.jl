@@ -1,7 +1,7 @@
 @testitem "Test Morgensterm generators properties" begin
     using Oscar
     using Graphs
-    using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet
+    using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color
     using LinearAlgebra
     using QuantumExpanders
     using SimpleGraphConverter
