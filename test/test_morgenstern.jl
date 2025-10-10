@@ -1,7 +1,9 @@
 @testitem "Test Morgensterm generators properties" begin
     using Oscar
     using Graphs
-    using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet
+    using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color
+    using GraphsColoring: DSATUR, color, Greedy
+    using IGraphs: IGraph, IGVectorInt, LibIGraph
     using LinearAlgebra
     using QuantumExpanders
     using SimpleGraphConverter
@@ -70,12 +72,30 @@
                 @test all(abs(μ) ≤ ramanujan_bound+1e-10 for μ in sorted_evals[2:end])
                 violating_eigenvalues = count(μ -> abs(μ) > ramanujan_bound+1e-10, sorted_evals[2:end])
                 @test violating_eigenvalues == 0
+                # Property III of Theorem 5.13: g(Γ) ≥ (2/3)⋅log_q(|Γ|)
+                # https://igraph.org/c/doc/igraph-Structural.html#igraph_girth
+                girth_Γ_g = floor(Int, (2/3)*log(q, expected_order))
+                g_igraph = IGraph(graph)
+                girth_val = Ref{LibIGraph.igraph_real_t}(0.0)
+                cycle = IGVectorInt()
+                LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref)
+                actual_girth = isinf(girth_val[]) ? 0 : Int(girth_val[])
+                @test actual_girth >= girth_Γ_g 
                 # Property IV: Diameter bound
                 diam = diameter(graph)
                 max_diameter = 2*log(q, expected_order)+2
                 @test diam ≤ ceil(Int, max_diameter)
                 # Property V: The chromatic number property
-                # @test chromatic_number(UG(graph)) <= 2*log(q)*expected_order+2 # silly slow test
+                # Theorem 5.13: χ(Γ_g) ≥ ((q+1)/2√q)+1
+                coloring = greedy_color(graph; sort_degree=false, reps=1000)
+                χ_greedy = coloring.num_colors
+                @test χ_greedy >= (q+1)/(2*sqrt(q))+1
+                colors_dsatur = color(graph; algorithm=DSATUR())
+                χ_dsatur = length(colors_dsatur.colors) 
+                @test χ_dsatur >= (q+1)/(2*sqrt(q))+1
+                colors_greedy = color(graph; algorithm=Greedy())
+                χ_greedy₂ = length(colors_greedy.colors) 
+                @test χ_greedy₂ >= (q+1)/(2*sqrt(q))+1
                 # Properties of generator set B
                 @test length(gens) == q+1
                 # All generators should have determinant 1.
