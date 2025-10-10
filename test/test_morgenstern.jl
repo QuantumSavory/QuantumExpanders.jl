@@ -77,8 +77,8 @@
                 # Property V: The chromatic number property
                 # Theorem 5.13: χ(Γ_g) ≥ ((q+1)/2√q)+1
                 coloring = greedy_color(graph; sort_degree=false, reps=1000)
-                χ = coloring.num_colors
-                @test χ >= (q+1)/(2*sqrt(q))+1
+                χ_greedy = coloring.num_colors
+                @test χ_greedy >= (q+1)/(2*sqrt(q))+1
                 # Properties of generator set B
                 @test length(gens) == q+1
                 # All generators should have determinant 1.
