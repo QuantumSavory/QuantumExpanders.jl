@@ -3,6 +3,7 @@ mor = "mor"
 morg = "morg"
 Mian = "Mian"
 Tou = "Tou"
+ure = "ure"
 
 [type.ipynb]
 # It detects false possitives in the base64 encoded images inside notebooks
