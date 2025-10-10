@@ -75,7 +75,7 @@
                 # Property III of Theorem 5.13: g(Γ) ≥ (2/3)⋅log_q(|Γ|)
                 # https://igraph.org/c/doc/igraph-Structural.html#igraph_girth
                 girth_Γ_g = floor(Int, (2/3)*log(q, expected_order))
-                g_igraph = IGraph(g)
+                g_igraph = IGraph(graph)
                 girth_val = Ref{LibIGraph.igraph_real_t}(0.0)
                 cycle = IGVectorInt()
                 LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref)
