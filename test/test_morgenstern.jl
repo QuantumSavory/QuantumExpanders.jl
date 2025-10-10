@@ -2,6 +2,7 @@
     using Oscar
     using Graphs
     using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color
+    using GraphsColoring: DSATUR, color, Greedy
     using LinearAlgebra
     using QuantumExpanders
     using SimpleGraphConverter
@@ -79,6 +80,12 @@
                 coloring = greedy_color(graph; sort_degree=false, reps=1000)
                 χ_greedy = coloring.num_colors
                 @test χ_greedy >= (q+1)/(2*sqrt(q))+1
+                colors_dsatur = color(graph; algorithm=DSATUR())
+                χ_dsatur = length(colors_dsatur.colors) 
+                @test χ_dsatur >= (q+1)/(2*sqrt(q))+1
+                colors_greedy = color(graph; algorithm=Greedy())
+                χ_greedy₂ = length(colors_greedy.colors) 
+                @test χ_greedy₂ >= (q+1)/(2*sqrt(q))+1
                 # Properties of generator set B
                 @test length(gens) == q+1
                 # All generators should have determinant 1.
