@@ -1,28 +1,67 @@
-using Oscar
-using LinearAlgebra
-using Graphs
-using Graphs: nv, add_edge!, adjacency_matrix, degree, vertices, edges, Edge, nv, ne, src, dst
+"""
+Computes the [Legendre symbol](https://en.wikipedia.org/wiki/Legendre_symbol) ``\\frac{a}{p}``
+for an odd prime ``p``.
+    
+The Legendre symbol determines whether ``a`` is a [quadratic residue](https://en.wikipedia.org/wiki/Quadratic_residue)
+modulo ``p``, and specifically controls which group ``\\mathrm{PGL}`` or ``\\mathrm{PSL}`` is used in the LPS construction
+of the Ramanujan graph [lubotzky1988ramanuja](@cite).
 
-"""Compute the Legendre symbol (a/p) for an odd prime p."""
+- When ``\\frac{p}{q} = -1``, the graph ``X^{p,q}`` is constructed as a Cayley graph of ``\\mathrm{PGL}(2, \\mathbb{Z}/q\\mathbb{Z})``
+and is *bipartite* of order ``q(q^2-1)``.
+- When ``\\frac{p}{q} = 1``, the graph is constructed as a Cayley graph of ``\\mathrm{PSL}(2, \\mathbb{Z}/q\\mathbb{Z})``, is
+*non-bipartite*, and has order ``q(q^2-1)/2``.
+"""
 function legendre_symbol(a::Int, p::Int)
     @assert is_prime(p) "p must be prime"
     ls = powermod(a, (p - 1) ÷ 2, p)
     return ls == p - 1 ? -1 : ls
 end
 
-"""Scalar matrices for GL(2,F): every nonzero scalar gives a valid scalar matrix."""
+"""
+Generates the [center](https://en.wikipedia.org/wiki/Center_(group_theory)) of the general linear group
+``\\mathrm{GL}(2, F)`` over a finite field ``F``, consisting of all scalar matrices
+
+```math
+\\begin{aligned}
+\\begin{bmatrix}
+x & 0 \\\\
+0 & x
+\\end{bmatrix}
+\\end{aligned}
+```
+
+where ``x`` is any nonzero element of ``F``. These matrices form the center ``Z(GL(2, F))`` and
+are used in the LPS construction to form the projective general linear group ``PGL(2, F) = GL(2, F)/Z(GL(2, F))``.
+"""
 function scalar_matrices_GL(GL2)
     F = base_ring(GL2)
     return [GL2([x 0; 0 x]) for x in F if x != 0]
 end
 
-"""Scalar matrices for SL(2,F): only those with x^2 == 1 have determinant 1."""
+"""
+Generates the [center](https://en.wikipedia.org/wiki/Center_(group_theory)) of the special linear group
+``\\mathrm{SL}(2, F)`` over a finite field ``F``, consisting of scalar matrices
+
+```math
+\\begin{aligned}
+\\begin{bmatrix}
+x & 0 \\\\
+0 & x
+\\end{bmatrix}
+\\end{aligned}
+```
+
+with ``x^2 = 1``. These matrices form the center ``Z(SL(2, F))`` and are used in the LPS construction
+to form the projective special linear group ``PSL(2, F) = SL(2, F)/Z(SL(2, F))``.
+"""
 function scalar_matrices_SL(SL2)
     F = base_ring(SL2)
     return [SL2([x 0; 0 x]) for x in F if x^2 == one(F)]
 end
 
-"""Solve p = a² + b² + c² + d² (over the integers)"""
+"""
+Finds all integer solutions to the equation ``p = a^2 + b^2 + c^2 + d^2`` for a prime ``p \\equiv 1 \\pmod{4}``.
+according to the [Jacobi's theorem](https://en.wikipedia.org/wiki/Jacobi%27s_four-square_theorem)."""
 function solve_four_squares(p::Int)
     solutions = Tuple{Int,Int,Int,Int}[]
     max_val = isqrt(p)
@@ -43,59 +82,41 @@ function solve_four_squares(p::Int)
     return unique(solutions)
 end
 
-"""Filter solutions: select those with a > 0 and b, c, d even."""
+"""
+Filters the solutions from `solve_four_squares` to select exactly ``p+1` solutions
+with ``a > 0`` and ``b, c, d`` even. """
 function process_solutions(solutions, p)
     filtered = filter(sol -> sol[1] > 0 && all(iseven, sol[2:4]), solutions)
     @assert length(filtered) == p + 1 "Incorrect number of solutions"
     return filtered
 end
 
-"""Create generator matrices over F from four–square solutions.
-Each matrix has determinant equal to F(p)."""
-function create_generators(solutions, F, p)
+"""
+Constructs the generator matrices from the filtered four-square solutions. For each solution (a, b, c, d), creates a matrix:
+
+```math
+\\begin{aligned}
+\\begin{bmatrix}
+a + i b & c + i d \\\\
+-c + i d & a - i b
+\\end{bmatrix}
+\\end{aligned}
+```
+
+where ``i`` satisfies ``i^2 \\equiv -1 \\pmod{q}``. These matrices have determinant
+``a^2 + b^2 + c^2 + d^2 = p`` and will serve as the ``p+1`` generators for the Cayley
+graph.
+"""
+function lps_generators(solutions, F, p)
     u = sqrt(F(-1))  # Find u such that u² = -1 in F.
     generators = MatrixElem{typeof(F(0))}[]
     for (a, b, c, d) in solutions
         mat = matrix(F, [a + u*b   c + u*d;
-                         -c + u*d   a - u*b])
+                        -c + u*d   a - u*b])
         @assert det(mat) == F(p) "Generator matrix must have determinant p"
         push!(generators, mat)
     end
     return generators
-end
-
-""" Construct the Cayley graph from a given group quotient PG,
-a list of generators (as group elements), and the canonical morphism."""
-function construct_cayley_graph(PG, generators, morphism)
-    element_dict = Dict{eltype(PG), Int}()
-    elements = [one(PG)]
-    element_dict[elements[1]] = 1
-    queue = copy(elements)
-    
-    while !isempty(queue)
-        current = popfirst!(queue)
-        for gen in generators
-            # Ensure gen is interpreted as a group element.
-            gen_elem = parent(gen)(gen)
-            new_elem = morphism(gen_elem) * current
-            if !haskey(element_dict, new_elem)
-                push!(elements, new_elem)
-                element_dict[new_elem] = length(elements)
-                push!(queue, new_elem)
-            end
-        end
-    end
-
-    g = SimpleGraph(length(elements))
-    for (idx, elem) in enumerate(elements)
-        for gen in generators
-            gen_elem = parent(gen)(gen)
-            neighbor = morphism(gen_elem) * elem
-            neighbor_idx = element_dict[neighbor]
-            add_edge!(g, idx, neighbor_idx)
-        end
-    end
-    return g
 end
 
 """
@@ -111,50 +132,54 @@ function is_ramanujan(g::SimpleGraph, p::Int)
     return all(v -> abs(v) ≤ bound + 1e-6, non_trivial)
 end
 
+function lps_graph(::Val{-1}, p::Int, q::Int)
+    F = GF(q)
+    GL2 = GL(2, F)
+    center = scalar_matrices_GL(GL2)
+    PG, morphism = quo(GL2, center)
+    solutions = solve_four_squares(p)
+    solutions_processed = process_solutions(solutions, p)
+    generators = lps_generators(solutions_processed, F, p)
+    gl_gens = [GL2(mat) for mat in generators]
+    PG_generators = [morphism(gen) for gen in gl_gens]
+    return cayley_right(PG, PG_generators)
+end
+
+function lps_graph(::Val{1}, p::Int, q::Int)
+    F = GF(q)
+    SL2 = SL(2, F)
+    center = scalar_matrices_SL(SL2)
+    PG, morphism = quo(SL2, center)
+    solutions = solve_four_squares(p)
+    solutions_processed = process_solutions(solutions, p)
+    generators = lps_generators(solutions_processed, F, p)
+    s = sqrt(F(p))
+    s_inv = inv(s)
+    generators_scaled = [s_inv * mat for mat in generators]
+    sl_gens = [SL2(mat) for mat in generators_scaled]
+    PG_generators = [morphism(gen) for gen in sl_gens]
+    return cayley_right(PG, PG_generators)
+end
 
 """
-Construct the Ramanujan graph X^(p,q).
-Chooses the group quotient based on the Legendre symbol (p/q):
-- If (p/q) = -1, use PGL₂(F).
-- If (p/q) = 1, use PSL₂(F) (scaling generators so their determinant becomes 1).
+Construct the Ramanujan graph X^(p,q) as described in the LPS paper.
+For primes p, q ≡ 1 mod 4, constructs a (p+1)-regular graph that satisfies
+the Ramanujan property: all non-trivial eigenvalues λ satisfy |λ| ≤ 2√p.
+
+The construction depends on the Legendre symbol (p/q):
+- If (p/q) = -1: X^(p,q) is the Cayley graph of PGL₂(𝔽_q) with respect to
+  p+1 generators derived from the representations p = a₀² + a₁² + a₂² + a₃²
+  with a₀ > 0 odd and a₁,a₂,a₃ even. The graph is bipartite of order q(q²-1).
+- If (p/q) = 1: X^(p,q) is the Cayley graph of PSL₂(𝔽_q) with the scaled
+  generators. The graph is non-bipartite of order q(q²-1)/2.
 """
-function ramanujan_graph(p::Int, q::Int)
+function LPS(p::Int, q::Int)
     @assert is_prime(p) && is_prime(q) "p and q must be primes."
     @assert p % 4 == 1 && q % 4 == 1 "p and q must be ≡ 1 mod 4."
-    
-    F = GF(q)
-    symbol = legendre_symbol(p, q)  # Compute (p/q)
-    
-    if symbol == -1
-        # Use GL(2,F) → PGL₂(F)
-        GL2 = GL(2, F)
-        center = scalar_matrices_GL(GL2)
-        PG, morphism = quo(GL2, center)
-        solutions = solve_four_squares(p)
-        solutions_processed = process_solutions(solutions, p)
-        generators = create_generators(solutions_processed, F, p)
-        gl_gens = [GL2(mat) for mat in generators]
-        return construct_cayley_graph(PG, gl_gens, morphism)
-    elseif symbol == 1
-        # Use SL(2,F) → PSL₂(F)
-        SL2 = SL(2, F)
-        center = scalar_matrices_SL(SL2)
-        PG, morphism = quo(SL2, center)
-        solutions = solve_four_squares(p)
-        solutions_processed = process_solutions(solutions, p)
-        generators = create_generators(solutions_processed, F, p)
-        # In these generators, det(mat) == F(p). Since (p/q)=1, p is a square in F.
-        # Let s be a square root of F(p) (note F(p) means the image of p in GF(q)).
-        s = sqrt(F(p))
-        s_inv = inv(s)
-        # Scale each generator so that its determinant becomes 1:
-        # (s_inv)^2 * p = 1.
-        generators_scaled = [s_inv * mat for mat in generators]
-        sl_gens = [SL2(mat) for mat in generators_scaled]
-        return construct_cayley_graph(PG, sl_gens, morphism)
-    else
-        error("Unexpected Legendre symbol value.")
-    end
+    symbol = legendre_symbol(p, q)
+    symbol == -1 && return lps_graph(Val(-1), p, q)
+    symbol == 1 && return lps_graph(Val(1), p, q)
+    error("Unexpected Legendre symbol value.")
 end
 
 
