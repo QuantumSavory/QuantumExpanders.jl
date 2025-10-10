@@ -3,7 +3,7 @@
     using Graphs
     using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color
     using GraphsColoring: DSATUR, color, Greedy
-    using IGraphs: IGraph, LibIGraph.igraph_real_t, IGVectorInt
+    using IGraphs: IGraph, IGVectorInt, LibIGraph
     using LinearAlgebra
     using QuantumExpanders
     using SimpleGraphConverter
