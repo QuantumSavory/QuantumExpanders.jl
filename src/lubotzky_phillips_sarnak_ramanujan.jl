@@ -63,6 +63,7 @@ end
 Finds all integer solutions to the equation ``p = a^2 + b^2 + c^2 + d^2`` for a prime ``p \\equiv 1 \\pmod{4}``.
 according to the [Jacobi's theorem](https://en.wikipedia.org/wiki/Jacobi%27s_four-square_theorem)."""
 function solve_four_squares(p::Int)
+    @assert mod(p, 4) == 1 "p must be ≡ 1 mod 4 [lubotzky1988ramanujan](@cite)"
     solutions = Tuple{Int,Int,Int,Int}[]
     max_val = isqrt(p)
     for w in 0:max_val, x in 0:max_val, y in 0:max_val
@@ -78,6 +79,7 @@ function solve_four_squares(p::Int)
             push!(solutions, (sw*w, sx*x, sy*y, sz*z))
         end
     end
+    @assert length(solutions) == 8*(p+1) "Jacobi's theorem: should have exactly 8(p+1) solutions [lubotzky1988ramanujan](@cite), Section 2, Page 264"
     return unique(solutions)
 end
 
