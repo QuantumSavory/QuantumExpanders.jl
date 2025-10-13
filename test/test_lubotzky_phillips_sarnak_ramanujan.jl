@@ -140,8 +140,8 @@
 
     @testset "Correctness of center computation of SL/GL against Oscar.center" begin
         q_vals = filter(p -> mod(p, 4) == 1, primes(10000))
-        F = GF(q)
         for q in q_vals
+            F = GF(q)
             GL₂ = GL(2, F)
             SL₂ = SL(2, F)
             GL_center = scalar_matrices_GL(GL₂)
