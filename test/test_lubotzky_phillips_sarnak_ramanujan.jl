@@ -78,6 +78,8 @@
                 @test verify_expansion_property(B, 0.1)
                 @test Graphs.is_bipartite(cayley_g)
                 # https://igraph.org/c/doc/igraph-Structural.html#igraph_girth
+                # Girth Property: g(Xᵖ,ᵗ) ≥ 4 logₚ q - logₚ 4
+                # Page 263: Case i (a) of [lubotzky1988ramanujan](@cite)
                 girth_Γ_g = floor(Int, 4*log(p, q)-log(p, 4))
                 g_igraph = IGraph(cayley_g)
                 girth_val = Ref{LibIGraph.igraph_real_t}(0.0)
@@ -85,6 +87,8 @@
                 LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref)
                 actual_girth = isinf(girth_val[]) ? 0 : Int(girth_val[])
                 @test actual_girth >= girth_Γ_g
+                # Diameter property: diam(Xᵖ,ᵗ) ≤ 2logₚn+2logₚ2+1
+                # Page 263: Case i (b) of [lubotzky1988ramanujan](@cite)
                 diam = diameter(cayley_g)
                 max_diameter = 2*log(p, n)+2*log(p, 2)+1
                 @test diam ≤ ceil(Int, max_diameter)
@@ -106,6 +110,8 @@
                 @test is_unbalanced_bipartite(B)
                 @test verify_expansion_property(B, 0.1)
                 # https://igraph.org/c/doc/igraph-Structural.html#igraph_girth
+                # Girth property: g(Xᵖ,ᵗ) ≥ 2 logₚ q
+                # Page 263: Case ii (a) of [lubotzky1988ramanujan](@cite)
                 girth_Γ_g = floor(Int, 2*log(p, q))
                 g_igraph = IGraph(cayley_g)
                 girth_val = Ref{LibIGraph.igraph_real_t}(0.0)
@@ -113,9 +119,13 @@
                 LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref)
                 actual_girth = isinf(girth_val[]) ? 0 : Int(girth_val[])
                 @test actual_girth >= girth_Γ_g
+                # Diamater property: diam(Xᵖ,ᵗ) ≤ 2logₚ n+2logₚ2+1
+                # Page 263: Case ii (b) of [lubotzky1988ramanujan](@cite)
                 diam = diameter(cayley_g)
                 max_diameter = 2*log(p, n)+2*log(p, 2)+1
                 @test diam ≤ ceil(Int, max_diameter)
+                # Indepdendence number: i(Xᵖ,ᵗ) ≤ (2√p)/(p + 1) n
+                # Page 263: Case ii (c) of [lubotzky1988ramanujan](@cite)
                 ind_set = independent_set(cayley_g, MaximalIndependentSet())
                 independenceₙᵤₘ = length(ind_set)
                 independenceₘₐₓₙᵤₘ = ((2*sqrt(p))/(p+1))*n
