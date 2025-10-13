@@ -1,5 +1,6 @@
 @testitem "Test LPS Ramanujan Graph properties" begin
     using Oscar
+    using Oscar: center
     using Primes
     using Primes: primes
     using Graphs
