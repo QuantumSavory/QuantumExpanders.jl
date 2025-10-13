@@ -13,7 +13,7 @@ and is *bipartite* of order ``q(q^2-1)``.
 """
 function legendre_symbol(a::Int, p::Int)
     @assert is_prime(p) "p must be prime"
-    ls = powermod(a, (p-1)÷ 2, p)
+    ls = powermod(a, (p-1)÷2, p)
     return ls == p - 1 ? -1 : ls
 end
 
@@ -70,7 +70,6 @@ function solve_four_squares(p::Int)
         rem ≥ 0 || continue
         z = isqrt(rem)
         z^2 == rem || continue
-        # Generate sign permutations for nonzero components.
         signs_w = w == 0 ? [0] : [1, -1]
         signs_x = x == 0 ? [0] : [1, -1]
         signs_y = y == 0 ? [0] : [1, -1]
@@ -162,16 +161,73 @@ function lps_graph(::Val{1}, p::Int, q::Int)
 end
 
 """
-Construct the Ramanujan graph X^(p,q) as described in the LPS paper.
-For primes p, q ≡ 1 mod 4, constructs a (p+1)-regular graph that satisfies
-the Ramanujan property: all non-trivial eigenvalues λ satisfy |λ| ≤ 2√p.
+Construct the Lubotzky–Phillips–Sarnak Ramanujan graph ``X^(p,q)`` as described in [lubotzky1988ramanujan](@cite).
 
-The construction depends on the Legendre symbol (p/q):
-- If (p/q) = -1: X^(p,q) is the Cayley graph of PGL₂(𝔽_q) with respect to
-  p+1 generators derived from the representations p = a₀² + a₁² + a₂² + a₃²
-  with a₀ > 0 odd and a₁,a₂,a₃ even. The graph is bipartite of order q(q²-1).
-- If (p/q) = 1: X^(p,q) is the Cayley graph of PSL₂(𝔽_q) with the scaled
-  generators. The graph is non-bipartite of order q(q²-1)/2.
+Returns the ``(p+1)``-regular LPS Ramanujan graph ``X^{p,q}``.
+
+# LPS Ramanujan graph ``X^(p,q)``
+
+Let ``p`` and ``q`` be distinct primes congruent to ``1 \\pmod{4}``. The LPS Ramanujan graphs ``X^{p,q}`` are
+``p+1``-regular Cayley graphs of the projective linear group ``\\mathrm{PSL}(2,\\mathbb{Z}/q\\mathbb{Z})`` when
+the Legendre symbol satisfies ``\\left( \\tfrac{p}{q} \\right) = 1``, and of ``\\mathrm{PGL}(2,\\mathbb{Z}/q\\mathbb{Z})``
+when ``\\left( \\tfrac{p}{q} \\right) = -1``.
+
+The construction of these graphs relies on representing the prime p as a sum of four squares. Specifically, the p+1 generators
+for the Cayley graph are derived from the distinct integer solutions to
+
+```math
+\\begin{aligned}
+p = a_0^2 + a_1^2 + a_2^2 + a_3^2
+\\end{aligned}
+```
+
+where ``a_0 > 0`` is odd and ``a_1, a_2, a_3`` are even. That there are exactly p+1 such representations is a consequence of
+[Jacobi’s theorem](https://en.wikipedia.org/wiki/Jacobi%27s_four-square_theorem) on the number of representations ``r_4(n)``:
+
+```math
+\\begin{aligned}
+r_4(n) = 8 \\sum_{\substack{d \\mid n \\\\ 4 \\nmid d}} d
+\\end{aligned}
+```
+
+To generalize this construction, [lubotzky1988ramanujan](@cite) used representations by certain quaternary quadratic forms
+([dickson1927quaternary](@cite), [sarnak1990some](@cite)). Define the form
+
+```math
+\\begin{aligned}
+\\mathcal{Q}_q(x_1, x_2, x_3, x_4) = x_1^2 + 4q^2x_2^2 + 4q^2x_3^2 + 4q^2x_4^2,
+\\end{aligned}
+```
+
+and let ``r_Q(n)`` denote the number of integer solutions ``v \\in \\mathbb{Z}^4`` to ``\\mathcal{Q}_q(v) = n``. Unlike the
+explicit formula for ``r_4(n)``, no simple closed form exists for ``r_Q(n)``. However, the Ramanujan conjecture [ramanujan1916certain](@cite)
+proved in this context by Eichler [eichler1954quaternare](@cite) and Igusa [igusa1956fibre](@cite) provides a asymptotic approximation which
+establishes LPS graphs ``X^{p,q}`` as Ramanujan graphs. For n = p^k with ``vk \\ge 0``v, we have
+
+```math
+\\begin{aligned}
+r_Q(p^k) = C(p^k) + O_\\varepsilon\\!\\left( p^{k(1/2 + \\varepsilon)} \\right) \\quad \\text{as } k \\to \\infty, \\quad \\forall \\varepsilon > 0,
+\\end{aligned}
+```
+
+where the main term C(p^k) is given by
+
+```math
+\\begin{aligned}
+C(p^k) =
+\\begin{cases}
+c_1 \\displaystyle\\sum_{d \\mid p^k} d & \text{if } \\left( \\tfrac{p}{q} \\right) = 1 \\\\
+c_2 \\displaystyle\\sum_{d \\mid p^k} d & \text{if } \\left( \\tfrac{p}{q} \\right) = -1 \\text{ and } k \text{ is even} \\\\
+0 & \\text{if } \\left( \\tfrac{p}{q} \\right) = -1 \\text{ and } k \\text{ is odd}
+\\end{cases}
+\\end{aligned}
+```
+
+The constants ``c_1`` and ``c_2`` are determined in Section 4 of [lubotzky1988ramanujan](@cite).
+
+### Arguments
+- `p`: A prime number congruent to ``1 \\pmod{4}``.
+- `q`: A prime number, distinct from `p`, also congruent to ``1 \\pmod{4}``.
 """
 function LPS(p::Int, q::Int)
     @assert is_prime(p) && is_prime(q) "p and q must be primes."
