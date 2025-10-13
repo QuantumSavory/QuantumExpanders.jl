@@ -87,8 +87,20 @@ end
 Filters the solutions from `solve_four_squares` to select exactly ``p+1` solutions
 with ``a > 0`` and ``b, c, d`` even. """
 function process_solutions(solutions, p)
+    @assert mod(p, 4) == 1 "p must be ≡ 1 mod 4 [lubotzky1988ramanujan](@cite)"
+    @assert length(solutions) == 8*(p+1) "Jacobi's theorem: should have exactly 8(p+1) solutions [lubotzky1988ramanujan](@cite), Section 2, Page 264"
     filtered = filter(sol -> sol[1] > 0 && all(iseven, sol[2:4]), solutions)
-    @assert length(filtered) == p + 1 "Incorrect number of solutions"
+    @assert all(sol -> sol[1] > 0, filtered) "All solutions must have a₀ > 0. Page 262 of [lubotzky1988ramanujan](@cite)"
+    @assert all(sol -> isodd(sol[1]), filtered) "a₀ must be odd. Page 262 of [lubotzky1988ramanujan](@cite)"  
+    @assert all(sol -> all(iseven, sol[2:4]), filtered) "a₁,a₂,a₃ must be even. Page 262 of [lubotzky1988ramanujan](@cite)"
+    @assert length(filtered) == p + 1 "Should have exactly p+1 solutions. Page 262 of [lubotzky1988ramanujan](@cite)"
+    @assert all(sol -> isodd(sol[1]), filtered) "After unit action, all a₀ must be odd"
+    @assert all(sol -> all(iseven, sol[2:4]), filtered) "After unit action, all a₁,a₂,a₃ must be even"
+    # See Section 3, Page 265 of [lubotzky1988ramanujan](@cite)
+    # The set S containing p+1 elements splits into distinct conjugate pairs {α₁,ᾱ₁,α₂,ᾱ₂,...,αₛ,ᾱₛ} where s=(p+1)/2.
+    conjugates = Set([(sol[1], -sol[2], -sol[3], -sol[4]) for sol in filtered])
+    @assert length(conjugates) == length(filtered) "Solutions must form distinct conjugate pairs"
+    @assert iseven(length(filtered)) "Number of solutions must be even to form conjugate pairs"
     return filtered
 end
 
