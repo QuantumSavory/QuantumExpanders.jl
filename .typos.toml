@@ -1,0 +1,10 @@
+[default.extend-words]
+mor = "mor"
+morg = "morg"
+Mian = "Mian"
+Tou = "Tou"
+
+[type.ipynb]
+# It detects false possitives in the base64 encoded images inside notebooks
+extend-glob = ["*.ipynb"]
+check-file = false

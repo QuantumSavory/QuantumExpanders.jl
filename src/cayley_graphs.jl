@@ -1,11 +1,3 @@
-using Nemo
-using Oscar
-using LinearAlgebra
-using Random
-using Graphs
-using Multigraphs
-using ProgressMeter
-
 """Construct the Cayleyʳⁱᵍʰᵗ graph for a given group and set of generators."""
 function cayley_right(group,generators)
     idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
@@ -256,4 +248,4 @@ function is_nonconjugate(group,genA,genB)
 end
 
 """Check the generating set is symmetric."""
-is_symmetric_gen(gens) = Set(inv.(gens)) == Set(gens)
+is_symmetric_gen(gens) = Set(Nemo.inv.(gens)) == Set(gens)
