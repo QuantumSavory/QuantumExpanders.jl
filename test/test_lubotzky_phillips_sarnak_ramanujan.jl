@@ -5,7 +5,7 @@
     using GraphsColoring: DSATUR, color, Greedy
     using IGraphs: IGraph, IGVectorInt, LibIGraph
     using LinearAlgebra
-    using QuantumExpanders: legendre_symbol
+    using QuantumExpanders: legendre_symbol, LPS, edge_vertex_incidence_graph, is_unbalanced_bipartite, is_ramanujan
     using LogExpFunctions
 
     function binary_entropy(α)
@@ -47,6 +47,8 @@
     @testset "LPS Ramanujan Graph Tests" begin
         # Define a list of valid (p, q) pairs: both p and q are primes, p,q ≡ 1 (mod 4), and p ≠ q.
         test_pairs = [( 5, 29),
+                      (41,  5),
+                      (61,  5),
                       (13, 17),
                       (17, 13),
                       (29, 13)]
