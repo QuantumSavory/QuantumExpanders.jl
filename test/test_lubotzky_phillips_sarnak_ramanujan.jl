@@ -73,6 +73,7 @@
                 B = edge_vertex_incidence_graph(ram_graph)
                 @test is_unbalanced_bipartite(B)
                 @test verify_expansion_property(B, 0.1)
+                @test !is_bipartite(cayley_g)
             elseif symbol == 1
                 cayley_g = LPS(p, q)
                 for v in Graphs.vertices(cayley_g)
@@ -84,6 +85,7 @@
                 @test nv(cayley_g) == expected_order
                 ram_graph = cayley_g
                 @test is_ramanujan(ram_graph, p) == true
+                @test !is_bipartite(cayley_g)
                 @test nv(ram_graph) == expected_order
                 B = edge_vertex_incidence_graph(ram_graph)
                 @test is_unbalanced_bipartite(B)
