@@ -241,6 +241,25 @@ c_2 \\displaystyle\\sum_{d \\mid p^k} d & \text{if } \\left( \\tfrac{p}{q} \\rig
 
 The constants ``c_1`` and ``c_2`` are determined in Section 4 of [lubotzky1988ramanujan](@cite).
 
+!!! note
+    As stated by [lubotzky1988ramanujan](@cite): "As was proved in Section 3 the girth ``g(X^{p,q})`` of our graphs
+    ``\\to \\infty`` as q (and hence n) ``\\to \\infty``. Thus the spectrum of the graphs ``X^{p,q}`` lies in 
+    ``[-2\\sqrt{p}, 2\\sqrt{p}]`` (besides ``\\pm(p+1)``) and it is distributed in this interval according to the
+    density ``d\\mu_{p+1}`` as ``q \\to \\infty``".
+    
+Here, ``d\\mu_{p+1}`` denotes the limiting spectral distribution given in Proposition 4.3 of [lubotzky1988ramanujan](@cite) where
+``k = p + 1`` is the degree of the graph.
+
+```math
+\\begin{aligned}
+d\\mu_{p+1}(t) = 
+\\begin{cases} 
+\\dfrac{\\sqrt{p - t^2/4}}{\\pi(p+1)(1-(t/(p+1))^2)} \\, dt & \\text{if } |t| \\leq 2\\sqrt{p} \\\\
+0 & \\text{otherwise}
+\\end{cases}
+\\end{aligned}
+```
+
 ### Arguments
 - `p`: A prime number congruent to ``1 \\pmod{4}``.
 - `q`: A prime number, distinct from `p`, also congruent to ``1 \\pmod{4}``.
