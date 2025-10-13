@@ -5,7 +5,7 @@
     using GraphsColoring: DSATUR, color, Greedy
     using IGraphs: IGraph, IGVectorInt, LibIGraph
     using LinearAlgebra
-    using QuantumExpanders
+    using QuantumExpanders: legendre_symbol
     using LogExpFunctions
 
     function binary_entropy(α)
@@ -59,6 +59,7 @@
             # Compute the Legendre symbol (p/q)
             symbol = legendre_symbol(p, q)
             if symbol == -1
+                n = q*(q^2-1)
                 cayley_g = LPS(p, q)
                 # Test regularity: each vertex should have degree p+1.
                 for v in Graphs.vertices(cayley_g)
@@ -76,7 +77,16 @@
                 @test is_unbalanced_bipartite(B)
                 @test verify_expansion_property(B, 0.1)
                 @test Graphs.is_bipartite(cayley_g)
+                # https://igraph.org/c/doc/igraph-Structural.html#igraph_girth
+                girth_Γ_g = floor(Int, 4*log(p, q)-log(p, 4))
+                g_igraph = IGraph(cayley_g)
+                girth_val = Ref{LibIGraph.igraph_real_t}(0.0)
+                cycle = IGVectorInt()
+                LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref)
+                actual_girth = isinf(girth_val[]) ? 0 : Int(girth_val[])
+                @test actual_girth >= girth_Γ_g 
             elseif symbol == 1
+                n = q*(q^2-1)/2
                 cayley_g = LPS(p, q)
                 for v in Graphs.vertices(cayley_g)
                     @test Graphs.degree(cayley_g, v) == p + 1
@@ -92,6 +102,14 @@
                 B = edge_vertex_incidence_graph(ram_graph)
                 @test is_unbalanced_bipartite(B)
                 @test verify_expansion_property(B, 0.1)
+                # https://igraph.org/c/doc/igraph-Structural.html#igraph_girth
+                girth_Γ_g = floor(Int, 2*log(p, q))
+                g_igraph = IGraph(cayley_g)
+                girth_val = Ref{LibIGraph.igraph_real_t}(0.0)
+                cycle = IGVectorInt()
+                LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref)
+                actual_girth = isinf(girth_val[]) ? 0 : Int(girth_val[])
+                @test actual_girth >= girth_Γ_g 
             end
         end
     end
