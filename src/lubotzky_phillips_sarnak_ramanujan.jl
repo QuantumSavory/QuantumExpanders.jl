@@ -122,6 +122,7 @@ graph.
 """
 function lps_generators(solutions, F, p)
     u = sqrt(F(-1))  # Find u such that u² = -1 in F.
+    @assert u^2 == F(-1)
     generators = MatrixElem{typeof(F(0))}[]
     for (a, b, c, d) in solutions
         mat = matrix(F, [a + u*b   c + u*d;
@@ -129,6 +130,7 @@ function lps_generators(solutions, F, p)
         @assert det(mat) == F(p) "Generator matrix must have determinant p"
         push!(generators, mat)
     end
+     @assert length(generators) == p + 1 "Should have p+1 generators"
     return generators
 end
 
