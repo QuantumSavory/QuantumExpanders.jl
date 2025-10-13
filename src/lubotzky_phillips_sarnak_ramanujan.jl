@@ -186,7 +186,7 @@ where ``a_0 > 0`` is odd and ``a_1, a_2, a_3`` are even. That there are exactly 
 
 ```math
 \\begin{aligned}
-r_4(n) = 8 \\sum_{\substack{d \\mid n \\\\ 4 \\nmid d}} d
+r_4(n) = 8 \\sum_{\\substack{d \\mid n \\\\ 4 \\nmid d}} d
 \\end{aligned}
 ```
 
@@ -235,7 +235,7 @@ function LPS(p::Int, q::Int)
     symbol = legendre_symbol(p, q)
     symbol == -1 && return lps_graph(Val(-1), p, q)
     symbol == 1 && return lps_graph(Val(1), p, q)
-    error("Unexpected Legendre symbol value.")
+    throw(ArgumentError("Unexpected Legendre symbol value."))
 end
 
 
