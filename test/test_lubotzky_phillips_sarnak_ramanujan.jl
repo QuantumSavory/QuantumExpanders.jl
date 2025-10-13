@@ -84,7 +84,10 @@
                 cycle = IGVectorInt()
                 LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref)
                 actual_girth = isinf(girth_val[]) ? 0 : Int(girth_val[])
-                @test actual_girth >= girth_Γ_g 
+                @test actual_girth >= girth_Γ_g
+                diam = diameter(cayley_g)
+                max_diameter = 2*log(p, n)+2*log(p, 2)+1
+                @test diam ≤ ceil(Int, max_diameter)
             elseif symbol == 1
                 n = q*(q^2-1)/2
                 cayley_g = LPS(p, q)
@@ -109,7 +112,10 @@
                 cycle = IGVectorInt()
                 LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref)
                 actual_girth = isinf(girth_val[]) ? 0 : Int(girth_val[])
-                @test actual_girth >= girth_Γ_g 
+                @test actual_girth >= girth_Γ_g
+                diam = diameter(cayley_g)
+                max_diameter = 2*log(p, n)+2*log(p, 2)+1
+                @test diam ≤ ceil(Int, max_diameter)
             end
         end
     end
