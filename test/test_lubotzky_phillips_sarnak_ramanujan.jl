@@ -42,7 +42,7 @@
         return true
     end
 
-    @testset "Ramanujan Graph Extended Tests" begin
+    @testset "LPS Ramanujan Graph Tests" begin
         # Define a list of valid (p, q) pairs: both p and q are primes, p,q ≡ 1 (mod 4), and p ≠ q.
         test_pairs = [( 5, 29),
                       (13, 17),

@@ -13,7 +13,7 @@ and is *bipartite* of order ``q(q^2-1)``.
 """
 function legendre_symbol(a::Int, p::Int)
     @assert is_prime(p) "p must be prime"
-    ls = powermod(a, (p - 1) ÷ 2, p)
+    ls = powermod(a, (p-1)÷ 2, p)
     return ls == p - 1 ? -1 : ls
 end
 
