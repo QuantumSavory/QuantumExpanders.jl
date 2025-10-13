@@ -76,6 +76,7 @@
                 B = edge_vertex_incidence_graph(ram_graph)
                 @test is_unbalanced_bipartite(B)
                 @test verify_expansion_property(B, 0.1)
+                # When Legendre symbol = -1, the graph must be bipartite [lubotzky1988ramanujan](@cite).
                 @test Graphs.is_bipartite(cayley_g)
                 # https://igraph.org/c/doc/igraph-Structural.html#igraph_girth
                 # Girth Property: g(Xᵖ,ᵗ) ≥ 4 logₚ q - logₚ 4
@@ -104,6 +105,7 @@
                 @test nv(cayley_g) == expected_order
                 ram_graph = cayley_g
                 @test is_ramanujan(ram_graph, p) == true
+                # When Legendre symbol = 1, the graph must be non-bipartite [lubotzky1988ramanujan](@cite).
                 @test !Graphs.is_bipartite(cayley_g)
                 @test nv(ram_graph) == expected_order
                 B = edge_vertex_incidence_graph(ram_graph)
@@ -119,12 +121,12 @@
                 LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref)
                 actual_girth = isinf(girth_val[]) ? 0 : Int(girth_val[])
                 @test actual_girth >= girth_Γ_g
-                # Diamater property: diam(Xᵖ,ᵗ) ≤ 2logₚ n+2logₚ2+1
+                # Diameter property: diam(Xᵖ,ᵗ) ≤ 2logₚ n+2logₚ2+1
                 # Page 263: Case ii (b) of [lubotzky1988ramanujan](@cite)
                 diam = diameter(cayley_g)
                 max_diameter = 2*log(p, n)+2*log(p, 2)+1
                 @test diam ≤ ceil(Int, max_diameter)
-                # Indepdendence number: i(Xᵖ,ᵗ) ≤ (2√p)/(p + 1) n
+                # Independence number: i(Xᵖ,ᵗ) ≤ (2√p)/(p + 1) n
                 # Page 263: Case ii (c) of [lubotzky1988ramanujan](@cite)
                 ind_set = independent_set(cayley_g, MaximalIndependentSet())
                 independenceₙᵤₘ = length(ind_set)
