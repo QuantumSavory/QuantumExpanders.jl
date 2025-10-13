@@ -73,7 +73,7 @@
                 B = edge_vertex_incidence_graph(ram_graph)
                 @test is_unbalanced_bipartite(B)
                 @test verify_expansion_property(B, 0.1)
-                @test !is_bipartite(cayley_g)
+                @test is_bipartite(cayley_g)
             elseif symbol == 1
                 cayley_g = LPS(p, q)
                 for v in Graphs.vertices(cayley_g)
