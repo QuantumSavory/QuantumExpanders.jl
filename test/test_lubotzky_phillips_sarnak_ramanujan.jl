@@ -1,8 +1,10 @@
 @testitem "Test LPS Ramanujan Graph properties" begin
     using Oscar
-    using LinearAlgebra
     using Graphs
-    using Graphs: nv, neighbors, AbstractGraph, degree, ne
+    using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color, neighbors, AbstractGraph, degree
+    using GraphsColoring: DSATUR, color, Greedy
+    using IGraphs: IGraph, IGVectorInt, LibIGraph
+    using LinearAlgebra
     using QuantumExpanders
     using LogExpFunctions
 
