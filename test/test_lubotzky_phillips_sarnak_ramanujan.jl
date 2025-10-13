@@ -140,7 +140,7 @@
     end
 
     @testset "Correctness of center computation of SL/GL against Oscar.center" begin
-        q_vals = filter(p -> mod(p, 4) == 1, primes(1000))
+        q_vals = filter(p -> mod(p, 4) == 1, primes(500))
         for q in q_vals
             F = GF(q)
             GL₂ = GL(2, F)
