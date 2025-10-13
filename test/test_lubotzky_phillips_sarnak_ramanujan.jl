@@ -1,5 +1,7 @@
 @testitem "Test LPS Ramanujan Graph properties" begin
     using Oscar
+    using Primes
+    using Primes: primes
     using Graphs
     using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color, neighbors, AbstractGraph, degree
     using GraphsColoring: DSATUR, color, Greedy
@@ -133,6 +135,28 @@
                 independenceₘₐₓₙᵤₘ = ((2*sqrt(p))/(p+1))*n
                 @test independenceₙᵤₘ ≤ ceil(Int, independenceₘₐₓₙᵤₘ)
             end
+        end
+    end
+
+    @testset "Correctness of center computation of SL/GL against Oscar.center" begin
+        q_vals = filter(p -> mod(p, 4) == 1, primes(10000))
+        F = GF(q)
+        for q in q_vals
+            GL₂ = GL(2, F)
+            SL₂ = SL(2, F)
+            GL_center = scalar_matrices_GL(GL₂)
+            GL_center_groupₒₛ, emb = center(GL₂)
+            GL_centerₒₛ = collect(GL_center_groupₒₛ)
+            @test length(GL_center) == length(GL_centerₒₛ)
+            @test all(M -> emb\M in GL_centerₒₛ, GL_center)
+            @test length(GL_center) == order(F) - 1
+            SL_center = scalar_matrices_SL(SL₂)
+            SL_center_groupₒₛ, emb = center(SL₂)
+            SL_centerₒₛ = collect(SL_center_groupₒₛ)
+            @test length(SL_center) == length(SL_centerₒₛ)
+            @test all(M -> emb\M in SL_centerₒₛ, SL_center)
+            expected_sl_size = gcd(2, q - 1)
+            @test length(SL_center) == expected_sl_size
         end
     end
 end
