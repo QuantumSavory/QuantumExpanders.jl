@@ -116,6 +116,10 @@
                 diam = diameter(cayley_g)
                 max_diameter = 2*log(p, n)+2*log(p, 2)+1
                 @test diam ≤ ceil(Int, max_diameter)
+                ind_set = independent_set(cayley_g, MaximalIndependentSet())
+                independenceₙᵤₘ = length(ind_set)
+                independenceₘₐₓₙᵤₘ = ((2*sqrt(p))/(p+1))*n
+                @test independenceₙᵤₘ ≤ ceil(Int, independenceₘₐₓₙᵤₘ)
             end
         end
     end
