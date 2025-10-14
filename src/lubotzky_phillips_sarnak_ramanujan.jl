@@ -297,10 +297,14 @@ end
 
 
 """
-Constructs the edge-vertex incidence graph of a given graph G.
-Let G = (V, E) be a graph with vertex set V and edge set E. The
-edge-vertex incidence graph of G is a bipartite graph with vertex
-set E ∪ V and edge set {(e, v) ∈ E × V : v is an endpoint of e}.
+Construct the *edge–vertex incidence graph* associated with G.
+
+Returns the undirected bipartite incidence graph with `nv(G) + ne(G)` vertices.
+
+Given a graph G = (V, E) with vertex set V and edge set E, the
+edge–vertex incidence graph is a bipartite graph with vertex set V ∪ E
+and edges connecting each vertex v ∈ V to every edge e ∈ E for which
+v is an endpoint of `e` [expandercode556667](@cite). 
 
 # Example
 
@@ -312,19 +316,20 @@ julia> B = edge_vertex_incidence_graph(G);
 julia> is_unbalanced_bipartite(B)
 true
 ```
+
+### Arguments
+- `G::AbstractGraph` — any undirected graph constructed with `Graphs.jl`.
 """
-function edge_vertex_incidence_graph(G)
+function edge_vertex_incidence_graph(G::AbstractGraph)
     n = nv(G)
     m = ne(G)
-    B = SimpleGraph(n + m)
-    edge_to_index = Dict{Graphs.Edge, Int}()
+    B = SimpleGraph(n+m)
     for (i, e) in enumerate(edges(G))
-        edge_to_index[e] = n + i
+        edge_vertex = n+i
+        add_edge!(B, src(e), edge_vertex)
+        add_edge!(B, dst(e), edge_vertex)
     end
-    for (e, idx) in edge_to_index
-        add_edge!(B, src(e), idx)
-        add_edge!(B, dst(e), idx)
-    end
+    @assert nv(B) == n+m "Output graph should have n+m vertices"
     return B
 end
 
@@ -387,7 +392,7 @@ julia> alon_chung_lemma(B, 0.1)
 (true, 143, 1520.6609615130378)
 ```
 
-See [expandercode556667](@cite) for more details how Alon–Chung Lemma is used to characterize the
+See [expandercode556667](@cite) for more details on how Alon–Chung Lemma is used to characterize the
 edge-vertex incidence graphs of the LPS expander graphs in the construction of classical expander codes.
 
 ### Arguments
