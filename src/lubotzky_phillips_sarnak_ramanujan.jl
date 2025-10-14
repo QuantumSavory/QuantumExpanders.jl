@@ -200,6 +200,18 @@ function is_ramanujan(g::SimpleGraph, p::Int)
     return all(v -> abs(v) ≤ bound + 1e-6, non_trivial)
 end
 
+"""
+Construct the LPS Ramanujan graph for the case where the Legendre symbol ``\\left(\\frac{p}{q}\\right) = -1``
+as described in [lubotzky1988ramanujan](@cite).
+
+Returns a Cayley graph of the projective general linear group ``\\mathrm{PGL}(2, \\mathbb{F}_q)`` that is 
+(p+1)-regular and has order ``q(q^2 - 1)``. The graph is *bipartite*.
+
+### Arguments
+- `::Val{-1}`: Dispatch parameter indicating ``\\left(\\frac{p}{q}\\right) = -1``
+- `p::Int`: Prime number congruent to ``1 \\pmod{4}`` used in the four-square decomposition
+- `q::Int`: Prime number congruent to ``1 \\pmod{4}`` defining the finite field ``\\mathbb{F}_q``
+"""
 function lps_graph(::Val{-1}, p::Int, q::Int)
     F = GF(q)
     GL2 = GL(2, F)
@@ -213,6 +225,18 @@ function lps_graph(::Val{-1}, p::Int, q::Int)
     return cayley_right(PG, PG_generators)
 end
 
+"""
+Construct the LPS Ramanujan graph for the case where the Legendre symbol ``\\left(\\frac{p}{q}\\right) = 1``
+as described in [lubotzky1988ramanujan](@cite).
+
+Returns a Cayley graph of the projective special linear group ``\\mathrm{PSL}(2, \\mathbb{F}_q)`` that is 
+(p+1)-regular and has order ``q(q^2 - 1)/2``. The graph is *non-bipartite*.
+
+### Arguments
+- `::Val{1}`: Dispatch parameter indicating ``\\left(\\frac{p}{q}\\right) = 1``
+- `p::Int`: Prime number congruent to ``1 \\pmod{4}`` used in the four-square decomposition
+- `q::Int`: Prime number congruent to ``1 \\pmod{4}`` defining the finite field ``\\mathbb{F}_q``
+"""
 function lps_graph(::Val{1}, p::Int, q::Int)
     F = GF(q)
     SL2 = SL(2, F)
@@ -221,6 +245,7 @@ function lps_graph(::Val{1}, p::Int, q::Int)
     solutions = solve_four_squares(p)
     solutions_processed = process_solutions(solutions, p)
     generators = lps_generators(solutions_processed, F, p)
+    # det((1/√p)*[a+ib  c+id; -c+id  a-ib]) = (1/p)*p = 1
     s = sqrt(F(p))
     s_inv = inv(s)
     generators_scaled = [s_inv * mat for mat in generators]
