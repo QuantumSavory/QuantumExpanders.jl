@@ -33,7 +33,7 @@ x & 0 \\\\
 where ``x`` is any nonzero element of ``F``. These matrices form the center ``Z(GL(2, F))`` and
 are used in the LPS construction to form the projective general linear group ``PGL(2, F) = GL(2, F)/Z(GL(2, F))``.
 """
-function scalar_matrices_GL(GL2)
+function scalar_matrices_GL(GL2::MatrixGroup)
     F = base_ring(GL2)
     return [GL2([x 0; 0 x]) for x in F if x != 0]
 end
@@ -54,7 +54,7 @@ x & 0 \\\\
 with ``x^2 = 1``. These matrices form the center ``Z(SL(2, F))`` and are used in the LPS construction
 to form the projective special linear group ``PSL(2, F) = SL(2, F)/Z(SL(2, F))``.
 """
-function scalar_matrices_SL(SL2)
+function scalar_matrices_SL(SL2::MatrixGroup)
     F = base_ring(SL2)
     return [SL2([x 0; 0 x]) for x in F if x^2 == one(F)]
 end
@@ -86,7 +86,7 @@ end
 """
 Filters the solutions from `solve_four_squares` to select exactly ``p+1` solutions
 with ``a > 0`` and ``b, c, d`` even. """
-function process_solutions(solutions, p)
+function process_solutions(solutions::AbstractVector, p::Int)
     @assert mod(p, 4) == 1 "p must be ≡ 1 mod 4 [lubotzky1988ramanujan](@cite)"
     @assert length(solutions) == 8*(p+1) "Jacobi's theorem: should have exactly 8(p+1) solutions [lubotzky1988ramanujan](@cite), Section 2, Page 264"
     filtered = filter(sol -> sol[1] > 0 && all(iseven, sol[2:4]), solutions)
@@ -120,7 +120,7 @@ where ``i`` satisfies ``i^2 \\equiv -1 \\pmod{q}``. These matrices have determin
 ``a^2 + b^2 + c^2 + d^2 = p`` and will serve as the ``p+1`` generators for the Cayley
 graph.
 """
-function lps_generators(solutions, F, p)
+function lps_generators(solutions::AbstractVector, F::FqField, p::Int)
     u = sqrt(F(-1))  # Find u such that u² = -1 in F.
     @assert u^2 == F(-1)
     generators = MatrixElem{typeof(F(0))}[]
@@ -177,7 +177,7 @@ function lps_graph(::Val{1}, p::Int, q::Int)
 end
 
 """
-Construct the Lubotzky–Phillips–Sarnak Ramanujan graph ``X^(p,q)`` as described in [lubotzky1988ramanujan](@cite).
+Constructs the Lubotzky–Phillips–Sarnak Ramanujan graph ``X^(p,q)`` as described in [lubotzky1988ramanujan](@cite).
 
 Returns the ``(p+1)``-regular LPS Ramanujan graph ``X^{p,q}``.
 

@@ -12,7 +12,7 @@ using Graphs
 using Graphs: add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix, add_vertex!, has_edge,
 vertices
 using Oscar: coefficients, zzModRingElem, MatSpace, zero_matrix, base_ring, lift, matrix_space, zzModMatrix,
-residue_ring, ZZ, nullspace, transpose, base_ring, kron, Matrix, embed, GroupElem
+residue_ring, ZZ, nullspace, transpose, base_ring, kron, Matrix, embed, GroupElem, MatrixGroup, FqField
 using Graphs: add_edge!, nv, ne, neighbors, Graphs
 using Multigraphs
 using ProgressMeter
