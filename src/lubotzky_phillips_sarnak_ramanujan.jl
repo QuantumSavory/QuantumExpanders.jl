@@ -1,7 +1,24 @@
 """
 Computes the [Legendre symbol](https://en.wikipedia.org/wiki/Legendre_symbol) ``\\frac{a}{p}``
-for an odd prime ``p``.
-    
+for an odd prime p.
+
+Returns an integer in ``{-1, 0, 1}`` where ``1`` indicates a is a quadratic residue modulo
+p with ``a \\not\\equiv 0 \\pmod{p}``, -1 indicates a is a quadratic non-residue modulo p,
+and 0 indicates ``a \\equiv 0 \\pmod{p}`` (i.e., p divides a).
+
+```jldoctest
+julia> using QuantumExpanders;
+
+julia> legendre_symbol(2, 7)
+1
+
+julia> legendre_symbol(3, 7)
+-1
+
+julia> legendre_symbol(14, 7)
+0
+```
+
 The Legendre symbol determines whether ``a`` is a [quadratic residue](https://en.wikipedia.org/wiki/Quadratic_residue)
 modulo ``p``, and specifically controls which group ``\\mathrm{PGL}`` or ``\\mathrm{PSL}`` is used in the LPS construction
 of the Ramanujan graph [lubotzky1988ramanujan](@cite).
@@ -10,6 +27,10 @@ of the Ramanujan graph [lubotzky1988ramanujan](@cite).
 and is *bipartite* of order ``q(q^2-1)``.
 - When ``\\frac{p}{q} = 1``, the graph is constructed as a Cayley graph of ``\\mathrm{PSL}(2, \\mathbb{Z}/q\\mathbb{Z})``, is
 *non-bipartite*, and has order ``q(q^2-1)/2``.
+
+### Arguments
+- `a::Int`: The integer for which to compute the Legendre symbol.
+- `p::Int`: An odd prime number
 """
 function legendre_symbol(a::Int, p::Int)
     @assert is_prime(p) "p must be prime"
@@ -32,6 +53,9 @@ x & 0 \\\\
 
 where ``x`` is any nonzero element of ``F``. These matrices form the center ``Z(GL(2, F))`` and
 are used in the LPS construction to form the projective general linear group ``PGL(2, F) = GL(2, F)/Z(GL(2, F))``.
+
+### Arguments
+- `GL2::MatrixGroup`: The general linear group ``\\mathrm{GL}(2, F)`` over a finite field F.
 """
 function scalar_matrices_GL(GL2::MatrixGroup)
     F = base_ring(GL2)
@@ -53,6 +77,9 @@ x & 0 \\\\
 
 with ``x^2 = 1``. These matrices form the center ``Z(SL(2, F))`` and are used in the LPS construction
 to form the projective special linear group ``PSL(2, F) = SL(2, F)/Z(SL(2, F))``.
+
+### Arguments
+- `GL2::MatrixGroup`: The general linear group ``\\mathrm{GL}(2, F)`` over a finite field F.
 """
 function scalar_matrices_SL(SL2::MatrixGroup)
     F = base_ring(SL2)
@@ -61,7 +88,15 @@ end
 
 """
 Finds all integer solutions to the equation ``p = a^2 + b^2 + c^2 + d^2`` for a prime ``p \\equiv 1 \\pmod{4}``.
-according to the [Jacobi's theorem](https://en.wikipedia.org/wiki/Jacobi%27s_four-square_theorem)."""
+according to the [Jacobi's theorem](https://en.wikipedia.org/wiki/Jacobi%27s_four-square_theorem).
+
+Returns an array of tuples ``(a, b, c, d)`` where each tuple represents an integer solution to the
+equation ``p = a^2 + b^2 + c^2 + d^2``, with exactly ``8(p+1)`` distinct solutions according to
+[Jacobi's four-square theorem](https://en.wikipedia.org/wiki/Jacobi%27s_four-square_theorem).
+
+### Arguments
+- `p::Int`: A prime number congruent to ``1 \\pmod{4}`` for which to find four-square representations.
+"""
 function solve_four_squares(p::Int)
     @assert mod(p, 4) == 1 "p must be ≡ 1 mod 4 [lubotzky1988ramanujan](@cite)"
     solutions = Tuple{Int,Int,Int,Int}[]
@@ -85,7 +120,16 @@ end
 
 """
 Filters the solutions from `solve_four_squares` to select exactly ``p+1` solutions
-with ``a > 0`` and ``b, c, d`` even. """
+with ``a > 0`` and ``b, c, d`` even.
+
+Returns an array of exactly p+1 tuples ``(a, b, c, d)`` satisfying ``p = a^2 + b^2 + c^2 + d^2``
+with a > 0 odd and b, c, d even, representing the filtered solution set ``S`` used in LPS Ramanujan
+graph construction [lubotzky1988ramanujan](@cite).
+
+### Arguments
+- `solutions::AbstractVector`: The complete set of integer solutions to ``p = a^2 + b^2 + c^2 + d^2``.
+- `p::Int`: The prime number congruent to ``1 \\pmod{4}`` for which the solutions were generated
+"""
 function process_solutions(solutions::AbstractVector, p::Int)
     @assert mod(p, 4) == 1 "p must be ≡ 1 mod 4 [lubotzky1988ramanujan](@cite)"
     @assert length(solutions) == 8*(p+1) "Jacobi's theorem: should have exactly 8(p+1) solutions [lubotzky1988ramanujan](@cite), Section 2, Page 264"
@@ -119,6 +163,11 @@ a + i b & c + i d \\\\
 where ``i`` satisfies ``i^2 \\equiv -1 \\pmod{q}``. These matrices have determinant
 ``a^2 + b^2 + c^2 + d^2 = p`` and will serve as the ``p+1`` generators for the Cayley
 graph.
+
+### Arguments
+- `solutions::AbstractVector`: The filtered set of p+1 integer tuples (a, b, c, d) satisfying ``p = a^2 + b^2 + c^2 + d^2`` with a > 0 odd and b, c, d even
+- `F::FqField`: The finite field ``\\mathbb{F}_q`` over which the matrices are constructed
+- `p::Int`: The prime number used in the four-square decomposition
 """
 function lps_generators(solutions::AbstractVector, F::FqField, p::Int)
     u = sqrt(F(-1))  # Find u such that u² = -1 in F.
@@ -138,6 +187,10 @@ end
 Check the Ramanujan property:
 - For a (p+1)-regular graph, the trivial eigenvalue is p+1.
 - All other eigenvalues should have absolute value ≤ 2√p.
+
+### Arguments
+- `g::SimpleGraph`: A connected (p+1)-regular graph to test for the Ramanujan property
+- `p::Int`: The prime parameter used to compute the eigenvalue bound ``2\\sqrt{p}``
 """
 function is_ramanujan(g::SimpleGraph, p::Int)
     A = adjacency_matrix(g)
@@ -293,124 +346,4 @@ function LPS(p::Int, q::Int)
     symbol == -1 && return lps_graph(Val(-1), p, q)
     symbol == 1 && return lps_graph(Val(1), p, q)
     throw(ArgumentError("Unexpected Legendre symbol value."))
-end
-
-
-"""
-Construct the *edge–vertex incidence graph* associated with G.
-
-Returns the undirected bipartite incidence graph with `nv(G) + ne(G)` vertices.
-
-Given a graph G = (V, E) with vertex set V and edge set E, the
-edge–vertex incidence graph is a bipartite graph with vertex set V ∪ E
-and edges connecting each vertex v ∈ V to every edge e ∈ E for which
-v is an endpoint of `e` [expandercode556667](@cite). 
-
-# Example
-
-```jldoctest
-julia> G = LPS(5, 13);
-
-julia> B = edge_vertex_incidence_graph(G);
-
-julia> is_unbalanced_bipartite(B)
-true
-```
-
-### Arguments
-- `G::AbstractGraph` — any undirected graph constructed with `Graphs.jl`.
-"""
-function edge_vertex_incidence_graph(G::AbstractGraph)
-    n = nv(G)
-    m = ne(G)
-    B = SimpleGraph(n+m)
-    for (i, e) in enumerate(edges(G))
-        edge_vertex = n+i
-        add_edge!(B, src(e), edge_vertex)
-        add_edge!(B, dst(e), edge_vertex)
-    end
-    @assert nv(B) == n+m "Output graph should have n+m vertices"
-    return B
-end
-
-"""Verify that the edge-vertex incidence graph B is an unbalanced bipartite graph."""
-function is_unbalanced_bipartite(B)
-    # The first n vertices in B correspond to the vertices of G
-    n = 0
-    while n + 1 <= nv(B) && degree(B, n + 1) > 2
-        n += 1
-    end
-    # If no vertices satisfy degree > 2, return false
-    if n == 0
-        return false
-    end
-    # The degree of any vertex in the first n vertices of B is d
-    d = degree(B, 1)
-    # The remaining vertices in B correspond to the edges of G
-    m = nv(B) - n
-    for v in 1:n
-        if degree(B, v) != d
-            return false
-        end
-    end
-    for v in (n + 1):(n + m)
-        if degree(B, v) != 2
-            return false
-        end
-    end
-    if n * d != m * 2
-        return false
-    end
-    return true
-end
-
-"""
-Test the Alon–Chung Lemma [alon1988explicit](@cite) on a regular graph.
-
-Returns whether the bound holds, edges in induced subgraph, and theoretical upper bound.
-
-The Alon–Chung Lemma states that for a d-regular graph G with n vertices and 
-second-largest eigenvalue ``\\lambda``, any vertex subset ``X \\subseteq V(G)``
-with cardinality ``|X| = \\gamma n`` satisfies:
-
-```math
-\\begin{aligned}
-|E(G[X])| \\leq \\frac{dn}{2} \\left( \\gamma^2 + \\frac{\\lambda}{d} \\gamma (1 - \\gamma) \\right)
-\\end{aligned}
-```
-
-where ``E(G[X])`` denotes the edge set of the [induced subgraph](https://en.wikipedia.org/wiki/Induced_subgraph).
-
-# Example
-
-```jldoctest
-julia> G = LPS(5, 13);
-
-julia> B = edge_vertex_incidence_graph(G);
-
-julia> alon_chung_lemma(B, 0.1)
-(true, 143, 1520.6609615130378)
-```
-
-See [expandercode556667](@cite) for more details on how Alon–Chung Lemma is used to characterize the
-edge-vertex incidence graphs of the LPS expander graphs in the construction of classical expander codes.
-
-### Arguments
-- `g`: A d-regular graph
-- `γ`: Fraction of vertices in the subset (0 < γ < 1)
-"""
-function alon_chung_lemma(g::AbstractGraph, γ::Real)
-    n = nv(g)
-    d = degree(g, 1)
-    A = adjacency_matrix(g)
-    Λ = eigvals(Matrix(A))
-    λ = sort(Λ, rev=true)[2]
-    # Select a random subset X of size γ*n.
-    s = Int(round(γ*n))
-    X = randperm(n)[1:s]
-    subg = induced_subgraph(g, X)[1]
-    # Count the number of edges in the subgraph induced by X.
-    edges = ne(subg)
-    bound = (d*n/2)*(γ^2+(λ/d)*γ*(1-γ))
-    return edges ≤ bound, edges, bound
 end
