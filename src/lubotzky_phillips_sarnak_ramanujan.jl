@@ -260,6 +260,26 @@ d\\mu_{p+1}(t) =
 \\end{aligned}
 ```
 
+# Cayley graphs of Free Groups via Geometric Group Theory
+
+As detailed in [lubotzky1988ramanujan](@cite), for a prime ``p \\equiv 1 \\pmod{4}``,
+there exists a set S of p + 1 integral quaternions of norm p, unique up to units and
+satisfying ``\\alpha \\equiv 1 \\pmod{2}``. [lubotzky1988ramanujan](@cite) establishes
+that every quaternion ``\\alpha \\in ``H(\\mathbb{Z})`` with ``N(\\alpha) = p^k`` can
+be expressed uniquely in the form ``\\alpha = \\varepsilon p^r R_m(\\alpha_1, \\ldots, \\bar{\alpha}_s)``
+where ``\\varepsilon`` is a unit, ``2r + m = k``, and ``R_m`` is a *reduced word* in the elements of ``S``
+and their conjugates, where "reduced" means no generator is adjacent to its inverse (see Definition 2.3.4
+of [loh2017geometric](@cite)). This unique factorization property shows that the multiplicative group
+``A(2)`` formed by these quaternion classes (modulo the identification ``\\pm p^{v_1}\\alpha \\sim p^{v_2}\\beta``
+is *freely generated* by the classes ``[\\alpha_1], [\\alpha_2], \\ldots, [\\alpha_s]`` (see Proposition 2.3.5
+of [loh2017geometric](@cite)), with every element represented by exactly one reduced word (see Corollary
+2.3.6 of [loh2017geometric](@cite)). Consequently, the Cayley graph ``\\text{Cay}(A(2), S)`` is an infinite
+(p + 1)-regular tree (see Theorem 2.3.1 of [loh2017geometric](@cite)). The finite Ramanujan graphs ``X^{p,q}``
+are then constructed as explicit quotients of this tree by taking the congruence subgroup ``A(2q)``, defined
+as the kernel of reduction modulo ``2q``. The quotient ``A(2)/A(2q)`` is shown to be isomorphic to either
+``\\PGL(2, \\mathbb{Z}/q\\mathbb{Z})`` or ``\\PSL(2, \\mathbb{Z}/q\\mathbb{Z})``, and the resulting Cayley
+graph is the LPS graph ``X^{p,q}``.
+
 ### Arguments
 - `p`: A prime number congruent to ``1 \\pmod{4}``.
 - `q`: A prime number, distinct from `p`, also congruent to ``1 \\pmod{4}``.
