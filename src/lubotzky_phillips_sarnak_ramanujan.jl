@@ -4,7 +4,7 @@ for an odd prime ``p``.
     
 The Legendre symbol determines whether ``a`` is a [quadratic residue](https://en.wikipedia.org/wiki/Quadratic_residue)
 modulo ``p``, and specifically controls which group ``\\mathrm{PGL}`` or ``\\mathrm{PSL}`` is used in the LPS construction
-of the Ramanujan graph [lubotzky1988ramanuja](@cite).
+of the Ramanujan graph [lubotzky1988ramanujan](@cite).
 
 - When ``\\frac{p}{q} = -1``, the graph ``X^{p,q}`` is constructed as a Cayley graph of ``\\mathrm{PGL}(2, \\mathbb{Z}/q\\mathbb{Z})``
 and is *bipartite* of order ``q(q^2-1)``.
