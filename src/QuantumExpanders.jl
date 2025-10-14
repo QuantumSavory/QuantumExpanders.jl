@@ -10,7 +10,7 @@ using LinearAlgebra
 using Random
 using Graphs
 using Graphs: add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix, add_vertex!, has_edge,
-vertices
+vertices, induced_subgraph, AbstractGraph
 using Oscar: coefficients, zzModRingElem, MatSpace, zero_matrix, base_ring, lift, matrix_space, zzModMatrix,
 residue_ring, ZZ, nullspace, transpose, base_ring, kron, Matrix, embed, GroupElem, MatrixGroup, FqField
 using Graphs: add_edge!, nv, ne, neighbors, Graphs
@@ -31,8 +31,8 @@ export
     # Morgenstern Ramanujan
     morgenstern_generators, alternative_morgenstern_generators, AllPairs, FirstOnly,
     # Lubotzky-Phillips-Sarnak Ramanujan
-    ramanujan_graph, scalar_matrices_GL, scalar_matrices_SL, solve_four_squares,
-    process_solutions, lps_generators, legendre_symbol, LPS, lps_graph,
-    edge_vertex_incidence_graph, is_unbalanced_bipartite, alon_chung_lemma
+    scalar_matrices_GL, scalar_matrices_SL, solve_four_squares, process_solutions,
+    lps_generators, legendre_symbol, LPS, lps_graph, edge_vertex_incidence_graph,
+    is_unbalanced_bipartite, alon_chung_lemma, is_ramanujan
 
 end #module

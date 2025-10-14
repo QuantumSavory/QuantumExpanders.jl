@@ -301,8 +301,9 @@ edge-vertex incidence graph of G is a bipartite graph with vertex
 set E ∪ V and edge set {(e, v) ∈ E × V : v is an endpoint of e}.
 
 # Example
+
 ```jldoctest
-julia> G = ramanujan_graph(5, 13);
+julia> G = LPS(5, 13);
 
 julia> B = edge_vertex_incidence_graph(G);
 
@@ -357,35 +358,52 @@ function is_unbalanced_bipartite(B)
 end
 
 """
-Test Alon–Chung Lemma, which states that for a `d`-regular graph `G` with `n`
-vertices and second-largest eigenvalue `λ`, the number of edges in the subgraph
-induced by any subset `X` of size `γ*n` is at most:
-- (d * n / 2) * (γ² + (λ / d) * γ * (1 - γ))
+Test the Alon–Chung Lemma [alon1988explicit](@cite) on a regular graph.
+
+Returns whether the bound holds, edges in induced subgraph, and theoretical upper bound.
+
+The Alon–Chung Lemma states that for a d-regular graph G with n vertices and 
+second-largest eigenvalue ``\\lambda``, any vertex subset ``X \\subseteq V(G)``
+with cardinality ``|X| = \\gamma n`` satisfies:
+
+```math
+\\begin{aligned}
+|E(G[X])| \\leq \\frac{dn}{2} \\left( \\gamma^2 + \\frac{\lambda}{d} \\gamma (1 - \\gamma) \\right)
+\\end{aligned}
+```
+
+where ``E(G[X])`` denotes the edge set of the [induced subgraph](https://en.wikipedia.org/wiki/Induced_subgraph).
 
 # Example
+
 ```jldoctest
-julia> G = ramanujan_graph(5, 13);
+julia> G = LPS(5, 13);
 
 julia> B = edge_vertex_incidence_graph(G);
 
 julia> alon_chung_lemma(B, 0.1)
 (true, 143, 1520.6609615130378)
 ```
+
+See [expandercode556667](@cite) for more details how Alon–Chung Lemma is used to characterize the
+edge-vertex incidence graphs of the LPS expander graphs in the construction of classical expander codes.
+
+### Arguments
+- `g`: A d-regular graph
+- `γ`: Fraction of vertices in the subset (0 < γ < 1)
 """
-function alon_chung_lemma(g, γ)
+function alon_chung_lemma(g::AbstractGraph, γ::Real)
     n = nv(g)
     d = degree(g, 1)
     A = adjacency_matrix(g)
     Λ = eigvals(Matrix(A))
     λ = sort(Λ, rev=true)[2]
-    # Select a random subset X of size γ * n
-    subset_size = Int(round(γ * n))
-    X = randperm(n)[1:subset_size]
-    # Count the number of edges in the subgraph induced by X
-    induced_subgraph_result = induced_subgraph(g, X)
-    induced_subgraph_g = induced_subgraph_result[1]
-    num_edges_in_subgraph = ne(induced_subgraph_g)
-    bound = (d * n / 2) * (γ^2 + (λ / d) * γ * (1 - γ))
-    satisfies_bound = num_edges_in_subgraph ≤ bound
-    return satisfies_bound, num_edges_in_subgraph, bound
+    # Select a random subset X of size γ*n.
+    s = Int(round(γ*n))
+    X = randperm(n)[1:s]
+    subg = induced_subgraph(g, X)[1]
+    # Count the number of edges in the subgraph induced by X.
+    edges = ne(subg)
+    bound = (d*n/2)*(γ^2+(λ/d)*γ*(1-γ))
+    return edges ≤ bound, edges, bound
 end
