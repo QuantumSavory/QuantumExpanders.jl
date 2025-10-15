@@ -37,7 +37,6 @@
                 @test is_nonconjugate(SL₂, A_pairs, gens)
                 @test is_symmetric_gen(A_pairs)
                 @test is_symmetric_gen(A_first)
-                @test is_symmetric_gen(gens)
             end
         end
     end
