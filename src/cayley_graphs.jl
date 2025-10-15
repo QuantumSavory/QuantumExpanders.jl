@@ -234,7 +234,24 @@ function tanner_code_quadripartite(mgraph,edge_q_index,edge_ab_index,local_code)
     code
 end
 
-"""Check the TNC condition of [dinur2022locally](@cite)."""
+"""
+Check whether the *symmetric generating* sets A and B satisfy the *Total Non-Conjugacy* (TNC) 
+condition for the given group G, as defined in [dinur2022locally](@cite).
+
+Given a finite group with symmetric generating sets A and B (i.e., ``A = A^-1`` and ``B = B^-1``),
+the TNC condition requires:
+
+```math
+\\begin{aligned}
+\\forall a \\in A, \\forall b \\in B, \\forall g \\in G, \\quad g^{-1} a g \\neq b
+\\end{aligned}
+```
+
+### Arguments
+- `group`: The finite group G
+- `genA`: Symmetric generating set A for G (``A = A^-1``)
+- `genB`: Symmetric generating set B for G (``B = B^-1``)
+"""
 function is_nonconjugate(group,genA,genB)
     genset = Set(genB)
     for g in group
