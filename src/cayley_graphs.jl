@@ -247,7 +247,7 @@ the TNC condition requires:
 \\end{aligned}
 ```
 
-# Arguments
+### Arguments
 - `group`: The finite group G
 - `genA`: Symmetric generating set A for G (``A = A^-1``)
 - `genB`: Symmetric generating set B for G (``B = B^-1``)
