@@ -21,7 +21,7 @@
         ]
         for (l, i) in test_cases
             @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
-                SL_group, gens = morgenstern_generators(l, i)
+                SL₂, gens = morgenstern_generators(l, i)
                 q = 2^l
                 @test length(gens) == q + 1
                 Fq = finite_field(2, l, :a)[1]
@@ -30,11 +30,11 @@
                 @test length(sols) == q + 1
                 @test all(((γ,δ),) -> γ^2 + γ*δ + ε*δ^2 == one(Fq), sols)
                 A_first = alternative_morgenstern_generators(gens, FirstOnly())
-                @test is_nonconjugate(SL_group,  A_first, gens)
                 @test length(A_first) == 2*q
                 A_pairs = alternative_morgenstern_generators(gens, AllPairs())
                 @test length(A_pairs) == q*(q+1)
-                @test is_nonconjugate(SL_group,  A_pairs, gens)
+                @test is_nonconjugate(SL₂, A_first, gens)
+                @test is_nonconjugate(SL₂, A_pairs, gens)
                 @test is_symmetric_gen(A_pairs)
                 @test is_symmetric_gen(A_first)
                 @test is_symmetric_gen(gens)

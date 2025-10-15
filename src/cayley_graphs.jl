@@ -238,8 +238,8 @@ end
 Check whether the *symmetric generating* sets A and B satisfy the *Total Non-Conjugacy* (TNC) 
 condition for the given group G, as defined in [dinur2022locally](@cite).
 
-Given a finite group with symmetric generating sets A and B (i.e., ``A = A^-1`` and ``B = B^-1``).
-The generating sets A and B satisfy the TNC condition if:
+Given a finite group with symmetric generating sets A and B (i.e., ``A = A^-1`` and ``B = B^-1``),
+the TNC condition requires:
 
 ```math
 \\begin{aligned}
