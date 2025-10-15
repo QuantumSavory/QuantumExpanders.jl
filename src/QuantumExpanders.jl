@@ -29,7 +29,8 @@ export
     cayley_right, cayley_left, is_nonconjugate, is_ramanujan, is_symmetric_gen,
     cayley_complex_square_graphs, cayley_complex_square_graphs_quadripartite,
     # Morgenstern Ramanujan
-    morgenstern_generators, alternative_morgenstern_generators, AllPairs, FirstOnly,
+    morgenstern_solutions, morgenstern_generators, alternative_morgenstern_generators,
+    AllPairs, FirstOnly,
     # Lubotzky-Phillips-Sarnak Ramanujan
     scalar_matrices_GL, scalar_matrices_SL, solve_four_squares, process_solutions,
     lps_generators, legendre_symbol, lps_graph, LPS, is_ramanujan
