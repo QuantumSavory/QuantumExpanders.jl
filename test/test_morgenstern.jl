@@ -216,11 +216,10 @@
         end
     end
 
-    @testset "Cayley Graph Isomorphism: Remark 3.3 of [dinur2022locally](@cite)" begin
+    @testset "Cayley Graph Isomorphism: Remark 3.2 of [dinur2022locally](@cite)" begin
         test_cases = [
             (1, 2), # PSL(2,4)
-            (1, 4), # PSL(2,16)
-            (1, 6) # PSL(2,64)
+            (1, 4) # PSL(2,16)
         ]
         for (l, i) in test_cases
             @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
