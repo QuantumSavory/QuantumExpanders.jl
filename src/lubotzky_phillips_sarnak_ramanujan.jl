@@ -197,7 +197,7 @@ function is_ramanujan(g::SimpleGraph, p::Int)
     λ = sort(eigvals(Matrix(A)), rev=true)
     bound = 2 * sqrt(p)
     non_trivial = filter(x -> abs(x - (p+1)) > 1e-6, λ)
-    return all(v -> abs(v) ≤ bound + 1e-6, non_trivial)
+    return all(v -> abs(v) <= bound + 1e-6, non_trivial)
 end
 
 """
