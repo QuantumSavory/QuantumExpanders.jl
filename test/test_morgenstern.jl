@@ -4,6 +4,7 @@
     using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color
     using GraphsColoring: DSATUR, color, Greedy
     using IGraphs: IGraph, IGVectorInt, LibIGraph
+    using NautyGraphs: NautyGraph, is_isomorphic
     using LinearAlgebra
     using QuantumExpanders
     using SimpleGraphConverter
@@ -212,6 +213,37 @@
             @test length(sols_fast) == length(sols_slow) == order(F) + 1
             @test all(((γ, δ),) -> γ^2+γ*δ+δ^2*ε == one(F), sols_fast)
             @test all(((γ, δ),) -> γ^2+γ*δ+δ^2*ε == one(F), sols_slow)
+        end
+    end
+
+    @testset "Cayley Graph Isomorphism: Remark 3.3" begin
+        test_cases = [
+            (1, 2), # PSL(2,4)
+            (1, 4), # PSL(2,16)
+            (1, 6) # PSL(2,64)
+        ]
+        for (l, i) in test_cases
+            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+                SL₂, gens = morgenstern_generators(l, i)
+                q = 2^l
+                cayleyᵣ = cayley_right(SL₂, gens)
+                cayleyₗ = cayley_left(SL₂, gens)
+                cgᵣ = NautyGraph(cayleyᵣ)
+                cgₗ = NautyGraph(cayleyₗ)
+                @test is_isomorphic(cgᵣ, cgₗ)
+                A_first = alternative_morgenstern_generators(gens, FirstOnly())
+                cayleyᵣ = cayley_right(SL₂, A_first)
+                cayleyₗ = cayley_left(SL₂, A_first)
+                cgᵣ = NautyGraph(cayleyᵣ)
+                cgₗ = NautyGraph(cayleyₗ)
+                @test is_isomorphic(cgᵣ, cgₗ)
+                A_pairs = alternative_morgenstern_generators(gens, AllPairs())
+                cayleyᵣ = cayley_right(SL₂, A_pairs)
+                cayleyₗ = cayley_left(SL₂, A_pairs)
+                cgᵣ = NautyGraph(cayleyᵣ)
+                cgₗ = NautyGraph(cayleyₗ)
+                @test is_isomorphic(cgᵣ, cgₗ)
+            end
         end
     end
 end
