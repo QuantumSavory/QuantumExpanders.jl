@@ -90,11 +90,11 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
                     donedict[q] = q_count
                 end
                 e₀ = iᵍ,iᵃᵍᵇ # the order is important
-                add_edge!(𝒢₀□,e₀...)
+                Multigraphs.add_edge!(𝒢₀□,e₀...)
                 edge₀_q_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = donedict[q]
                 edge₀_ab_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = ab_count
                 e₁ = iᵍᵇ,iᵃᵍ # the order is important
-                add_edge!(𝒢₁□,e₁...)
+                Multigraphs.add_edge!(𝒢₁□,e₁...)
                 edge₁_q_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = donedict[q]
                 edge₁_ab_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = ab_count
             end
@@ -102,10 +102,10 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     end
     @info "|Q| = |G||A||B|/2 = $(q_count)"
     @assert q_count==N*length(A)*length(B)÷2
-    @assert unique(values(indegree(𝒢₀□))) == [length(A)*length(B)]
-    @assert unique(values(indegree(𝒢₁□))) == [length(A)*length(B)]
-    @assert unique(values(outdegree(𝒢₀□))) == [length(A)*length(B)]
-    @assert unique(values(outdegree(𝒢₁□))) == [length(A)*length(B)]
+    @assert unique(values(Multigraphs.indegree(𝒢₀□))) == [length(A)*length(B)]
+    @assert unique(values(Multigraphs.indegree(𝒢₁□))) == [length(A)*length(B)]
+    @assert unique(values(Multigraphs.outdegree(𝒢₀□))) == [length(A)*length(B)]
+    @assert unique(values(Multigraphs.outdegree(𝒢₁□))) == [length(A)*length(B)]
     𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
 
@@ -164,11 +164,11 @@ function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph
                 q = (iᵍ,iᵃᵍᵇ,iᵍᵇ,iᵃᵍ) # note each q is unique due to the quadripartite construction
                 q_count+=1
                 e₀ = iᵍ,iᵃᵍᵇ # the order is important
-                add_edge!(𝒢₀□,e₀...)
+                Multigraphs.add_edge!(𝒢₀□,e₀...)
                 edge₀_q_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = q_count
                 edge₀_ab_idx[(e₀...,Multigraphs.mul(𝒢₀□,e₀...))] = ab_count
                 e₁ = iᵍᵇ,iᵃᵍ # the order is important
-                add_edge!(𝒢₁□,e₁...)
+                Multigraphs.add_edge!(𝒢₁□,e₁...)
                 edge₁_q_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = q_count
                 edge₁_ab_idx[(e₁...,Multigraphs.mul(𝒢₁□,e₁...))] = ab_count
             end
@@ -176,10 +176,10 @@ function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph
     end
     @info "|Q| = |G||A||B| = $(q_count)"
     @assert q_count==N*length(A)*length(B)
-    @assert sort!(unique(values(indegree(𝒢₀□)))) == [0, length(A)*length(B)]
-    @assert sort!(unique(values(indegree(𝒢₁□)))) == [0, length(A)*length(B)]
-    @assert sort!(unique(values(outdegree(𝒢₀□)))) == [0, length(A)*length(B)]
-    @assert sort!(unique(values(outdegree(𝒢₁□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(Multigraphs.indegree(𝒢₀□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(Multigraphs.indegree(𝒢₁□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(Multigraphs.outdegree(𝒢₀□)))) == [0, length(A)*length(B)]
+    @assert sort!(unique(values(Multigraphs.outdegree(𝒢₁□)))) == [0, length(A)*length(B)]
 
     𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
