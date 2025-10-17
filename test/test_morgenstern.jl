@@ -216,7 +216,7 @@
         end
     end
 
-    @testset "Cayley Graph Isomorphism: Remark 3.3" begin
+    @testset "Cayley Graph Isomorphism: Remark 3.3 of [dinur2022locally](@cite)" begin
         test_cases = [
             (1, 2), # PSL(2,4)
             (1, 4), # PSL(2,16)
