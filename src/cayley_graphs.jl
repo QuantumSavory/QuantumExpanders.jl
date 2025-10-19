@@ -36,6 +36,13 @@ It is more convenient to count the edges as directional (i.e. double counting th
 as that makes it much easier to track how edge indices correspond to indices in A×B.
 """
 function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
+    @assert is_symmetric_gen(A) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
+    @assert is_symmetric_gen(B) "Definition 3.1: Set B must be symmetric generating set [dinur2022locally](@cite)"
+    # Identity element of G is neither in A nor in B
+    @assert !(one(G) in A) "Definition 3.1: Identity must not be in A [dinur2022locally](@cite)"
+    @assert !(one(G) in B) "Definition 3.1: Identity must not be in B [dinur2022locally](@cite)"
+    # Total No-conjugacy Condition
+    @assert is_nonconjugate(G, A, B) "Definition 3.6: ∀ a ∈ A, b ∈ B, g ∈ G, g⁻¹ag ≠ b [dinur2022locally](@cite)"
     # Mappings between group element as a matrix and as an integer enumerator
     idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
@@ -100,16 +107,36 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
             end
         end
     end
-    @info "|Q| = |G||A||B|/2 = $(q_count)"
-    @assert q_count==N*length(A)*length(B)÷2
-    @assert unique(values(Multigraphs.indegree(𝒢₀□))) == [length(A)*length(B)]
-    @assert unique(values(Multigraphs.indegree(𝒢₁□))) == [length(A)*length(B)]
-    @assert unique(values(Multigraphs.outdegree(𝒢₀□))) == [length(A)*length(B)]
-    @assert unique(values(Multigraphs.outdegree(𝒢₁□))) == [length(A)*length(B)]
-    𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
+    @assert N == length(G) "Vertex sets V₀ and V₁ each have size |G| [gu2022efficient](@cite)"
+    @info "|V₀| = |V₁| = |G| = $N"
+    total_A_edges = N*length(A)
+    total_B_edges = N*length(B)
+    @info "|E_A| = Δ|G| = $(total_A_edges), |E_B| = Δ|G| = $(total_B_edges)"
+    @assert total_A_edges == N*length(A) "|E_A| = Δ|G| [gu2022efficient](@cite)"
+    @assert total_B_edges == N*length(B) "|E_B| = Δ|G| [gu2022efficient](@cite)"
+    @info "|Q| = Δ²|G|/2 = $(q_count)"
+    @assert q_count == N*length(A)*length(B)÷2 "|Q| = Δ²|G|/2 [gu2022efficient](@cite)"
+    @assert unique(values(Multigraphs.indegree(𝒢₀□))) == [length(A)*length(B)] "𝒢₀□ is Δ²-regular multigraph [gu2022efficient](@cite)"
+    @assert unique(values(Multigraphs.indegree(𝒢₁□))) == [length(A)*length(B)] "𝒢₁□ is Δ²-regular multigraph [gu2022efficient](@cite)"
+    @assert unique(values(Multigraphs.outdegree(𝒢₀□))) == [length(A)*length(B)] "𝒢₀□ is Δ²-regular multigraph [gu2022efficient](@cite)" 
+    @assert unique(values(Multigraphs.outdegree(𝒢₁□))) == [length(A)*length(B)] "𝒢₁□ is Δ²-regular multigraph [gu2022efficient](@cite)"
+    # "By TNC, each square is guaranteed to have 4 distinct vertices [gu2022efficient](@cite)"
+    for g in G, a in A, b in B
+        vertices = [g, a*g, g*b, a*g*b]
+        @assert length(Set(vertices)) == 4 "By TNC, each square has 4 distinct vertices [gu2022efficient](@cite)"
+    end
+    # "There are Δ² squares incident to a given vertex [gu2022efficient](@cite)"
+    for g_idx in 1:N
+        g = idx_to_mat[g_idx]
+        incident_squares = Set()
+        for a in A, b in B
+            square_vertices = (mat_to_idx[g], mat_to_idx[a*g], mat_to_idx[g*b], mat_to_idx[a*g*b])
+            push!(incident_squares, square_vertices)
+        end
+        @assert length(incident_squares) == length(A) * length(B) "Each vertex has Δ² incident squares [gu2022efficient](@cite)"
+    end
+    return 𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
-
-
 
 """Construct the Cayley complex square graphs 𝒢₀□ and 𝒢₁□ using the quadripartite construction as presented in [leverrier2022quantum](@cite).
 
