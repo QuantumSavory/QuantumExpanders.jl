@@ -223,8 +223,8 @@ and ``\\Delta_B = |B|``. We typically take ``\\Delta_A = \\Delta_B = \\Delta`` [
 Classical linear block codes employ redundancy to encode information and
 detect/correct errors. An `[n,k]`-code encodes k information bits into `n > k`
 bits, described by either:
-- A ``k \\times n`` generator matrix $G$ whose rows span the code space
-- An ``(n-k) \\times n`` parity check matrix $H$ representing parity constraints
+- A ``k \\times n`` generator matrix G whose rows span the code space
+- An ``(n-k) \\times n`` parity check matrix H representing parity constraints
 
 These satisfy ``GH^T = 0``.
 
