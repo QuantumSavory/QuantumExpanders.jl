@@ -127,10 +127,10 @@ function enumerate_square_incidences(G, A, B)
                 type0_incidence = Any[
                     0, # bipartition_type: V₀
                     g_idx, # anchor_vertex: v ∈ V₀ seeing this square
-                    [g_idx, ag_idx + group_size, gb_idx + group_size, agb_idx],# square vertices
+                    [g_idx, ag_idx + group_size, gb_idx + group_size, agb_idx], # square vertices
                     [g_idx, ag_idx + group_size, gb_idx + group_size, agb_idx], # vertex indices  
                     [a_idx, b_idx], # generator_indices identifying the square
-                    a_idx,            # a_idx: coordinate in A for local view
+                    a_idx, # a_idx: coordinate in A for local view
                     b_idx,  # b_idx: coordinate in B for local view
                     square_counter  # square_idx: unique identifier for qubit
                 ]
@@ -163,9 +163,9 @@ function enumerate_square_incidences(G, A, B)
     @info "Square complex construction complete" 
     @info "Group order |G| = $group_size, |A| = $(length(A)), |B| = $(length(B))"
     @info "Total square incidences: $num_incidences"
-    @info "Physical squares (qubits): $(group_size * length(A) * length(B))"
-    @info "Graph Γ₀^□: $(group_size) vertices, $(group_size * length(A) * length(B)) edges"
-    @info "Graph Γ₁^□: $(group_size) vertices, $(group_size * length(A) * length(B)) edges"
+    @info "Physical squares (qubits): $(group_size*length(A)*length(B))"
+    @info "Graph Γ₀^□: $(group_size) vertices, $(group_size*length(A)*length(B)) edges"
+    @info "Graph Γ₁^□: $(group_size) vertices, $(group_size*length(A)*length(B)) edges"
     return incidence_matrix
 end
 
@@ -294,9 +294,9 @@ function parity_matrix(group_size, square_incidences, classical_code_pair)
     end
     hx, hz = unique(x_stabs, dims=1), unique(z_stabs, dims=1)
     hx, hz = [Int.(hx), Int.(hz)]
-    # expected quantum rate and LDPC parameters [radebold2025explicit](@cite).
-    ρ_A = size(generator_A, 1) / Δ_A
-    expected_rate = round((2ρ_A - 1)^2, digits=4)
+    # Expected quantum rate and LDPC parameters [radebold2025explicit](@cite).
+    ρ_A = size(generator_A, 1)/Δ_A
+    expected_rate = round((2ρ_A-1)^2, digits=4)
     max_stabilizer_weight = Δ_A*Δ_B
     max_qubit_degree = 4*ρ_A*(1-ρ_A)*Δ_A*Δ_B
     @info "Physical qubits: $num_qubits"
