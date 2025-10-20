@@ -310,7 +310,7 @@ basis elements of ``C_1`` to produce ``\\dim(C_1)|V_1|`` X-type stabilizers at e
     as [gu2022efficient](@cite) employ a multigraph construction where qubits are
     identified with edges of the multigraphs ``\\mathcal{G}_0^\\square`` and ``\\mathcal{G}_1^\\square``
     derived from the left-right Cayley complex. These multigraphs have vertex set
-    ``V_0 = G \\times \\{0\\}`` (respectively ``V_1 = G \\times \\{1\\}). Edges correspond
+    ``V_0 = G \\times \\{0\\}`` (respectively ``V_1 = G \\times \\{1\\}``). Edges correspond
     to squares ``q \\in Q`` connecting vertices ``(g,0)`` and ``(agb,0)`` via the relation
     ``g' = agb``. Stabilizers are built from Tanner codes associated with these multigraphs.
 
