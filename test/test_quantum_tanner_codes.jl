@@ -19,7 +19,7 @@
                 A, G = A_first, SL₂
                 ρ, Δ = 0.3, 4
                 squares = enumerate_square_incidences(G, A, B)
-                classical_code_pair = random_code_pair(rho, delta)
+                classical_code_pair = random_code_pair(ρ, Δ)
                 hx, hz = parity_matrix(length(G), squares, classical_code_pair)
                 A_pairs = alternative_morgenstern_generators(B, AllPairs())
                 A, G = A_pairs, SL₂
