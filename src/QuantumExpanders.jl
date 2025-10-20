@@ -21,6 +21,7 @@ include("cayley_graphs.jl")
 include("quantum_tanner_code.jl")
 include("tensor_codes.jl")
 include("morgenstern.jl")
+include("quantum_tanner_codes.jl")
 include("lubotzky_phillips_sarnak_ramanujan.jl")
 
 export
