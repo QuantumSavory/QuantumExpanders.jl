@@ -131,8 +131,8 @@ function enumerate_square_incidences(G, A, B)
                     [g_idx, ag_idx + group_size, gb_idx + group_size, agb_idx], # vertex indices  
                     [a_idx, b_idx], # generator_indices identifying the square
                     a_idx, # a_idx: coordinate in A for local view
-                    b_idx,  # b_idx: coordinate in B for local view
-                    square_counter  # square_idx: unique identifier for qubit
+                    b_idx, # b_idx: coordinate in B for local view
+                    square_counter # square_idx: unique identifier for qubit
                 ]
                 push!(square_incidences, type0_incidence)
                 # TYPE 1 INCIDENCE: Square as seen from V₁ vertex ag ∈ V₁  
@@ -147,7 +147,7 @@ function enumerate_square_incidences(G, A, B)
                     [a_idx, b_idx], # same generator_indices (same physical square)
                     a_idx, # same a_idx
                     b_idx, # same b_idx  
-                    square_counter  # new incidence index
+                    square_counter # new incidence index
                 ]
                 push!(square_incidences, type1_incidence)
             end
@@ -163,9 +163,9 @@ function enumerate_square_incidences(G, A, B)
     @info "Square complex construction complete" 
     @info "Group order |G| = $group_size, |A| = $(length(A)), |B| = $(length(B))"
     @info "Total square incidences: $num_incidences"
-    @info "Physical squares (qubits): $(group_size*length(A)*length(B))"
-    @info "Graph Γ₀^□: $(group_size) vertices, $(group_size*length(A)*length(B)) edges"
-    @info "Graph Γ₁^□: $(group_size) vertices, $(group_size*length(A)*length(B)) edges"
+    @info "Physical squares (qubits): $(group_size * length(A) * length(B))"
+    @info "Graph Γ₀^□: $(group_size) vertices, $(group_size * length(A) * length(B)) edges"
+    @info "Graph Γ₁^□: $(group_size) vertices, $(group_size * length(A) * length(B)) edges"
     return incidence_matrix
 end
 
@@ -175,6 +175,142 @@ Returns the matrix for X-type stabilizer generators (dim(C₁) × |V₁| rows) a
 
 The quantum code Q = (C₀, C₁) is defined by two classical Tanner codes where Z-stabilizers: C₀ = T(Γ₀^□, (C_A ⊗ C_B)^⊥) and
 X-stabilizers: C₁ = T(Γ₁^□, (C_A^⊥ ⊗ C_B^⊥)^⊥).
+
+# Left-Right Cayley Complex
+
+A Cayley graph `\\Gamma(V,E)`` provides a graph-theoretic representation
+of a group G via a fixed generating set S that excludes the identity element.
+The vertex set V corresponds to elements of G, with an edge connecting vertices
+g and g' if and only if there exists ``s \\in S`` such that `g \\cdot s = g'``,
+where ``\\cdot`` denotes the group operation. Edges are undirected if S is symmetric,
+i.e., ``S = S^{-1}``.
+
+A left-right Cayley complex extends this construction by incorporating both left
+and right group actions. Specifically, we consider two symmetric generating sets A
+and B and define a *bipartite* structure on the vertices.
+
+Consider G be a finite group with symmetric generating sets ``A, B \\subseteq G``
+such that ``\\langle A, B \\rangle = G`` and ``A = A^{-1}``, ``B = B^{-1}``. The
+left-right Cayley complex ``\\Gamma(G,A,B)`` is defined as:
+
+- Vertex set: ``V = V_0 \\cup V_1 = \\{g_i \\mid g \\in G, i \\in \\{0,1\\}\\}``
+- Edge sets:
+   - E_A = \\{(g_i, (ag)_j) \\mid a \\in A, g \\in G, i \\neq j\\}
+   - E_B = \\{(g_i, (gb)_j) \\mid b \\in B, g \\in G, i \\neq j\\}
+
+This construction yields a 2-dimensional complex whose faces are 4-cycles of the form:
+
+```math
+\\begin{aligned}
+\\{g_i, (ag)_j, (gb)_j, (agb)_i \\mid i,j \\in \\{0,1\\}, i \\neq j\\}
+\\end{aligned}
+```
+
+To ensure distinct opposite vertices in each face, we require that elements of A and B are not conjugates:
+
+```math
+\\begin{aligned}
+\\forall a \\in A, b \\in B, g \\in G, \\quad ag \\neq gb
+\\end{aligned}
+```
+
+Satisfying *Total Non-Conjugacy (TNC)* guarantees a proper 2D complex structure
+where each vertex has degree ``\\Delta_A + \\Delta_B``, with ``\\Delta_A = |A|``
+and ``\\Delta_B = |B|``. We typically take ``\\Delta_A = \\Delta_B = \\Delta`` [radebold2025explicit](@cite).
+
+# Tensor codes
+
+Classical linear block codes employ redundancy to encode information and
+detect/correct errors. An `[n,k]`-code encodes k information bits into `n > k`
+bits, described by either:
+- A ``k \\times n`` generator matrix $G$ whose rows span the code space
+- An ``(n-k) \\times n`` parity check matrix $H$ representing parity constraints
+
+These satisfy ``GH^T = 0``.
+
+For quantum Tanner codes, [radebold2025explicit](@cite) utilize a pair of binary
+linear codes ``(C_A, C_B)`` where:
+- ``C_A`` encodes ``\\rho\\Delta_A`` bits into ``\\Delta_A`` bits (``0 < \\rho < 1``)
+- ``C_B`` encodes ``(1-\\rho)\\Delta_B`` bits into ``\\Delta_B`` bits
+
+We construct tensor codes:
+
+```math
+\\begin{aligned}
+C_0 = C_A \\otimes C_B, \\quad C_1 = C_A^\\perp \\otimes C_B^\\perp
+\\end{aligned}
+```
+
+where ``\\dim(C_i \\otimes C_j) = \\dim(C_i)\\dim(C_j)`` and ``d(C_i \\otimes C_j) = d(C_i)d(C_j)``
+for minimum distances.
+
+# Quantum Tanner codes
+
+To construct a quantum Tanner code, we begin with a left-right Cayley complex
+``\\Gamma(G,A,B)`` built from a finite non-abelian group ``G``. Let ``Q`` denote
+the complete set of faces of the complex, and for each vertex ``v \\in V``, let ``Q(v)``
+be the set of faces incident to ``v`` [radebold2025explicit](@cite). We note that ``Q(v)``
+is uniquely determined by pairs ``(a,b) \\in A \\times B`` for every vertex ``v``. The
+physical qubits of the quantum code are placed on the faces of the complex, so the code
+length is ``n = |Q|``.
+
+We select two classical binary linear codes ``C_A`` and ``C_B``, where ``C_A``
+encodes ``\\rho\\Delta_A`` logical bits into ``\\Delta_A`` bits for some
+``0 < \\rho < 1``, and ``C_B`` encodes ``(1-\\rho)\\Delta_B`` logical bits into
+``\\Delta_B`` bits. From these, we form the tensor codes ``C_0 = C_A \\otimes C_B``
+and ``C_1 = C_A^\\perp \\otimes C_B^\\perp``. Since the number of columns of ``C_A`` is
+``\\Delta_A``, we can label these columns with elements of ``A``. Having fixed this
+association, we use the notation that codewords of ``C_A`` are binary vectors ``\\beta_A \\in \\mathbb{F}_2^A``.
+Similarly, we associate the columns of ``C_B`` with elements of ``B``, so that
+codewords of ``C_B`` are binary vectors ``\\beta_B \\subset \\mathbb{F}_2^B``. This
+correspondence between the bits of the classical codes and group elements yields a natural
+labeling of the columns of the tensor codes ``C_0`` and ``C_1`` by pairs ``(a,b) \\in A \\times B``
+[radebold2025explicit](@cite).
+
+To construct stabilizer generators on ``\\Gamma(G,A,B)`` using the classical codes
+``C_0`` and ``C_1``, [radebold2025explicit](@cite)
+define a function
+
+```math
+\\begin{aligned}
+\\phi_v: A \\times B \\to Q(v)
+\\end{aligned}
+```
+
+for each vertex v by ``\\phi_v(a,b) = {v, av, vb, avb}``, which maps a pair of
+group generators to the unique face in ``Q(v)`` that it defines. One can verify that
+``\\phi_v`` is bijective [radebold2025explicit](@cite). For each basis element
+``\\beta`` of ``C_0``, we associate a set of pairs of group generators
+
+```math
+\\begin{aligned}
+Z(\\beta) = \\{(a,b) \\mid \\beta_{(a,b)} = 1\\}
+\\end{aligned}
+```
+
+corresponding to the nonzero entries of ``\\beta``. Each Z-stabilizer generator
+of the quantum Tanner code is then specified by a choice of vertex ``v \\in V_0``
+and classical codeword ``\\beta`` such that the ``Z``-stabilizer generator has
+support equal to the set of faces ``\\phi_v(Z(\\beta))``. We can characterize this
+stabilizer generator by a binary vector ``x \\in \\mathbb{F}2^Q``, where the |Q| qubits
+are labelled by faces of the complex. For a given Z-stabilizer generator, the restriction
+``x|{Q(v)}`` equals a basis element ``\\beta`` of ``C_0`` (based on a fixed ordering of
+the faces), and is zero elsewhere. This yields ``\\dim(C_0)|V_0|`` Z-type stabilizer
+generators, which correspond to codewords of C_0 placed locally at each vertex [radebold2025explicit](@cite).
+
+[radebold2025explicit](@cite) repeat the same process for vertices ``v \\in V_1`` and
+basis elements of ``C_1`` to produce ``\\dim(C_1)|V_1|`` X-type stabilizers at each vertex of that partition.
+
+!!! note
+    We note that there exist alternative formulations of quantum Tanner codes in the literature. The construction
+    presented in [radebold2025explicit](@cite) utilizes the left-right Cayley complex structure where qubits
+    are placed on the square faces (the 4-cycles of the form ``\\{g, ag, gb, agb\\}``) and stabilizers are
+    defined via local tensor codes at vertices. In contrast, other approaches such as [gu2022efficient](@cite)
+    employ a multigraph construction where qubits are identified with edges of the multigraphs ``\\mathcal{G}_0^\\square``
+    and ``\\mathcal{G}_1^\\square`` derived from the left-right Cayley complex. These multigraphs have vertex set
+    ``V_0 = G \\times \\{0\\}`` (respectively ``V_1 = G \\times \\{1\\}). Edges correspond to squares ``q \\in Q``
+    connecting vertices ``(g,0)`` and ``(agb,0)`` via the relation ``g' = agb``. Stabilizers are built from Tanner
+    codes associated with these multigraphs.
 
 # Stabilizer Matrices
 
@@ -294,9 +430,9 @@ function parity_matrix(group_size, square_incidences, classical_code_pair)
     end
     hx, hz = unique(x_stabs, dims=1), unique(z_stabs, dims=1)
     hx, hz = [Int.(hx), Int.(hz)]
-    # Expected quantum rate and LDPC parameters [radebold2025explicit](@cite).
-    ρ_A = size(generator_A, 1)/Δ_A
-    expected_rate = round((2ρ_A-1)^2, digits=4)
+    # expected quantum rate and LDPC parameters [radebold2025explicit](@cite).
+    ρ_A = size(generator_A, 1) / Δ_A
+    expected_rate = round((2ρ_A - 1)^2, digits=4)
     max_stabilizer_weight = Δ_A*Δ_B
     max_qubit_degree = 4*ρ_A*(1-ρ_A)*Δ_A*Δ_B
     @info "Physical qubits: $num_qubits"

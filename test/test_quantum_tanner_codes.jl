@@ -2,7 +2,7 @@
     using Test
     using Oscar
     using QuantumExpanders
-    using QuantumExpanders: random_code, parity_matrix
+    using QuantumExpanders: random_code_pair, parity_matrix, enumerate_square_incidences
     using Nemo: zero_matrix, base_ring, transpose, rank
 
     @testset "Morgenstern Generators" begin
