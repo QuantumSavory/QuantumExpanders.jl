@@ -33,6 +33,10 @@ export
     AllPairs, FirstOnly,
     # Lubotzky-Phillips-Sarnak Ramanujan
     scalar_matrices_GL, scalar_matrices_SL, solve_four_squares, process_solutions,
-    lps_generators, legendre_symbol, lps_graph, LPS, is_ramanujan
+    lps_generators, legendre_symbol, lps_graph, LPS, is_ramanujan,
+    # Tensor codes
+    uniformly_random_code_checkmatrix, dual_code,
+    # Quantum Tanner codes
+    enumerate_square_incidences, parity_matrix, random_code_pair
 
 end #module
