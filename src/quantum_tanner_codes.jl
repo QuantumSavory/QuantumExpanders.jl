@@ -1,4 +1,88 @@
 """
+Generate a pair of symmetric generating sets for group G, each of size δ.
+
+Returns a pair of symmetric sets that generate G and satisfy the non-conjugacy condition of [dinur2022locally](@cite).
+
+### Arguments
+- `G`: A finite group
+- `δ`: The size of each generating set (must be less than |G|/2)
+"""
+function find_generators(G, δ)
+    elems = collect(G)
+    count = 0
+    while count < 10000
+        A = elem_type(G)[]
+        B = elem_type(G)[]
+        used = Set{elem_type(G)}()
+        shuffled = shuffle(elems)
+        ord2 = [g for g in elems if order(g) == 2 && g != one(G)]
+        pairs = []
+        for g in elems
+            if g != one(G) && order(g) > 2 && !(g in used) && !(inv(g) in used)
+                push!(pairs, (g, inv(g)))
+                push!(used, g)
+                push!(used, inv(g))
+            end
+        end
+        ord2 = shuffle(ord2)
+        pairs = shuffle(pairs)
+        usedA = Set{elem_type(G)}()
+        A = _build_sym_set(G, δ, ord2, pairs, usedA)
+        rem_ord2 = [g for g in ord2 if !(g in usedA)]
+        rem_pairs = [(g, inv_g) for (g, inv_g) in pairs if !(g in usedA) && !(inv_g in usedA)]
+        usedB = copy(usedA)
+        B = _build_sym_set(G, δ, rem_ord2, rem_pairs, usedB)
+        if length(A) == δ && length(B) == δ && is_symmetric_gen(A) && is_symmetric_gen(B) && _are_disjoint(A, B)
+            if is_nonconjugate(G, A, B)
+                all_gens = vcat(A, B)
+                H, emb = sub(G, all_gens)
+                if H == G
+                    return [A, B]
+                end
+            end
+        end
+        count += 1
+    end
+    return false
+end
+
+function _build_sym_set(G, target_size, ord2, pairs, used)
+    S = elem_type(G)[]
+    p_idx = 1
+    o_idx = 1
+    while length(S) < target_size
+        if p_idx <= length(pairs) && length(S) <= target_size - 2
+            p = pairs[p_idx]
+            if !(p[1] in used) && !(p[2] in used)
+                push!(S, p[1])
+                push!(S, p[2])
+                push!(used, p[1])
+                push!(used, p[2])
+                p_idx += 1
+            else
+                p_idx += 1
+            end
+        elseif o_idx <= length(ord2)
+            g = ord2[o_idx]
+            if !(g in used)
+                push!(S, g)
+                push!(used, g)
+                o_idx += 1
+            else
+                o_idx += 1
+            end
+        else
+            break
+        end
+    end
+    return S
+end
+
+function _are_disjoint(A, B)
+    return isempty(intersect(Set(A), Set(B)))
+end
+
+"""
 Generate a pair of random classical codes (C_A, C_B) for quantum Tanner code construction [radebold2025explicit](@cite)
 
 Returns a tuple (C_A, C_B) where each code is represented as a tuple (parity check matrix, generator matrix).
@@ -11,7 +95,7 @@ Both codes have block length Δ, with C_A having dimension ⌊ρΔ⌋ and C_B ha
 function random_code_pair(ρ::Real, Δ::Int)
     H_A = uniformly_random_code_checkmatrix(ρ, Δ)
     G_A = dual_code(H_A)
-    H_B = uniformly_random_code_checkmatrix(ρ, Δ)
+    H_B = uniformly_random_code_checkmatrix(1-ρ, Δ)
     G_B = dual_code(H_B)
     H_A = Matrix{Int}(lift.(H_A))
     G_A = Matrix{Int}(lift.(G_A))
@@ -47,126 +131,147 @@ The bijective mapping φ_v: A×B → Q(v) is defined as [radebold2025explicit](@
 This establishes a natural labeling of qubits (*faces*) by generator pairs, allowing classical tensor codes
 to be applied locally at each vertex [radebold2025explicit](@cite).
 
-Returns incidence_matrix`: Matrix where each row represents a square incidence with:
-[`bipartition_type`, `anchor_vertex`, `square_vertices`, `vertex_indices`, `generator_indices`,
-`a_idx`, `b_idx`, `square_idx`] where each field means:
-
--  `bipartition_type::Int`: 
-    - 0: Square viewed from a V₀ vertex (for Z-stabilizer assignment)
-    - 1: Square viewed from a V₁ vertex (for X-stabilizer assignment)
-    - Each physical square appears twice: once as type 0 and once as type 1
-  
-- `anchor_vertex::Int`: 
-    - The reference vertex from which this square is viewed
-    - For type 0: vertex index in V₀ (range: 1 to |G|)
-    - For type 1: vertex index in V₁ (range: |G|+1 to 2|G|)
-    - This is the vertex that "sees" this square in its local view
-  
-- `square_vertices::Vector{Int}`: 
-    - All 4 vertices of the square in cyclic order
-    - Format: [v₀₁, v₁₁, v₁₂, v₀₂] where v₀ᵢ ∈ V₀, v₁ᵢ ∈ V₁
-    - For type 0: [g, ag, gb, agb] with proper bipartite indexing
-    - For type 1: [ag, gb, agb, g] (rotated view)
-  
-- `vertex_indices::Vector{Int}`: 
-    - Integer indices of the square vertices (same as square_vertices)
-    - V₀ vertices: 1 to |G|, V₁ vertices: |G|+1 to 2|G|
-    - Used for graph construction and neighborhood queries
-  
-- `generator_indices::Vector{Int}`: 
-    - Pair [a_idx, b_idx] identifying which generators created this square
-    - a_idx ∈ {1,...,|A|} indexes into the generating set A
-    - b_idx ∈ {1,...,|B|} indexes into the generating set B
-    - Together they uniquely identify the square up to the anchor vertex
-  
-- `a_idx::Int`: 
-    - Index of the left generator a ∈ A that created this square
-    - Used as the "row coordinate" in the local A×B grid at each vertex
-  
-- `b_idx::Int`: 
-    - Index of the right generator b ∈ B that created this square  
-    - Used as the "column coordinate" in the local A×B grid at each vertex
-  
-- `square_idx::Int`: 
-    - Identifier for this square incidence
-    - Note: Each physical square has two incidence records (type 0 and type 1)
-    - Used as the physical qubit index in the quantum code
-    - Range: 1 to 2|G||A||B| (total incidences), but physical qubits = |G||A||B|
-
 ### Arguments
 - `G`: A finite group
 - `A`: Symmetric generating set (closed under inverses) not containing the identity
 - `B`: Symmetric generating set (closed under inverses) not containing the identity
 """
-function enumerate_square_incidences(G, A, B)
+function enumerate_squares(G, A, B)
     @assert is_symmetric_gen(A) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
     @assert is_symmetric_gen(B) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
     @assert !(one(G) in A) "Definition 3.1: Identity must not be in A [dinur2022locally](@cite)"
     @assert !(one(G) in B) "Definition 3.1: Identity must not be in A [dinur2022locally](@cite)"
     @assert is_nonconjugate(G, A, B) "Definition 3.6: ∀ a ∈ A, b ∈ B, g ∈ G, g⁻¹ag ≠ b [dinur2022locally](@cite)"
-    group_elements = collect(G)
-    element_to_idx = Dict(elem => i for (i, elem) in enumerate(group_elements))
-    group_size = length(group_elements)
-    square_incidences = []
-    square_counter = 0
-    @showprogress for g in group_elements
-        g_idx = element_to_idx[g]
-        for (a_idx, a) in enumerate(A)
-            ag = a*g
-            ag_idx = element_to_idx[ag]
-            for (b_idx, b) in enumerate(B)
-                square_counter += 1
-                # Lets find all vertices of the square q = {(g,0), (ag,1), (gb,1), (agb,0)}
-                gb = g*b
-                agb = a*g*b
-                gb_idx = element_to_idx[gb]
-                agb_idx = element_to_idx[agb]
-                # TYPE 0 INCIDENCE: Square as seen from V₀ vertex g ∈ V₀
-                # This defines an edge in Γ₀^□ = (V₀, Q) connecting g and agb
-                # Used for constructing Z-stabilizers via Tanner code T(Γ₀^□, C_A ⊗ C_B) see II. Section 3 of [radebold2025explicit](@cite).
-                type0_incidence = Any[
-                    0, # bipartition_type: V₀
-                    g_idx, # anchor_vertex: v ∈ V₀ seeing this square
-                    [g_idx, ag_idx + group_size, gb_idx + group_size, agb_idx], # square vertices
-                    [g_idx, ag_idx + group_size, gb_idx + group_size, agb_idx], # vertex indices  
-                    [a_idx, b_idx], # generator_indices identifying the square
-                    a_idx, # a_idx: coordinate in A for local view
-                    b_idx, # b_idx: coordinate in B for local view
-                    square_counter # square_idx: unique identifier for qubit
+    idx_to_mat = collect(G)
+    n = length(collect(G))
+    mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
+    Q = []
+    Q_redundant = ([], [])
+    for g in idx_to_mat
+        for a in A
+            for b in B
+                gᵢ = mat_to_idx[g]
+                agᵢ = mat_to_idx[a*g] 
+                gbᵢ = mat_to_idx[g*b]
+                agbᵢ = mat_to_idx[a*g*b]
+                aᵢ, bᵢ = findfirst(==(a), A), findfirst(==(b), B)
+                aᵢₙᵥᵢ, bᵢₙᵥᵢ = findfirst(==(inv(a)), A), findfirst(==(inv(b)), B)
+                # Typeₒ squares ({g₀, (a·g)₁, (g·b)₁, (a·g·b)₀}) represent Z-type stabilizers at V₀ vertices.
+                typeₒ□ = [
+                    0,
+                    [g, a*g, g*b, a*g*b],
+                    [gᵢ, agᵢ+n, gbᵢ+n, agbᵢ],
+                    [a, b],
+                    [aᵢ, bᵢ]
                 ]
-                push!(square_incidences, type0_incidence)
-                # TYPE 1 INCIDENCE: Square as seen from V₁ vertex ag ∈ V₁  
-                # This defines an edge in Γ₁^□ = (V₁, Q) connecting ag and gb
-                # Used for constructing X-stabilizers via Tanner code T(Γ₁^□, C_A^⊥ ⊗ C_B^⊥)
-                square_counter += 1
-                type1_incidence = Any[
-                    1, # bipartition_type: V₁
-                    ag_idx + group_size, # anchor_vertex: v ∈ V₁ seeing this square
-                    [ag_idx + group_size, gb_idx + group_size, agb_idx, g_idx], # rotated view
-                    [ag_idx + group_size, gb_idx + group_size, agb_idx, g_idx], # vertex indices
-                    [a_idx, b_idx], # same generator_indices (same physical square)
-                    a_idx, # same a_idx
-                    b_idx, # same b_idx  
-                    square_counter # new incidence index
+                typeₒ□_alt₁ = [
+                    0, [a*g*b, g*b, a*g, g],
+                    [agbᵢ, gbᵢ+n, agᵢ+n, gᵢ],
+                    [inv(a), inv(b)], [aᵢₙᵥᵢ, bᵢₙᵥᵢ]
                 ]
-                push!(square_incidences, type1_incidence)
+                typeₒ□_alt₂ = [
+                    1, [g*b, a*g*b, g, a*g], 
+                    [gbᵢ+n, agbᵢ, gᵢ, agᵢ+n],
+                    [a, inv(b)], [aᵢ, bᵢₙᵥᵢ]
+                ]
+                typeₒ□_alt₃ = [
+                    1, [a*g, g, a*g*b, g*b],
+                    [agᵢ+n, gᵢ, agbᵢ, gbᵢ+n], 
+                    [inv(a), b], [aᵢₙᵥᵢ, bᵢ]
+                ]
+                is_new□ = true
+                for existing□ in Q
+                    if (existing□[3] == typeₒ□[3] || existing□[3] == typeₒ□_alt₁[3] || existing□[3] == typeₒ□_alt₂[3] || existing□[3] == typeₒ□_alt₃[3])
+                        is_new□ = false
+                        break
+                    end
+                end
+                if is_new□
+                    push!(Q, typeₒ□)
+                    □ᵢ = length(Q)
+                    push!(typeₒ□, □ᵢ)
+                    push!(typeₒ□_alt₁, □ᵢ)
+                    push!(typeₒ□_alt₂, □ᵢ)
+                    push!(typeₒ□_alt₃, □ᵢ)
+                    push!(Q_redundant[1], typeₒ□)
+                    push!(Q_redundant[1], typeₒ□_alt₁)
+                    push!(Q_redundant[2], typeₒ□_alt₂)
+                    push!(Q_redundant[2], typeₒ□_alt₃)
+                end
+                # Type 1 squares {g₁, (a·g)₀, (g·b)₀, (a·g·b)₁} represent X-stabilizers at V₁ vertices
+                type□₁ = [
+                    1,
+                    [g, a*g, g*b, a*g*b],
+                    [gᵢ + n, agᵢ, gbᵢ, agbᵢ + n],
+                    [a, b],
+                    [aᵢ, bᵢ]
+                ]
+                type□₁_alt₁ = [
+                    1, [a*g*b, g*b, a*g, g],
+                    [agbᵢ+n, gbᵢ, agᵢ, gᵢ+n],
+                    [inv(a), inv(b)], [aᵢₙᵥᵢ, bᵢₙᵥᵢ]
+                ]
+                type□₁_alt₂ = [
+                    0, [g*b, a*g*b, g, a*g],
+                    [gbᵢ, agbᵢ+n, gᵢ+n, agᵢ],
+                    [a, inv(b)], [aᵢ, bᵢₙᵥᵢ]
+                ]
+                type□₁_alt₃ = [
+                    0, [a*g, g, a*g*b, g*b],
+                    [agᵢ, gᵢ+n, agbᵢ+n, gbᵢ],
+                    [inv(a), b], [aᵢₙᵥᵢ, bᵢ]
+                ]
+                is_new□ = true
+                for existing□ in Q
+                    if (existing□[3] == type□₁[3] || existing□[3] == type□₁_alt₁[3] || existing□[3] == type□₁_alt₂[3] || existing□[3] == type□₁_alt₃[3])
+                        is_new□ = false
+                        break
+                    end
+                end
+                if is_new□
+                    push!(Q, type□₁)
+                    □ᵢ = length(Q)
+                    push!(type□₁, □ᵢ)
+                    push!(type□₁_alt₁, □ᵢ)
+                    push!(type□₁_alt₂, □ᵢ)
+                    push!(type□₁_alt₃, □ᵢ)
+                    push!(Q_redundant[2], type□₁)
+                    push!(Q_redundant[2], type□₁_alt₁)
+                    push!(Q_redundant[1], type□₁_alt₂)
+                    push!(Q_redundant[1], type□₁_alt₃)
+                end
             end
         end
     end
-    num_incidences = length(square_incidences)
-    incidence_matrix = Matrix{Any}(undef, num_incidences, 8)
-    for (i, incidence_row) in enumerate(square_incidences)
-        for j in 1:8
-            incidence_matrix[i, j] = incidence_row[j]
+    @info "Left-right Cayley complex Γ(G,A,B) square enumeration complete"
+    @info "Group order |G| = $(length(collect(G))), |A| = $(length(A)), |B| = $(length(B))"
+    @info "Physical qubits: $(length(Q))"
+    @info "Left-right Cayley complex Γ(G,A,B): enumerated $(length(Q)) faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)"
+    @info "Squares incident to vertices: $(length(Q_redundant[1])) at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)"
+    @info "Squares incident to vertices: $(length(Q_redundant[2])) at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)"
+    return Q, Q_redundant
+end
+
+"""Convert redundant face list to matrix format for stabilizer matrix generation."""
+function convert_squares_to_incidence_matrix(Q_redundant::Tuple)
+    V₀□, V₁□ = Q_redundant
+    total□ = length(V₀□)+length(V₁□)
+    matrix□ = zeros(Int, total□, 8)
+    rowᵢ = 1
+    for (type□, list□) in enumerate([V₀□, V₁□])
+        for square in list□
+            matrix□[rowᵢ, 1] = square[1]
+            matrix□[rowᵢ, 2] = square[3][1] 
+            matrix□[rowᵢ, 3] = square[3][2]
+            matrix□[rowᵢ, 4] = square[3][3]
+            matrix□[rowᵢ, 5] = square[3][4]
+            matrix□[rowᵢ, 6] = square[5][1]
+            matrix□[rowᵢ, 7] = square[5][2]
+            matrix□[rowᵢ, 8] = square[6]
+            rowᵢ += 1
         end
     end
-    @info "Square complex construction complete" 
-    @info "Group order |G| = $group_size, |A| = $(length(A)), |B| = $(length(B))"
-    @info "Total square incidences: $num_incidences"
-    @info "Physical squares (qubits): $(group_size * length(A) * length(B))"
-    @info "Graph Γ₀^□: $(group_size) vertices, $(group_size * length(A) * length(B)) edges"
-    @info "Graph Γ₁^□: $(group_size) vertices, $(group_size * length(A) * length(B)) edges"
-    return incidence_matrix
+    return matrix□
 end
 
 """Construct X and Z stabilizer generators for the Quantum Tanner Code introduced in [leverrier2022quantum](@cite).
@@ -352,94 +457,71 @@ dim(C₁) × |V₁| ≈ 2ρ(1-ρ)Δ²|G| and number of Z-stabs is dim(C₀) × |
   - G_A, G_B: generator matrices
   - C_A = ker(H_A), C_B = ker(H_B) are the classical component codes.
 """
-function parity_matrix(group_size, square_incidences, classical_code_pair)
-    # Extract classical code components
-    parity_check_A, generator_A = classical_code_pair[1]
-    parity_check_B, generator_B = classical_code_pair[2]
-    num_incidences = size(square_incidences, 1)
-    Δ_A = size(generator_A, 2)
-    Δ_B = size(generator_B, 2)
-    # Number of physical qubits = number of squares in complex
-    num_qubits = Int(Δ_A*Δ_B*group_size/2)
-    # Z-stabilizers use constraint code: (C_A ⊗ C_B)^⊥ = C_A^⊥ ⊗ F₂^B + F₂^A ⊗ C_B^⊥
-    # But we generate them via the dual: we take generators of C_A ⊗ C_B
-    z_constraint_generators = kron(generator_A, generator_B)
-    # X-stabilizers use constraint code: (C_A^⊥ ⊗ C_B^⊥)^⊥ = C_A ⊗ F₂^B + F₂^A ⊗ C_B  
-    # Generated via generators of C_A^⊥ ⊗ C_B^⊥
-    x_constraint_generators = kron(parity_check_A, parity_check_B)
-    # Z-stabilizers: From Tanner code T(Γ₀^□, (C_A ⊗ C_B)^⊥)
-    # For each v ∈ V₀, constrain local view to be orthogonal to C_A ⊗ C_B
-    z_stabs = Matrix{Int}(undef, 0, num_qubits)
-    for v0_vertex in 1:group_size
-        local_squares = [] # Squares incident to this V₀ vertex
-        # Collect all Type 0 square incidences anchored at this V₀ vertex: φ_v: A×B → Q(v) for v ∈ V₀
-        for incidence_idx in 1:num_incidences
-            incidence_data = square_incidences[incidence_idx, :]
-            if length(incidence_data) >= 2 && incidence_data[1] == 0 && incidence_data[2] == v0_vertex
-                push!(local_squares, incidence_data)
+function parity_matrix(group_order::Int, squares_matrix::Matrix{Int}, classical_codes::Tuple)
+    H_A, G_A = classical_codes[1]
+    H_B, G_B = classical_codes[2]
+    Δ = size(G_A, 2)
+    num_squares = size(squares_matrix, 1)
+    # Number of physical qubits: n = Δ²|G|/2
+    n = Int(Δ^2*group_order/2)
+    # Construct tensor codes as per [radebold2025explicit](@cite).
+    # C₀ = C_A ⊗ C_B for Z-stabilizers [radebold2025explicit](@cite)
+    # C₁ = C_A^⊥ ⊗ C_B^⊥ for X-stabilizers [radebold2025explicit](@cite)
+    β₀ = kron(G_A, G_B) # Basis for C₀ [radebold2025explicit](@cite)
+    β₁ = kron(H_A, H_B) # Basis for C₁ [radebold2025explicit](@cite)
+    hz = Matrix{Int}(undef, 0, n)
+    hx = Matrix{Int}(undef, 0, n)
+    # Z-type stabilizers on V₀ vertices [radebold2025explicit](@cite)
+    for v in 1:group_order  # V₀ vertices: 1 to |G|
+        # Collect squares incident to vertex v
+        squares_at_v = Matrix{Int}(undef, 0, 8)
+        for square_idx in 1:num_squares 
+            square = squares_matrix[square_idx, :]
+            if (square[1] == 0 && square[2] == v) # Type 0 square at vertex v
+                squares_at_v = [squares_at_v; square']
             end
         end
-        # Apply each generator of C_A ⊗ C_B to the local square arrangement where each generator corresponds to a basis element β ∈ C₀
-        for constraint_idx in 1:size(z_constraint_generators, 1)
-            constraint_vector = z_constraint_generators[constraint_idx, :]
-            constraint_matrix = transpose(reshape(constraint_vector, (Δ_A, Δ_B)))
-            stabilizer = zeros(num_qubits)
-            for square_incidence in local_squares
-                if length(square_incidence) >= 8
-                    qubit_idx = square_incidence[8]
-                    a_coordinate = square_incidence[6]
-                    b_coordinate = square_incidence[7]
-                    # Assign coefficient from constraint code based on local coordinates which implements the support set Z(β) = {(a,b) | β_(a,b) = 1} [radebold2025explicit](@cite).
-                    if 1 <= qubit_idx <= num_qubits && 1 <= a_coordinate <= Δ_A && 1 <= b_coordinate <= Δ_B
-                        stabilizer[qubit_idx] = constraint_matrix[a_coordinate, b_coordinate]
-                    end
-                end
+        # Generate Z-stabilizers from basis of C₀
+        for basis_idx in 1:size(β₀, 1)
+            β_row = β₀[basis_idx, :]
+            # Reshape to Δ × Δ matrix indexed by generator pairs (a,b)
+            β_matrix = transpose(reshape(β_row, (Δ, Δ)))
+            stabs_vec = zeros(n)
+            for incident_square in eachrow(squares_at_v)
+                qubit_index = incident_square[8] # Physical qubit index
+                aᵢ = incident_square[6] # Generator index from A
+                bᵢ = incident_square[7] # Generator index from B
+                # Set qubit according to classical code
+                stabs_vec[qubit_index] = β_matrix[aᵢ, bᵢ]
             end
-            z_stabs = [z_stabs; transpose(stabilizer)]
-            z_stabs = unique(z_stabs, dims=1)
+            hz = [hz; transpose(stabs_vec)]
+            hz = unique(hz, dims=1)
         end
     end
-    # X-stabilizers: From Tanner code T(Γ₁^□, (C_A^⊥ ⊗ C_B^⊥)^⊥)  
-    # For each v ∈ V₁, constrain local view to be orthogonal to C_A^⊥ ⊗ C_B^⊥
-    x_stabs = Matrix{Int}(undef, 0, num_qubits)
-    for v1_vertex in (group_size + 1):(2 * group_size)
-        local_squares = []  # Squares incident to this V₁ vertex
-        # Collect all Type 1 square incidences anchored at this V₁ vertex which implements the mapping φ_v: A×B → Q(v) for v ∈ V₁ [radebold2025explicit](@cite).
-        for incidence_idx in 1:num_incidences
-            incidence_data = square_incidences[incidence_idx, :]
-            if length(incidence_data) >= 2 && incidence_data[1] == 1 && incidence_data[2] == v1_vertex
-                push!(local_squares, incidence_data)
+    # X-Type stabilizers on V₁ vertices [radebold2025explicit](@cite)
+    for v in (group_order+1):(2*group_order) # V₁ vertices: |G|+1 to 2|G|
+        squares_at_v = Matrix{Int}(undef, 0, 8)
+        for square_idx in 1:num_squares 
+            square = squares_matrix[square_idx, :]
+            if (square[1] == 1 && square[2] == v) # Type 1 square at vertex v
+                squares_at_v = [squares_at_v; square']
             end
         end
-        # Apply each generator of C_A^⊥ ⊗ C_B^⊥ to the local square arrangement where generator corresponds to a basis element β ∈ C₁
-        for constraint_idx in 1:size(x_constraint_generators, 1)
-            constraint_vector = x_constraint_generators[constraint_idx, :]
-            constraint_matrix = transpose(reshape(constraint_vector, (size(parity_check_A, 2), size(parity_check_B, 2))))
-            stabilizer = zeros(num_qubits)
-            for square_incidence in local_squares
-                if length(square_incidence) >= 8
-                    qubit_idx = square_incidence[8]
-                    a_coordinate = square_incidence[6]  
-                    b_coordinate = square_incidence[7]   
-                    if 1 <= qubit_idx <= num_qubits && 1 <= a_coordinate <= size(constraint_matrix, 1) && 1 <= b_coordinate <= size(constraint_matrix, 2)
-                        stabilizer[qubit_idx] = constraint_matrix[a_coordinate, b_coordinate]
-                    end
-                end
+        # Generate X-stabilizers from basis of C₁
+        for basis_idx in 1:size(β₁, 1)
+            β_row = β₁[basis_idx, :]
+            β_matrix = transpose(reshape(β_row, (Δ, Δ)))
+            stabs_vec = zeros(n)
+            for incident_square ∈ eachrow(squares_at_v)
+                qubit_index = incident_square[8] # Physical qubit index
+                aᵢ = incident_square[6] # Generator index from A
+                bᵢ = incident_square[7] # Generator index from B
+                stabs_vec[qubit_index] = β_matrix[aᵢ, bᵢ]
             end
-            x_stabs = [x_stabs; transpose(stabilizer)]
-            x_stabs = unique(x_stabs, dims=1)
+            hx = [hx; transpose(stabs_vec)]
+            hx = unique(hx, dims=1)
         end
     end
-    hx, hz = unique(x_stabs, dims=1), unique(z_stabs, dims=1)
-    hx, hz = [Int.(hx), Int.(hz)]
-    # expected quantum rate and LDPC parameters [radebold2025explicit](@cite).
-    ρ_A = size(generator_A, 1) / Δ_A
-    expected_rate = round((2ρ_A - 1)^2, digits=4)
-    max_stabilizer_weight = Δ_A*Δ_B
-    max_qubit_degree = 4*ρ_A*(1-ρ_A)*Δ_A*Δ_B
-    @info "Physical qubits: $num_qubits"
-    @info "Expected quantum rate: ≥ $expected_rate"
-    @info "LDPC properties: max stabilizer weight = $max_stabilizer_weight, max qubit degree = $max_qubit_degree"
-    iszero(mod.(hx*hz',2))
+    hx, hz = unique(hx, dims=1), unique(hz, dims=1)
     return hx, hz
 end

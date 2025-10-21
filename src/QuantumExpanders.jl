@@ -38,6 +38,6 @@ export
     # Tensor codes
     uniformly_random_code_checkmatrix, dual_code,
     # Quantum Tanner codes
-    enumerate_square_incidences, parity_matrix, random_code_pair
+    enumerate_squares, parity_matrix, random_code_pair
 
 end #module
