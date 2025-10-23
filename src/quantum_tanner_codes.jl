@@ -104,6 +104,28 @@ function random_code_pair(ρ::Real, Δ::Int)
     return ((H_A, G_A), (H_B, G_B))
 end
 
+struct QuantumTannerCode <: AbstractCSSCode
+    group::FPGroup
+    A::Vector{FPGroupElem}
+    B::Vector{FPGroupElem}
+    classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}}
+    function QuantumTannerCode(group::FPGroup,
+                              A::Vector{FPGroupElem},
+                              B::Vector{FPGroupElem}, 
+                              classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}})
+        @assert length(A) == length(B) "A and B must have the same size"
+        H_A, G_A = classical_codes[1]
+        H_B, G_B = classical_codes[2]
+        @assert size(H_A, 2) == length(A) "H_A parity check columns must match |A|"
+        @assert size(G_A, 2) == length(A) "G_A generator columns must match |A|"
+        @assert size(H_B, 2) == length(B) "H_B parity check columns must match |B|"
+        @assert size(G_B, 2) == length(B) "G_B generator columns must match |B|"
+        all(iszero, mod.(H_A*G_A', 2)) || @warn "C_A may not be a valid classical code: H_A*G_A^T ≠ 0"
+        all(iszero, mod.(H_B*G_B', 2)) || @warn "C_B may not be a valid classical code: H_B*G_B^T ≠ 0"
+        return new(group, A, B, classical_codes)
+    end
+end
+
 """
 Enumerate all square incidences in the Left-Right Cayley Complex
 following introduction by [dinur2022locally](@cite).
@@ -457,7 +479,11 @@ dim(C₁) × |V₁| ≈ 2ρ(1-ρ)Δ²|G| and number of Z-stabs is dim(C₀) × |
   - G_A, G_B: generator matrices
   - C_A = ker(H_A), C_B = ker(H_B) are the classical component codes.
 """
-function parity_matrix(group_order::Int, squares_matrix::Matrix{Int}, classical_codes::Tuple)
+function parity_matrix_xz(c::QuantumTannerCode)
+    Q, Q_red = enumerate_squares(c.group, c.A, c.B)
+    squares_matrix = convert_squares_to_incidence_matrix(Q_red)
+    group_order = order(c.group)
+    classical_codes = c.classical_codes
     H_A, G_A = classical_codes[1]
     H_B, G_B = classical_codes[2]
     Δ = size(G_A, 2)
@@ -523,5 +549,13 @@ function parity_matrix(group_order::Int, squares_matrix::Matrix{Int}, classical_
         end
     end
     hx, hz = unique(hx, dims=1), unique(hz, dims=1)
-    return hx, hz
+    return Int.(hx), Int.(hz)
 end
+
+parity_matrix_x(c::QuantumTannerCode) = parity_matrix_xz(c)[1]
+
+parity_matrix_z(c::QuantumTannerCode) = parity_matrix_xz(c)[2]
+
+code_n(c::QuantumTannerCode) = order(c.group)*length(c.A)*length(c.B)÷2
+
+code_k(c::QuantumTannerCode) = code_n(c) - rank(matrix(GF(2), parity_matrix_x(c))) - rank(matrix(GF(2), parity_matrix_z(c)))

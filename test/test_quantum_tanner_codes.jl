@@ -1,8 +1,12 @@
 @testitem "Test Quantum Tanner Codes" begin
     using Test
     using Oscar
+    using QECCore
     using QuantumExpanders
-    using QuantumExpanders: random_code_pair, parity_matrix, enumerate_square_incidences
+    using QuantumClifford
+    using QuantumClifford.ECC
+    using QuantumClifford.ECC: code_n, code_k
+    using QuantumExpanders: random_code_pair, parity_matrix
     using Nemo: zero_matrix, base_ring, transpose, rank
 
     @testset "New instances of Quantum Tanner codes using standard dihedral group" begin
@@ -23,10 +27,13 @@
         H_B = [1 1 1]
         G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
         classical_code_pair = ((H_A, G_A), (H_B, G_B))
-        Q, Q_red = enumerate_squares(G, A, B)
-        squares = QuantumExpanders.convert_squares_to_incidence_matrix(Q_red)
-        hx, hz = parity_matrix(length(G), squares, classical_code_pair)
-        iszero(mod.(hx*hz',2))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab) 
+        @test code_n(c) == 36 == ns && code_k(c) == 9 == ks
+
 
         # [[54, 7, d]]
         F = free_group([:s, :r])
@@ -45,10 +52,12 @@
         H_B = [1 1 1]
         G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
         classical_code_pair = ((H_A, G_A), (H_B, G_B))
-        Q, Q_red = enumerate_squares(G, A, B)
-        squares = QuantumExpanders.convert_squares_to_incidence_matrix(Q_red)
-        hx, hz = parity_matrix(length(G), squares, classical_code_pair)
-        iszero(mod.(hx*hz',2))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab) 
+        @test code_n(c) == 54 == ns && code_k(c) == 7 == ks
 
         # [[72, 16, d]]
         F = free_group([:s, :r])
@@ -67,10 +76,12 @@
         H_B = [1 1 1]
         G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
         classical_code_pair = ((H_A, G_A), (H_B, G_B))
-        Q, Q_red = enumerate_squares(G, A, B)
-        squares = QuantumExpanders.convert_squares_to_incidence_matrix(Q_red)
-        hx, hz = parity_matrix(length(G), squares, classical_code_pair)
-        iszero(mod.(hx*hz',2))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab) 
+        @test code_n(c) == 72 == ns && code_k(c) == 16 == ks
 
         # [[200, 13, d]]
         F = free_group([:s, :r])
@@ -89,10 +100,12 @@
         H_B = [1 1 1 1 1; 0 1 0 0 1]
         G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
         classical_code_pair = ((H_A, G_A), (H_B, G_B))
-        Q, Q_red = enumerate_squares(G, A, B)
-        squares = QuantumExpanders.convert_squares_to_incidence_matrix(Q_red)
-        hx, hz = parity_matrix(length(G), squares, classical_code_pair)
-        iszero(mod.(hx*hz',2))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab) 
+        @test code_n(c) == 200 == ns && code_k(c) == 13 == ks
 
         # [[250, 14, d]]
         F = free_group([:s, :r])
@@ -111,9 +124,11 @@
         H_B = [1 1 1 0 0; 1 1 0 0 1]
         G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
         classical_code_pair = ((H_A, G_A), (H_B, G_B))
-        Q, Q_red = enumerate_squares(G, A, B)
-        squares = QuantumExpanders.convert_squares_to_incidence_matrix(Q_red)
-        hx, hz = parity_matrix(length(G), squares, classical_code_pair)
-        iszero(mod.(hx*hz',2))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab) 
+        @test code_n(c) == 250 == ns && code_k(c) == 14 == ks
     end
 end

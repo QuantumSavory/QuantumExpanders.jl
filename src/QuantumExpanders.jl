@@ -6,22 +6,25 @@ module QuantumExpanders
 
 using Nemo
 using Oscar
+using QECCore
+import QECCore: code_n, code_k, parity_matrix, parity_matrix_z, parity_matrix_x, distance, AbstractCSSCode
 using LinearAlgebra
 using Random
 using Graphs
 using Graphs: add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix, add_vertex!, has_edge,
 vertices, induced_subgraph, AbstractGraph, is_bipartite, bipartite_map
 using Oscar: coefficients, zzModRingElem, MatSpace, zero_matrix, base_ring, lift, matrix_space, zzModMatrix,
-residue_ring, ZZ, nullspace, transpose, base_ring, kron, Matrix, embed, GroupElem, MatrixGroup, FqField
+residue_ring, ZZ, nullspace, transpose, base_ring, kron, Matrix, embed, GroupElem, MatrixGroup, FqField, transpose, matrix,
+rank, GF, FPGroup, FPGroupElem
 using Graphs: add_edge!, nv, ne, neighbors, Graphs
 using Multigraphs
 using ProgressMeter
 
 include("cayley_graphs.jl")
-include("quantum_tanner_code.jl")
 include("tensor_codes.jl")
 include("morgenstern.jl")
 include("quantum_tanner_codes.jl")
+include("quantum_tanner_code_multigraphs.jl")
 include("lubotzky_phillips_sarnak_ramanujan.jl")
 
 export
@@ -38,6 +41,7 @@ export
     # Tensor codes
     uniformly_random_code_checkmatrix, dual_code,
     # Quantum Tanner codes
-    enumerate_squares, parity_matrix, random_code_pair
+    enumerate_squares, random_code_pair, convert_squares_to_incidence_matrix, QuantumTannerCode,
+    parity_matrix, parity_matrix_x, parity_matrix_z, parity_matrix_xz, code_n, code_k 
 
 end #module
