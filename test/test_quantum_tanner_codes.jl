@@ -165,6 +165,11 @@
             @test is_symmetric_gen(A)
             @test is_symmetric_gen(B)
             @test is_nonconjugate(G, B, A)
+            H_A = [1 0 0; 1 1 1]
+            G_A = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_A))))
+            H_B = [1 1 1]
+            G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
+            classical_code_pair = ((H_A, G_A), (H_B, G_B))
             c = QuantumTannerCode(G, A, B, classical_code_pair)
             hx, hz = parity_matrix_x(c), parity_matrix_z(c)
             @test iszero(mod.(hx*hz',2))
