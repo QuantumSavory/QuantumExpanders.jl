@@ -35,14 +35,7 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab) 
         @test code_n(c) == 36 == ns && code_k(c) == 9 == ks
-        distance(c, DistanceMIPAlgorithm(solver=HiGHS))
-        classical_code_pair = random_code_pair(0.5, 3)
-        c = QuantumTannerCode(G, A, B, classical_code_pair)
-        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
-        @test iszero(mod.(hx*hz',2))
-        stab = parity_checks(c)
-        ns, ks = code_n(stab), code_k(stab)
-        distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 2
     
         # [[54, 7, 4]]
         F = free_group([:s, :r])
@@ -67,7 +60,7 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab) 
         @test code_n(c) == 54 == ns && code_k(c) == 7 == ks
-        distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
 
         # [[72, 16, 4]]
         F = free_group([:s, :r])
@@ -92,7 +85,7 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab) 
         @test code_n(c) == 72 == ns && code_k(c) == 16 == ks
-        distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
 
         # [[200, 13, 4]]
         F = free_group([:s, :r])
@@ -117,7 +110,7 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab) 
         @test code_n(c) == 200 == ns && code_k(c) == 13 == ks
-        distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
 
         # [[250, 14, 6]]
         F = free_group([:s, :r])
@@ -142,7 +135,7 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab) 
         @test code_n(c) == 250 == ns && code_k(c) == 14 == ks
-        distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 6
 
         # [[250, 14, 8]]
         A = [r^3, r^-3, r, r^-1, s*r^-2]
@@ -156,6 +149,6 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab) 
         @test code_n(c) == 250 == ns && code_k(c) == 14 == ks
-        distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 8
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 8
     end
 end
