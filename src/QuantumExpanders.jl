@@ -15,7 +15,7 @@ using Graphs: add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degre
 vertices, induced_subgraph, AbstractGraph, is_bipartite, bipartite_map
 using Oscar: coefficients, zzModRingElem, MatSpace, zero_matrix, base_ring, lift, matrix_space, zzModMatrix,
 residue_ring, ZZ, nullspace, transpose, base_ring, kron, Matrix, embed, GroupElem, MatrixGroup, FqField, transpose, matrix,
-rank, GF, FPGroup, FPGroupElem
+rank, GF, FPGroup, FPGroupElem, Group, GroupElem
 using Graphs: add_edge!, nv, ne, neighbors, Graphs
 using Multigraphs
 using ProgressMeter

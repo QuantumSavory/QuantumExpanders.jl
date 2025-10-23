@@ -105,13 +105,13 @@ function random_code_pair(ρ::Real, Δ::Int)
 end
 
 struct QuantumTannerCode <: AbstractCSSCode
-    group::FPGroup
-    A::Vector{FPGroupElem}
-    B::Vector{FPGroupElem}
+    group::Group
+    A::Vector{GroupElem}
+    B::Vector{GroupElem}
     classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}}
-    function QuantumTannerCode(group::FPGroup,
-                              A::Vector{FPGroupElem},
-                              B::Vector{FPGroupElem}, 
+    function QuantumTannerCode(group::Group,
+                              A::Vector{GroupElem},
+                              B::Vector{GroupElem}, 
                               classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}})
         @assert length(A) == length(B) "A and B must have the same size"
         H_A, G_A = classical_codes[1]
