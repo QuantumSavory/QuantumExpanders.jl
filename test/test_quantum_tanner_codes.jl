@@ -150,5 +150,28 @@
         ns, ks = code_n(stab), code_k(stab) 
         @test code_n(c) == 250 == ns && code_k(c) == 14 == ks
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 8
+
+
+        @testset "New codes found via other non-abelian groups" begin
+            # [[216, 30, 4]]
+            l = 12
+            m = 4
+            F = free_group(["r", "s"])
+            r, s = gens(F)
+            G, = quo(F, [s^m, r^l, s^(-1)*r*s*r])
+            r, s = gens(G)
+            A = [r^-4*s, s^-1*r^4, s^2]
+            B = [r^-3*s, s^-1*r^3, r^6*s^2]
+            @test is_symmetric_gen(A)
+            @test is_symmetric_gen(B)
+            @test is_nonconjugate(G, B, A)
+            c = QuantumTannerCode(G, A, B, classical_code_pair)
+            hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+            @test iszero(mod.(hx*hz',2))
+            stab = parity_checks(c)
+            ns, ks = code_n(stab), code_k(stab)
+            @test code_n(c) == 216 == ns && code_k(c) == 30 == ks
+            @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
+            @test describe(G) == "C12 : C4"
     end
 end

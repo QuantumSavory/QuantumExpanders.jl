@@ -106,12 +106,12 @@ end
 
 struct QuantumTannerCode <: AbstractCSSCode
     group::Group
-    A::Vector{GroupElem}
-    B::Vector{GroupElem}
+    A::Vector{<:GroupElem} 
+    B::Vector{<:GroupElem} 
     classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}}
     function QuantumTannerCode(group::Group,
-                              A::Vector{GroupElem},
-                              B::Vector{GroupElem}, 
+                              A::Vector{<:GroupElem},
+                              B::Vector{<:GroupElem}, 
                               classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}})
         @assert length(A) == length(B) "A and B must have the same size"
         H_A, G_A = classical_codes[1]
