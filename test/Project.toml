@@ -1,8 +1,11 @@
 [deps]
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 GraphsColoring = "ed38bb8a-6120-4024-8d1e-8789784f251b"
+HiGHS = "87dc4568-4c63-4d18-b0c0-bb2238e4078b"
 IGraphs = "647e90d3-2106-487c-adb4-c91fc07b96ea"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
+JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
 LogExpFunctions = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
 Multigraphs = "7ebac608-6c66-46e6-9856-b5f43e107bac"
 NautyGraphs = "7509a0a4-015a-4167-b44b-0799a1a2605e"
