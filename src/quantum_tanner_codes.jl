@@ -556,6 +556,6 @@ parity_matrix_x(c::QuantumTannerCode) = parity_matrix_xz(c)[1]
 
 parity_matrix_z(c::QuantumTannerCode) = parity_matrix_xz(c)[2]
 
-code_n(c::QuantumTannerCode) = order(c.group)*length(c.A)*length(c.B)÷2
+code_n(c::QuantumTannerCode) = Int(order(c.group))*length(c.A)*length(c.B)÷2
 
 code_k(c::QuantumTannerCode) = code_n(c) - rank(matrix(GF(2), parity_matrix_x(c))) - rank(matrix(GF(2), parity_matrix_z(c)))
