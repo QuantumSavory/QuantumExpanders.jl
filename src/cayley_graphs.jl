@@ -41,7 +41,7 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     # Identity element of G is neither in A nor in B
     @assert !(one(G) in A) "Definition 3.1: Identity must not be in A [dinur2022locally](@cite)"
     @assert !(one(G) in B) "Definition 3.1: Identity must not be in B [dinur2022locally](@cite)"
-    # Total No-conjugacy Condition: 
+    # Total No-conjugacy Condition
     @assert is_nonconjugate(G, A, B) "Definition 3.6: ∀ a ∈ A, b ∈ B, g ∈ G, g⁻¹ag ≠ b [dinur2022locally](@cite)"
     # Mappings between group element as a matrix and as an integer enumerator
     idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
