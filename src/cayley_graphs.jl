@@ -36,6 +36,13 @@ It is more convenient to count the edges as directional (i.e. double counting th
 as that makes it much easier to track how edge indices correspond to indices in A×B.
 """
 function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
+    @assert is_symmetric_gen(A) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
+    @assert is_symmetric_gen(B) "Definition 3.1: Set B must be symmetric generating set [dinur2022locally](@cite)"
+    # Identity element of G is neither in A nor in B
+    @assert !(one(G) in A) "Definition 3.1: Identity must not be in A [dinur2022locally](@cite)"
+    @assert !(one(G) in B) "Definition 3.1: Identity must not be in B [dinur2022locally](@cite)"
+    # Total No-conjugacy Condition
+    @assert is_nonconjugate(G, A, B) "Definition 3.6: ∀ a ∈ A, b ∈ B, g ∈ G, g⁻¹ag ≠ b [dinur2022locally](@cite)"
     # Mappings between group element as a matrix and as an integer enumerator
     idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
