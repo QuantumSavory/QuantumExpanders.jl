@@ -23,7 +23,6 @@ using ProgressMeter
 include("cayley_graphs.jl")
 include("tensor_codes.jl")
 include("morgenstern.jl")
-include("quantum_tanner_codes.jl")
 include("quantum_tanner_code_multigraphs.jl")
 include("lubotzky_phillips_sarnak_ramanujan.jl")
 

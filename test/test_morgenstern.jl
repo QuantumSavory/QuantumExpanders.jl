@@ -32,12 +32,18 @@
                 @test all(((γ,δ),) -> γ^2 + γ*δ + ε*δ^2 == one(Fq), sols)
                 A_first = alternative_morgenstern_generators(gens, FirstOnly())
                 @test length(A_first) == 2*q
+                gensₐₗₗ = vcat(gens, A_first)
+                H, _ = sub(SL₂, gensₐₗₗ)
+                @test H == SL₂
                 A_pairs = alternative_morgenstern_generators(gens, AllPairs())
                 @test length(A_pairs) == q*(q+1)
                 @test is_nonconjugate(SL₂, A_first, gens)
                 @test is_nonconjugate(SL₂, A_pairs, gens)
                 @test is_symmetric_gen(A_pairs)
                 @test is_symmetric_gen(A_first)
+                gensₐₗₗ = vcat(gens, A_pairs)
+                H, _ = sub(SL₂, gensₐₗₗ)
+                @test H == SL₂
             end
         end
     end
