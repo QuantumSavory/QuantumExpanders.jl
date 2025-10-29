@@ -8,7 +8,6 @@
     using QuantumClifford
     using QuantumClifford.ECC
     using QuantumClifford.ECC: code_n, code_k
-    using QuantumExpanders: random_code_pair, parity_matrix
     using Nemo: zero_matrix, base_ring, transpose, rank
 
     @testset "New instances of Quantum Tanner codes using standard dihedral group" begin
