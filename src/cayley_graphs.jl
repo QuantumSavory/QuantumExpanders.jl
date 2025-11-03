@@ -43,9 +43,25 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     @assert !(one(G) in B) "Definition 3.1: Identity must not be in B [dinur2022locally](@cite)"
     # Total No-conjugacy Condition
     @assert is_nonconjugate(G, A, B) "Definition 3.6: ∀ a ∈ A, b ∈ B, g ∈ G, g⁻¹ag ≠ b [dinur2022locally](@cite)"
+    # "By TNC, each square is guaranteed to have 4 distinct vertices [gu2022efficient](@cite)."
+    for g in G, a in A, b in B
+        vertices = [g, a*g, g*b, a*g*b]
+        @assert length(Set(vertices)) == 4 "By TNC, each square has 4 distinct vertices [gu2022efficient](@cite)"
+    end
     # Mappings between group element as a matrix and as an integer enumerator
     idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
+    # "There are Δ² squares incident to a given vertex, and the set of faces incident
+    # to a given vertex can be naturally identified with the set A × B [gu2022efficient](@cite)."
+    for g_idx in 1:N
+        g = idx_to_mat[g_idx]
+        incident_squares = Set()
+        for a in A, b in B
+            square_vertices = (mat_to_idx[g], mat_to_idx[a*g], mat_to_idx[g*b], mat_to_idx[a*g*b])
+            push!(incident_squares, square_vertices)
+        end
+        @assert length(incident_squares) == length(A)*length(B) "Each vertex has Δ² incident squares [gu2022efficient](@cite)"
+    end
 
     # |Q| = |G||A||B|/2 indexed by the `count` variable below.
     # |V₀| = |V₁| = |G|
@@ -120,22 +136,6 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     @assert unique(values(Multigraphs.indegree(𝒢₁□))) == [length(A)*length(B)] "𝒢₁□ is Δ²-regular multigraph [gu2022efficient](@cite)"
     @assert unique(values(Multigraphs.outdegree(𝒢₀□))) == [length(A)*length(B)] "𝒢₀□ is Δ²-regular multigraph [gu2022efficient](@cite)" 
     @assert unique(values(Multigraphs.outdegree(𝒢₁□))) == [length(A)*length(B)] "𝒢₁□ is Δ²-regular multigraph [gu2022efficient](@cite)"
-    # "By TNC, each square is guaranteed to have 4 distinct vertices [gu2022efficient](@cite)."
-    for g in G, a in A, b in B
-        vertices = [g, a*g, g*b, a*g*b]
-        @assert length(Set(vertices)) == 4 "By TNC, each square has 4 distinct vertices [gu2022efficient](@cite)"
-    end
-    # "There are Δ² squares incident to a given vertex, and the set of faces incident
-    # to a given vertex can be naturally identified with the set A × B [gu2022efficient](@cite)."
-    for g_idx in 1:N
-        g = idx_to_mat[g_idx]
-        incident_squares = Set()
-        for a in A, b in B
-            square_vertices = (mat_to_idx[g], mat_to_idx[a*g], mat_to_idx[g*b], mat_to_idx[a*g*b])
-            push!(incident_squares, square_vertices)
-        end
-        @assert length(incident_squares) == length(A)*length(B) "Each vertex has Δ² incident squares [gu2022efficient](@cite)"
-    end
     return 𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
 
