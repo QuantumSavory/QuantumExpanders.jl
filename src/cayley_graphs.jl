@@ -133,7 +133,7 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
             square_vertices = (mat_to_idx[g], mat_to_idx[a*g], mat_to_idx[g*b], mat_to_idx[a*g*b])
             push!(incident_squares, square_vertices)
         end
-        @assert length(incident_squares) == length(A) * length(B) "Each vertex has Δ² incident squares [gu2022efficient](@cite)"
+        @assert length(incident_squares) == length(A)*length(B) "Each vertex has Δ² incident squares [gu2022efficient](@cite)"
     end
     return 𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
