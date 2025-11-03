@@ -53,6 +53,7 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
     # "There are Δ² squares incident to a given vertex, and the set of faces incident
     # to a given vertex can be naturally identified with the set A × B [gu2022efficient](@cite)."
+    N = length(G)
     for g_idx in 1:N
         g = idx_to_mat[g_idx]
         incident_squares = Set()
@@ -81,7 +82,6 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     # - an A×B index useful for ordering
     # - a larger Q index useful for assigning qubits
 
-    N = length(G)
     𝒢₀□ = GraphType(N) # vertices V₀=G×{0}, edges Q, |A||B|-regular multigraph
     𝒢₁□ = GraphType(N) # vertices V₁=G×{1}, edges Q, |A||B|-regular multigraph
     edge₀_q_idx = Dict{Tuple{Int,Int,Int},Int}() # maps an edge (with multiplicity) to Q qubit/square index
