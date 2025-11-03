@@ -120,12 +120,13 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     @assert unique(values(Multigraphs.indegree(𝒢₁□))) == [length(A)*length(B)] "𝒢₁□ is Δ²-regular multigraph [gu2022efficient](@cite)"
     @assert unique(values(Multigraphs.outdegree(𝒢₀□))) == [length(A)*length(B)] "𝒢₀□ is Δ²-regular multigraph [gu2022efficient](@cite)" 
     @assert unique(values(Multigraphs.outdegree(𝒢₁□))) == [length(A)*length(B)] "𝒢₁□ is Δ²-regular multigraph [gu2022efficient](@cite)"
-    # "By TNC, each square is guaranteed to have 4 distinct vertices [gu2022efficient](@cite)"
+    # "By TNC, each square is guaranteed to have 4 distinct vertices [gu2022efficient](@cite)."
     for g in G, a in A, b in B
         vertices = [g, a*g, g*b, a*g*b]
         @assert length(Set(vertices)) == 4 "By TNC, each square has 4 distinct vertices [gu2022efficient](@cite)"
     end
-    # "There are Δ² squares incident to a given vertex [gu2022efficient](@cite)"
+    # "There are Δ² squares incident to a given vertex, and the set of faces incident
+    # to a given vertex can be naturally identified with the set A × B [gu2022efficient](@cite)."
     for g_idx in 1:N
         g = idx_to_mat[g_idx]
         incident_squares = Set()
