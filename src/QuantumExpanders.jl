@@ -6,6 +6,8 @@ module QuantumExpanders
 
 using Nemo
 using Oscar
+using QuantumClifford
+using QuantumClifford: Stabilizer, comm
 using LinearAlgebra
 using Random
 using Graphs
@@ -33,6 +35,8 @@ export
     AllPairs, FirstOnly,
     # Lubotzky-Phillips-Sarnak Ramanujan
     scalar_matrices_GL, scalar_matrices_SL, solve_four_squares, process_solutions,
-    lps_generators, legendre_symbol, lps_graph, LPS, is_ramanujan
+    lps_generators, legendre_symbol, lps_graph, LPS, is_ramanujan,
+    # tensor codes
+    uniformly_random_code_checkmatrix, dual_code
 
 end #module

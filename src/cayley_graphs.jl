@@ -315,6 +315,15 @@ function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph
     𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
 
+function _to_bool_matrix(matrix)
+    rows, cols = size(matrix)
+    bool_matrix = zeros(Bool, rows, cols)
+    for i in 1:rows, j in 1:cols
+        bool_matrix[i, j] = Bool(Int(lift(matrix[i, j])))
+    end
+    return bool_matrix
+end
+
 """Construct the Tanner code for a given multigraph, edge numbering and local code.
 
 The edge numbering is a map from (vertex, vertex, multiplicity) to index.
@@ -354,6 +363,7 @@ function tanner_code(mgraph,edge_q_index,edge_ab_index,local_code)
     E = ne(mgraph, count_mul=true)÷2 # edges are double counted
     r, Δ = size(local_code)
     code = zeros(Bool, r*V, E)
+    local_code = eltype(local_code) <: Bool ? local_code : _to_bool_matrix(local_code)
     for v in Graphs.vertices(mgraph)
         neigh = neighbors(mgraph,v)
         q_indices = rem.([edge_q_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
@@ -362,7 +372,7 @@ function tanner_code(mgraph,edge_q_index,edge_ab_index,local_code)
         @assert length(q_indices) == Δ
         @assert length(Set(ab_indices)) == Δ
         for row in 1:r
-            code[(v-1)*r+row,indices] .= [e.data for e in local_code[row,:]][1,:] # TODO there must be a neater way to write this
+            code[(v-1)*r + row, indices] .= local_code[row, :]
         end
     end
     code
