@@ -398,7 +398,7 @@ function tanner_code_quadripartite(mgraph,edge_q_index,edge_ab_index,local_code)
         @assert length(q_indices) == Δ
         @assert length(Set(ab_indices)) == Δ
         for row in 1:r 
-            code[(v-1)*r+row,indices] .= local_code[row,:] 
+            code[(v-1)*r+row,indices] .= local_code[row,:]
         end
     end
     code
