@@ -34,6 +34,45 @@ end
 
 It is more convenient to count the edges as directional (i.e. double counting them),
 as that makes it much easier to track how edge indices correspond to indices in A×B.
+
+Returns `(𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx)` where:
+- `𝒢₀□`: Square graph on ``V_0 = G × {0}`` with edges between vertices connected via squares
+- `𝒢₁□`: Square graph on ``V_1 = G × {1}`` with edges between vertices connected via squares  
+- ``edge₀_q_idx`: Dictionary mapping edges `(src,dst,multiplicity)` in 𝒢₀□ to their corresponding square index in Q
+- `edge₁_q_idx`: Dictionary mapping edges `(src,dst,multiplicity)` in 𝒢₁□  to their corresponding square index in Q
+- `edge₀_ab_idx`: Dictionary mapping edges `(src,dst,multiplicity)` in 𝒢₀□ to their corresponding position in A×B grid for 𝒢₀□
+- `edge₁_ab_idx`: Dictionary mapping edges `(src,dst,multiplicity)` in 𝒢₁□ to their corresponding position in A×B grid for 𝒢₁□
+
+# Bipartite Left-Right Cayley Complex
+
+The bipartite left-right Cayley complex a 2-dimensional complex from a finite group G and symmetric generating
+sets ``A = A^-1``, ``B = B^-1``.
+
+The vertex set V is bipartite and partitioned as V = V₀ ∪ V₁, with ``V_0 = G × {0}`` and ``V_1 = G × {1}`` representing
+two copies of the group G. The edge sets consist of A-edges ``E_A`` and B-edges ``E_B``, where ``E_A`` contains pairs
+``\\{(g,0), (ag,1)\\}`` for all g ∈ G and a ∈ A, and ``E_B`` contains pairs ``\\{(g,0), (gb,1)\\}`` for all g ∈ G
+and b ∈ B. The graph ``G_A = (V, E_A)`` is the double cover of the left Cayley graph Cay(G, A), while ``G_B = (V, E_B)``
+is the double cover of the right Cayley graph Cay(G, B) [leverrier2022quantum](@cite).
+
+The set Q of squares is defined as the collection of 4-subsets of vertices of the form
+
+```math
+\\begin{aligned}
+{(g,0), (ag,1), (gb,1), (agb,0)}
+\\end{aligned}
+```
+
+for all g ∈ G, a ∈ A, and b ∈ B. Each square contains two vertices from V₀ and two from V₁, forming the
+two-dimensional cells of the complex.
+
+The Total No-Conjugacy (TNC) condition ag ≠ gb for all a ∈ A, b ∈ B, g ∈ G ensures that every square consists
+of four distinct vertices and that the local view Q(v) of squares incident to any vertex v naturally identifies
+with the product set A × B [leverrier2022quantum](@cite).
+
+By restricting to vertices in V₀, the set of squares Q defines a graph 𝒢₀□ = (V₀, Q) where edges connect
+pairs (g,0) and (agb,0) that appear as opposite corners of squares. Similarly, restricting to V₁ defines
+the graph 𝒢₁□ = (V₁, Q) where edges connect pairs (ag,1) and (gb,1). Both 𝒢₀□ and 𝒢₁□ are Δ²-regular multigraphs
+on |G| vertices, with the total number of squares given by |Q| = Δ²|G|/2.
 """
 function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     @assert is_symmetric_gen(A) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
@@ -153,10 +192,10 @@ end
 Returns `(𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx)` where:
 - `𝒢₀□`: Square graph on `V₀₀ ∪ V₁₁ with edges
 - `𝒢₁□`: Square graph on `V₀₁ ∪ V₁₀ with edges
-- `edge₀_q_idx`: Dict mapping `(src,dst,multiplicity)` to their corresponding square index in 𝒢₀□
-- `edge₁_q_idx`: Dict mapping `(src,dst,multiplicity)` to their corresponding square index in 𝒢₁□
-- `edge₀_ab_idx`: Dict mapping `(src,dst,multiplicity)` to their corresponding position in A×B grid for 𝒢₀□
-- `edge₁_ab_idx`: Dict mapping `(src,dst,multiplicity)` to their corresponding position in A×B grid for 𝒢₁□
+- `edge₀_q_idx`: Dictionary mapping `(src,dst,multiplicity)` to their corresponding square index in 𝒢₀□
+- `edge₁_q_idx`: Dictionary mapping `(src,dst,multiplicity)` to their corresponding square index in 𝒢₁□
+- `edge₀_ab_idx`: Dictionary mapping `(src,dst,multiplicity)` to their corresponding position in A×B grid for 𝒢₀□
+- `edge₁_ab_idx`: Dictionary mapping `(src,dst,multiplicity)` to their corresponding position in A×B grid for 𝒢₁□
 
 !!! note
     The quadripartite construction eliminates the need for the Total No-Conjugacy and symmetric generating set
