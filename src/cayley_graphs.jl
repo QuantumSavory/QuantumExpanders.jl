@@ -159,9 +159,9 @@ Returns `(𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, 
 - `edge₁_ab_idx`: Dict mapping `(src,dst,multiplicity)` to their corresponding position in A×B grid for 𝒢₁□
 
 !!! note
-    The quadripartite construction is that it eliminates the need for the Total No-Conjugacy and symmetric
-    generating set conditions required in the bipartite version, while maintaining the essential properties
-    needed for the quantum code construction [leverrier2022quantum](@cite).
+    The quadripartite construction eliminates the need for the Total No-Conjugacy and symmetric generating set
+    conditions required in the bipartite version, while maintaining the essential properties needed for the
+    quantum code construction [leverrier2022quantum](@cite).
 
 It is more convenient to count the edges as directional (i.e. double counting them),
 as that makes it much easier to track how edge indices correspond to indices in A×B.
