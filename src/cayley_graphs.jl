@@ -372,7 +372,7 @@ function tanner_code(mgraph,edge_q_index,edge_ab_index,local_code)
         @assert length(q_indices) == Δ
         @assert length(Set(ab_indices)) == Δ
         for row in 1:r
-            code[(v-1)*r + row, indices] .= local_code[row, :]
+            code[(v-1)*r+row,indices] .= local_code[row,:]
         end
     end
     code
@@ -389,6 +389,7 @@ function tanner_code_quadripartite(mgraph,edge_q_index,edge_ab_index,local_code)
     E = ne(mgraph, count_mul=true) # edges are not double counted here
     r, Δ = size(local_code)
     code = zeros(Bool, r*V÷2, E)
+    local_code = eltype(local_code) <: Bool ? local_code : _to_bool_matrix(local_code)
     for v in sort!(Graphs.vertices(mgraph))[1:V÷2] # only first half of vertices have outgoing edges
         neigh = neighbors(mgraph,v)
         q_indices = rem.([edge_q_index[(v,v₂,m)] for v₂ in neigh for m in 1:Multigraphs.mul(mgraph,v,v₂)] .-1, E).+1
@@ -397,7 +398,7 @@ function tanner_code_quadripartite(mgraph,edge_q_index,edge_ab_index,local_code)
         @assert length(q_indices) == Δ
         @assert length(Set(ab_indices)) == Δ
         for row in 1:r 
-            code[(v-1)*r+row,indices] .= [e.data for e in local_code[row,:]][1,:] # TODO there must be a neater way to write this
+            code[(v-1)*r+row, indices] .= local_code[row,:] 
         end
     end
     code
