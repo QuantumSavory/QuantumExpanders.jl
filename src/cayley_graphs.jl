@@ -325,7 +325,35 @@ end
 The edge numbering is a map from (vertex, vertex, multiplicity) to index.
 Most convenient when used with [`cayley_complex_square_graphs`](@ref).
 
-As depicted in [dinur2022locally](@cite), [leverrier2022quantum](@cite), and [gu2022efficient](@cite)."""
+Returns a binary matrix of size `(r*V) × E` representing the parity check matrix of the
+Tanner code, where `r` is the number of checks in the local code, `V` is the number of vertices, and `E` is the number of edges.
+
+# Tanner Code
+
+Tanner code is a classical code where *bits* are placed on *edges* of a graph and
+*constraints* are imposed by local codes at each vertex.
+
+The Tanner code construction is defined as:
+
+```math
+\\begin{aligned}
+T(\\mathcal{G}, C_0) = \\{ x \\in \\mathbb{F}_2^E : \\operatorname{res}_{E(v)}(x) \\in C_0 \\forall v \\in V(\\mathcal{G})) \\}
+\\end{aligned}
+```
+
+the set of vectors ``\\mathbb{F_2}^E`` such that the restriction of `x` to edges incident to each vertex
+`v` belongs to the local code C₀. The qubits are placed on squares of the left-right Cayley complex, with
+Z-stabilizers defined by T(𝒢₀□, C_A ⊗ C_B) and X-stabilizers defined by T(𝒢₁□, C_A⊥ ⊗ C_B⊥). The commuting
+condition `H_X H_Zᵀ = 0` essential for CSS codes follows naturally from the incidence structure of the complex.
+
+As depicted in [dinur2022locally](@cite), [leverrier2022quantum](@cite), and [gu2022efficient](@cite).
+
+### Arguments
+- `mgraph`: A multigraph representing the underlying graph structure. For quantum Tanner codes, this is `𝒢₀□` or `𝒢₁□` from the left-right Cayley complex.
+- `edge_q_index`: A dictionary mapping `(vertex, vertex, multiplicity)` tuples to qubit indices. This identifies which physical qubit (placed on squares/faces) corresponds to each edge in the multigraph.
+- `edge_ab_index`: A dictionary mapping `(vertex, vertex, multiplicity)` tuples to local coordinate indices. This provides the identification of each edge with an element of `A×B` in the local view.
+- `local_code`: A binary matrix representing the parity check matrix of the local code. For quantum Tanner codes, this is C₀ = C_A ⊗ C_B for Z-stabilizers or C₁ = C_A⊥ ⊗ C_B⊥ for X-stabilizers.
+"""
 function tanner_code(mgraph,edge_q_index,edge_ab_index,local_code)
     V = nv(mgraph)
     E = ne(mgraph, count_mul=true)÷2 # edges are double counted
