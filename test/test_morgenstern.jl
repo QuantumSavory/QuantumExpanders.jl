@@ -6,6 +6,9 @@
     using IGraphs: IGraph, IGVectorInt, LibIGraph
     using NautyGraphs: NautyGraph, is_isomorphic
     using LinearAlgebra
+    using QECCore
+    using QuantumClifford: stab_looks_good
+    using QuantumClifford.ECC
     using QuantumExpanders
     using SimpleGraphConverter
     using SimpleGraphAlgorithms: chromatic_number, UG
@@ -253,7 +256,7 @@
         end
     end
 
-    @testset "LRCCs based on Morgenstern Generators" begin
+    @testset "Quantum Tanner codes based on Morgenstern Generators" begin
         # Test cases: (l, i) pairs where q=2^l and i is even
         test_cases = [
             (1, 2), # PSL(2,4)
@@ -265,9 +268,41 @@
                 SL₂, B = morgenstern_generators(l, i)
                 q = 2^l
                 A = alternative_morgenstern_generators(B, FirstOnly())
-                cayley_complex_square_graphs(SL₂, A, B)
+                𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx = cayley_complex_square_graphs(SL₂, A, B)
+                ra = 1/3
+                rb = 2/3
+                Hᴬ = uniformly_random_code_checkmatrix(ra,length(A))
+                Hᴮ = uniformly_random_code_checkmatrix(rb,length(B))
+                Cᴬ = dual_code(Hᴬ)
+                Cᴮ = dual_code(Hᴮ)
+                C₀ = kron(Cᴬ,Cᴮ)
+                C₁ = kron(Hᴬ,Hᴮ)
+                @assert good_css(Hᴬ,Cᴬ)
+                @assert good_css(Hᴮ,Cᴮ)
+                @assert good_css(C₀,C₁)
+                𝒞ᶻ = tanner_code(𝒢₀□,edge₀_q_idx,edge₀_ab_idx,C₀)
+                𝒞ˣ = tanner_code(𝒢₁□,edge₁_q_idx,edge₁_ab_idx,C₁)
+                @assert good_css(𝒞ˣ,𝒞ᶻ)
+                c = Stabilizer(CSS(𝒞ˣ, 𝒞ᶻ))
+                @test stab_looks_good(c, remove_redundant_rows=true)
                 A = alternative_morgenstern_generators(B, AllPairs())
-                cayley_complex_square_graphs(SL₂, A, B)
+                𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx = cayley_complex_square_graphs(SL₂, A, B)
+                ra = 1/3
+                rb = 2/3
+                Hᴬ = uniformly_random_code_checkmatrix(ra,length(A))
+                Hᴮ = uniformly_random_code_checkmatrix(rb,length(B))
+                Cᴬ = dual_code(Hᴬ)
+                Cᴮ = dual_code(Hᴮ)
+                C₀ = kron(Cᴬ,Cᴮ)
+                C₁ = kron(Hᴬ,Hᴮ)
+                @assert good_css(Hᴬ,Cᴬ)
+                @assert good_css(Hᴮ,Cᴮ)
+                @assert good_css(C₀,C₁)
+                𝒞ᶻ = tanner_code(𝒢₀□,edge₀_q_idx,edge₀_ab_idx,C₀)
+                𝒞ˣ = tanner_code(𝒢₁□,edge₁_q_idx,edge₁_ab_idx,C₁)
+                @assert good_css(𝒞ˣ,𝒞ᶻ)
+                c = Stabilizer(CSS(𝒞ˣ, 𝒞ᶻ))
+                @test stab_looks_good(c, remove_redundant_rows=true)
             end
         end
     end
