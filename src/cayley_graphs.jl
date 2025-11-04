@@ -35,7 +35,7 @@ end
 It is more convenient to count the edges as directional (i.e. double counting them),
 as that makes it much easier to track how edge indices correspond to indices in A×B.
 """
-function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
+function cayley_complex_square_graphs1(G,A,B,GraphType=DiMultigraph)
     @assert is_symmetric_gen(A) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
     @assert is_symmetric_gen(B) "Definition 3.1: Set B must be symmetric generating set [dinur2022locally](@cite)"
     # Identity element of G is neither in A nor in B
@@ -63,7 +63,6 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
         end
         @assert length(incident_squares) == length(A)*length(B) "Each vertex has Δ² incident squares [gu2022efficient](@cite)"
     end
-
     # |Q| = |G||A||B|/2 indexed by the `count` variable below.
     # |V₀| = |V₁| = |G|
 
@@ -136,6 +135,18 @@ function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
     @assert unique(values(Multigraphs.indegree(𝒢₁□))) == [length(A)*length(B)] "𝒢₁□ is Δ²-regular multigraph [gu2022efficient](@cite)"
     @assert unique(values(Multigraphs.outdegree(𝒢₀□))) == [length(A)*length(B)] "𝒢₀□ is Δ²-regular multigraph [gu2022efficient](@cite)" 
     @assert unique(values(Multigraphs.outdegree(𝒢₁□))) == [length(A)*length(B)] "𝒢₁□ is Δ²-regular multigraph [gu2022efficient](@cite)"
+    # "q ∈ Q is present as an edge (v,v') in 𝒢̂□₀ if and only if v and v' appear as opposite V₀-corners of the square q" [gu2022efficient](@cite)
+    for g in G, a in A, b in B
+        v₀₁ = mat_to_idx[g]
+        v₀₂ = mat_to_idx[a*g*b]
+        @assert has_edge(𝒢₀□, v₀₁, v₀₂) || has_edge(𝒢₀□, v₀₂, v₀₁) "Edge in 𝒢̂□₀ connects opposite V₀-corners of square [gu2022efficient](@cite)"
+    end
+    # "Each face q ∈ Q can be identified with its diagonal connecting its corners in V₁" [gu2022efficient](@cite)
+    for g in G, a in A, b in B
+        v₁₁ = mat_to_idx[a*g]
+        v₁₂ = mat_to_idx[g*b]
+        @assert has_edge(𝒢₁□, v₁₁, v₁₂) || has_edge(𝒢₁□, v₁₂, v₁₁) "Edge in 𝒢̂□₁ connects opposite V₁-corners of square [gu2022efficient](@cite)"
+    end
     return 𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx
 end
 
