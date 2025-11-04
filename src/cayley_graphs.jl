@@ -150,12 +150,72 @@ end
 
 """Construct the Cayley complex square graphs 𝒢₀□ and 𝒢₁□ using the quadripartite construction as presented in [leverrier2022quantum](@cite).
 
-The quadripartite construction removes the TNC and symmetric generator set conditions.
+Returns `(𝒢₀□, 𝒢₁□, edge₀_q_idx, edge₁_q_idx, edge₀_ab_idx, edge₁_ab_idx)` where:
+- `𝒢₀□`: Square graph on `V₀₀ ∪ V₁₁ with edges
+- `𝒢₁□`: Square graph on `V₀₁ ∪ V₁₀ with edges
+- `edge₀_q_idx`: Dict mapping `(src,dst,multiplicity)` to their corresponding square index in 𝒢₀□
+- `edge₁_q_idx`: Dict mapping `(src,dst,multiplicity)` to their corresponding square index in 𝒢₁□
+- `edge₀_ab_idx`: Dict mapping `(src,dst,multiplicity)` to their corresponding position in A×B grid for 𝒢₀□
+- `edge₁_ab_idx`: Dict mapping `(src,dst,multiplicity)` to their corresponding position in A×B grid for 𝒢₁□
+
+!!! note
+    The quadripartite construction is that it eliminates the need for the Total No-Conjugacy and symmetric
+    generating set conditions required in the bipartite version, while maintaining the essential properties
+    needed for the quantum code construction [leverrier2022quantum](@cite).
 
 It is more convenient to count the edges as directional (i.e. double counting them),
 as that makes it much easier to track how edge indices correspond to indices in A×B.
+
+# Quadripartite Left-Right Cayley Complex
+
+The quadripartite left-right Cayley complex is built from a finite group G with two generating
+sets A and B. The vertex set V is partitioned into four disjoint copies of the group:
+
+```math
+\\begin{aligned}
+V = V_{00} \\cup V_{01} \\cup V_{10} \\cup V_{11}
+\\end{aligned}
+```
+
+where ``V_{ij} = G \\times \\{i,j\\} for i,j \\in \\{0,1\\}``
+
+The squares Q of the complex are defined as the set of 4-tuples
+
+```math
+\\begin{aligned}
+{(g,00), (ag,01), (gb,10), (agb,11) : g \\in G, a \\in A, b \\in B\\}
+\\end{aligned}
+```
+
+with total cardinality ``|Q| = |G||A||B|``.
+
+Two square graphs are derived from this complex structure. The graph
+
+```math
+\\begin{aligned}
+\\mathcal{G}_0^\\square = (V_{00} \\cup V_{11}, Q)
+\\end{aligned}
+```
+
+connects vertices (g,00) to (agb,11) for each square, while
+
+```math
+\\begin{aligned}
+\\mathcal{G}_1^\\square = (V_{01} \\cup V_{10}, Q)
+\\end{aligned}
+```
+
+connects vertices (gb,10) to (ag,01). Both graphs are (``|A| \\times |B|``)-regular directed multigraphs,
+with each vertex having exactly ``\\Delta_A \\Delta_B`` incident edges, where ``\\Delta_A = |A|`` and ``\\Delta_B = |B|``.
+The local view Q(v) at any vertex v identifies with ``A \\times B``, where the squares incident to v are
+in bijection with pairs ``(a,b) \\in A \\times B`` [leverrier2022quantum](@cite).
 """
 function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph)
+    @assert !isempty(G)
+    @assert !isempty(A)
+    @assert !isempty(B)
+    @assert all(a -> a ∈ G, A) "All elements of A must be in G"
+    @assert all(b -> b ∈ G, B) "All elements of B must be in G"
     # Mappings between group element as a matrix and as an integer enumerator
     idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))

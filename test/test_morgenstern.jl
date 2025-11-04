@@ -265,9 +265,9 @@
                 SL₂, B = morgenstern_generators(l, i)
                 q = 2^l
                 A = alternative_morgenstern_generators(B, FirstOnly())
-                cayley_complex_square_graphs(SL₂, A, B)
+                @test_nowarn cayley_complex_square_graphs(SL₂, A, B)
                 A = alternative_morgenstern_generators(B, AllPairs())
-                cayley_complex_square_graphs(SL₂, A, B)
+                @test_nowarn cayley_complex_square_graphs(SL₂, A, B)
             end
         end
     end
