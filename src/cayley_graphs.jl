@@ -250,11 +250,6 @@ The local view Q(v) at any vertex v identifies with ``A \\times B``, where the s
 in bijection with pairs ``(a,b) \\in A \\times B`` [leverrier2022quantum](@cite).
 """
 function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph)
-    @assert !isempty(G)
-    @assert !isempty(A)
-    @assert !isempty(B)
-    @assert all(a -> a ∈ G, A) "All elements of A must be in G"
-    @assert all(b -> b ∈ G, B) "All elements of B must be in G"
     # Mappings between group element as a matrix and as an integer enumerator
     idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
