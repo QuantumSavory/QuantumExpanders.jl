@@ -37,6 +37,6 @@ export
     scalar_matrices_GL, scalar_matrices_SL, solve_four_squares, process_solutions,
     lps_generators, legendre_symbol, lps_graph, LPS, is_ramanujan,
     # tensor codes
-    uniformly_random_code_checkmatrix, dual_code
+    uniformly_random_code_checkmatrix, dual_code, good_css
 
 end #module
