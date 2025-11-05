@@ -7,7 +7,7 @@
     using NautyGraphs: NautyGraph, is_isomorphic
     using LinearAlgebra
     using QECCore
-    using QuantumClifford: stab_looks_good
+    using QuantumClifford: stab_looks_good, Stabilizer
     using QuantumClifford.ECC
     using QuantumExpanders
     using SimpleGraphConverter
