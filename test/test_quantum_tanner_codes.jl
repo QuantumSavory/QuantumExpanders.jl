@@ -177,5 +177,6 @@
             @test code_n(c) == 216 == ns && code_k(c) == 30 == ks
             @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
             @test describe(G) == "C12 : C4"
+        end
     end
 end
