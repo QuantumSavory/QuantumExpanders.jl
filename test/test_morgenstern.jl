@@ -269,7 +269,69 @@
                 A = alternative_morgenstern_generators(B, FirstOnly())
                 for _ in 1:5
                     for rate in [0.4, 0.5, 0.6, 0.7]
-                        hx, hz = gen_code(rate, SL₂, A, B)
+                        hx, hz = gen_code(rate, SL₂, A, B) # Q = 360
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                        hx, hz = gen_good_code(rate, SL₂, A, B)
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                    end
+                end
+            end
+            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+                q = 2^l
+                Δ = q+1
+                SL₂, B = morgenstern_generators(l, i)
+                A = alternative_morgenstern_generators(B, FirstOnly())
+                for _ in 1:5
+                    for rate in [0.5, 0.6, 0.7]
+                        hx, hz = gen_code(rate, SL₂, A, A, bipartite=false) # Q = 960
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                        hx, hz = gen_good_code(rate, SL₂, A, B)
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                    end
+                end
+            end
+            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+                q = 2^l
+                Δ = q+1
+                SL₂, B = morgenstern_generators(l, i)
+                A = alternative_morgenstern_generators(B, FirstOnly())
+                for _ in 1:5
+                    hx, hz = gen_code(0.4, SL₂, B, B, bipartite=false) # Q = 540
+                    c = Stabilizer(CSS(hx, hz))
+                    @test stab_looks_good(c, remove_redundant_rows=true)
+                    hx, hz = gen_good_code(rate, SL₂, A, B)
+                    c = Stabilizer(CSS(hx, hz))
+                    @test stab_looks_good(c, remove_redundant_rows=true)
+                end
+            end
+            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+                q = 2^l
+                Δ = q+1
+                SL₂, B = morgenstern_generators(l, i)
+                A = alternative_morgenstern_generators(B, FirstOnly())
+                for _ in 1:5
+                    for rate in [0.4, 0.5, 0.6, 0.7]
+                        hx, hz = gen_code(rate, SL₂, A, B, bipartite=false) # Q = 720
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                        hx, hz = gen_good_code(rate, SL₂, A, B)
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                    end
+                end
+            end
+            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+                q = 2^l
+                Δ = q+1
+                SL₂, B = morgenstern_generators(l, i)
+                A = alternative_morgenstern_generators(B, FirstOnly())
+                for _ in 1:5
+                    for rate in [0.4, 0.5, 0.6]
+                        hx, hz = gen_code(rate, SL₂, B, A, bipartite=false) # Q = 720
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
                         hx, hz = gen_good_code(rate, SL₂, A, B)
