@@ -309,7 +309,7 @@
                     hx, hz = gen_code(0.4, SL₂, B, B, use_same_local_code=true, bipartite=false)
                     c = Stabilizer(CSS(hx, hz))
                     @test stab_looks_good(c, remove_redundant_rows=true)
-                    hx, hz = gen_good_code(rate, SL₂, B, B, use_same_local_code=true, bipartite=false)
+                    hx, hz = gen_good_code(0.4, SL₂, B, B, use_same_local_code=true, bipartite=false)
                     c = Stabilizer(CSS(hx, hz))
                     @test stab_looks_good(c, remove_redundant_rows=true)
                 end
