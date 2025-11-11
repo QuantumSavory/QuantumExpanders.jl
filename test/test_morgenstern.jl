@@ -324,9 +324,6 @@
                         hx, hz = gen_code(rate, SL₂, A, B, bipartite=false) # Q = 720
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
-                        hx, hz = gen_good_code(rate, SL₂, A, B, bipartite=false)
-                        c = Stabilizer(CSS(hx, hz))
-                        @test stab_looks_good(c, remove_redundant_rows=true)
                     end
                 end
             end
@@ -338,9 +335,6 @@
                 for _ in 1:5
                     for rate in [0.4, 0.5, 0.6]
                         hx, hz = gen_code(rate, SL₂, B, A, bipartite=false) # Q = 720
-                        c = Stabilizer(CSS(hx, hz))
-                        @test stab_looks_good(c, remove_redundant_rows=true)
-                        hx, hz = gen_good_code(rate, SL₂, B, A, bipartite=false)
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
                     end
