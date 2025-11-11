@@ -6,11 +6,13 @@ module QuantumExpanders
 
 using Nemo
 using Oscar
+using QuantumClifford
+using QuantumClifford: Stabilizer, comm
 using LinearAlgebra
 using Random
 using Graphs
 using Graphs: add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix, add_vertex!, has_edge,
-vertices, induced_subgraph, AbstractGraph, is_bipartite, bipartite_map
+vertices, induced_subgraph, AbstractGraph, is_bipartite, bipartite_map, has_edge
 using Oscar: coefficients, zzModRingElem, MatSpace, zero_matrix, base_ring, lift, matrix_space, zzModMatrix,
 residue_ring, ZZ, nullspace, transpose, base_ring, kron, Matrix, embed, GroupElem, MatrixGroup, FqField
 using Graphs: add_edge!, nv, ne, neighbors, Graphs
@@ -33,6 +35,8 @@ export
     AllPairs, FirstOnly,
     # Lubotzky-Phillips-Sarnak Ramanujan
     scalar_matrices_GL, scalar_matrices_SL, solve_four_squares, process_solutions,
-    lps_generators, legendre_symbol, lps_graph, LPS, is_ramanujan
+    lps_generators, legendre_symbol, lps_graph, LPS, is_ramanujan,
+    # tensor codes
+    uniformly_random_code_checkmatrix, dual_code, good_css
 
 end #module
