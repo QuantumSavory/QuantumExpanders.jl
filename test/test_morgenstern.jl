@@ -262,7 +262,7 @@
             # (1, 4) # PSL(2,16) takes long time
         ]
         for (l, i) in test_cases
-            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+            @testset "Bipartite LRCCs: l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
                 q = 2^l
                 Δ = q+1
                 SL₂, B = morgenstern_generators(l, i)
@@ -278,7 +278,7 @@
                     end
                 end
             end
-            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+            @testset "Quadripartite LRCCs: l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
                 q = 2^l
                 Δ = q+1
                 SL₂, B = morgenstern_generators(l, i)
@@ -288,16 +288,16 @@
                         hx, hz = gen_code(rate, SL₂, A, A, bipartite=false) # Q = 960
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
-                        hx, hz = gen_code(0.4, SL₂, B, B, use_same_local_code=true, bipartite=false)
+                        hx, hz = gen_code(0.4, SL₂, A, A, use_same_local_code=true, bipartite=false)
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
-                        hx, hz = gen_good_code(rate, SL₂, A, B)
+                        hx, hz = gen_good_code(rate, SL₂, A, A, use_same_local_code=true, bipartite=false)
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
                     end
                 end
             end
-            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+            @testset "Quadripartite LRCCs: l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
                 q = 2^l
                 Δ = q+1
                 SL₂, B = morgenstern_generators(l, i)
@@ -306,15 +306,15 @@
                     hx, hz = gen_code(0.4, SL₂, B, B, bipartite=false) # Q = 540
                     c = Stabilizer(CSS(hx, hz))
                     @test stab_looks_good(c, remove_redundant_rows=true)
-                    c = Stabilizer(CSS(hx, hz))
                     hx, hz = gen_code(0.4, SL₂, B, B, use_same_local_code=true, bipartite=false)
+                    c = Stabilizer(CSS(hx, hz))
                     @test stab_looks_good(c, remove_redundant_rows=true)
-                    hx, hz = gen_good_code(rate, SL₂, A, B)
+                    hx, hz = gen_good_code(rate, SL₂, B, B, use_same_local_code=true, bipartite=false)
                     c = Stabilizer(CSS(hx, hz))
                     @test stab_looks_good(c, remove_redundant_rows=true)
                 end
             end
-            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+            @testset "Quadripartite LRCCs: l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
                 q = 2^l
                 Δ = q+1
                 SL₂, B = morgenstern_generators(l, i)
@@ -324,13 +324,13 @@
                         hx, hz = gen_code(rate, SL₂, A, B, bipartite=false) # Q = 720
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
-                        hx, hz = gen_good_code(rate, SL₂, A, B)
+                        hx, hz = gen_good_code(rate, SL₂, A, B, bipartite=false)
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
                     end
                 end
             end
-            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+            @testset "Quadripartite LRCCs: l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
                 q = 2^l
                 Δ = q+1
                 SL₂, B = morgenstern_generators(l, i)
@@ -340,7 +340,7 @@
                         hx, hz = gen_code(rate, SL₂, B, A, bipartite=false) # Q = 720
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
-                        hx, hz = gen_good_code(rate, SL₂, A, B)
+                        hx, hz = gen_good_code(rate, SL₂, B, A, bipartite=false)
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
                     end
