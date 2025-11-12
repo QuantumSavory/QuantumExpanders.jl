@@ -8,11 +8,13 @@ using Nemo
 using Oscar
 using QECCore
 import QECCore: code_n, code_k, parity_matrix, parity_matrix_z, parity_matrix_x, distance, AbstractCSSCode
+using QuantumClifford
+using QuantumClifford: Stabilizer, comm
 using LinearAlgebra
 using Random
 using Graphs
 using Graphs: add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix, add_vertex!, has_edge,
-vertices, induced_subgraph, AbstractGraph, is_bipartite, bipartite_map
+vertices, induced_subgraph, AbstractGraph, is_bipartite, bipartite_map, has_edge
 using Oscar: coefficients, zzModRingElem, MatSpace, zero_matrix, base_ring, lift, matrix_space, zzModMatrix,
 residue_ring, ZZ, nullspace, transpose, base_ring, kron, Matrix, embed, GroupElem, MatrixGroup, FqField, transpose, matrix,
 rank, GF, FPGroup, FPGroupElem, Group, GroupElem
@@ -43,5 +45,7 @@ export
     # Quantum Tanner codes
     enumerate_squares, random_code_pair, convert_squares_to_incidence_matrix, QuantumTannerCode,
     parity_matrix, parity_matrix_x, parity_matrix_z, parity_matrix_xz, code_n, code_k 
+    # tensor codes
+    uniformly_random_code_checkmatrix, dual_code, good_css
 
 end #module

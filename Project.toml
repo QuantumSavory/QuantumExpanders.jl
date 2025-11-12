@@ -1,6 +1,6 @@
 name = "QuantumExpanders"
 uuid = "144928dd-1f60-4b66-8c4c-f5ae7409097b"
-authors = ["Feroz Ahmed Mian <fmian@umass.edu>", "Vaishnavi Addala <vaddala9@mit.edu>", "QuantumSavory community members"]
+authors = ["Feroz Ahmed Mian <fmian@umass.edu>", "Stefan Krastanov <stefan@krastanov.org>", "Vaishnavi Addala <vaddala9@mit.edu>", "QuantumSavory community members"]
 version = "0.1.0"
 
 [deps]

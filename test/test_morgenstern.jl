@@ -6,6 +6,9 @@
     using IGraphs: IGraph, IGVectorInt, LibIGraph
     using NautyGraphs: NautyGraph, is_isomorphic
     using LinearAlgebra
+    using QECCore
+    using QuantumClifford: stab_looks_good, Stabilizer
+    using QuantumClifford.ECC
     using QuantumExpanders
     using SimpleGraphConverter
     using SimpleGraphAlgorithms: chromatic_number, UG
@@ -249,6 +252,31 @@
                 cgᵣ = NautyGraph(cayleyᵣ)
                 cgₗ = NautyGraph(cayleyₗ)
                 @test is_isomorphic(cgᵣ, cgₗ)
+            end
+        end
+    end
+
+    @testset "Quantum Tanner codes based on Morgenstern Generators" begin
+        test_cases = [
+            (1, 2), # PSL(2,4)
+            # (1, 4) # PSL(2,16) takes long time
+        ]
+        for (l, i) in test_cases
+            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+                q = 2^l
+                Δ = q+1
+                SL₂, B = morgenstern_generators(l, i)
+                A = alternative_morgenstern_generators(B, FirstOnly())
+                for _ in 1:5
+                    for rate in [0.4, 0.5, 0.6, 0.7]
+                        hx, hz = gen_code(rate, SL₂, A, B)
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                        hx, hz = gen_good_code(rate, SL₂, A, B)
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                    end
+                end
             end
         end
     end
