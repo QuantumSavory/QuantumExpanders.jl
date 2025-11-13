@@ -210,5 +210,13 @@
         @test code_n(c) == 360
         @test code_k(c) == 10
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 6
+
+        # [[360, 20, 4]]
+        classical_code_pair = (([1 1 0 0; 0 0 1 1], [1 1 0 0; 0 0 1 1]), ([0 0 1; 1 1 0], [1 1 0])) # found via random search
+        c = QuantumTannerCode(SL₂, A, B, classical_code_pair)
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 360
+        @test code_k(c) == 20
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
     end
 end
