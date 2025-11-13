@@ -397,7 +397,7 @@ dim(C₁) × |V₁| ≈ 2ρ(1-ρ)Δ²|G| and number of Z-stabs is dim(C₀) × |
 function parity_matrix_xz(c::QuantumTannerCode)
     Q, Q_red = enumerate_squares(c.group, c.A, c.B)
     squares_matrix = convert_squares_to_incidence_matrix(Q_red)
-    G_order = order(c.group)
+    group_order = order(c.group)
     classical_codes = c.classical_codes
     H_A, G_A = classical_codes[1]
     H_B, G_B = classical_codes[2]
@@ -405,7 +405,7 @@ function parity_matrix_xz(c::QuantumTannerCode)
     Δ_B = length(c.B)
     num_squares = size(squares_matrix, 1)
     # n = Δ_AΔ_B|G|/2
-    n = Int(Δ_A*Δ_B*G_order/2)
+    n = Int(Δ_A*Δ_B*group_order/2)
     # Construct tensor codes as per [radebold2025explicit](@cite)
     # C₀ = C_A ⊗ C_B for Z-stabilizers [radebold2025explicit](@cite)
     # C₁ = C_A^⊥ ⊗ C_B^⊥ for X-stabilizers [radebold2025explicit](@cite)
@@ -414,7 +414,7 @@ function parity_matrix_xz(c::QuantumTannerCode)
     hz = Matrix{Int}(undef, 0, n)
     hx = Matrix{Int}(undef, 0, n)
     # Z-type stabilizers on V₀ vertices [radebold2025explicit](@cite)
-    for v in 1:G_order  # V₀ vertices: 1 to |G|
+    for v in 1:group_order  # V₀ vertices: 1 to |G|
         # Collect squares incident to vertex v
         squares_at_v = Matrix{Int}(undef, 0, 8)
         for square_idx in 1:num_squares 
@@ -440,7 +440,7 @@ function parity_matrix_xz(c::QuantumTannerCode)
         end
     end
     # X-Type stabilizers on V₁ vertices [radebold2025explicit](@cite)
-    for v in (G_order+1):(2*G_order) # V₁ vertices: |G|+1 to 2|G|
+    for v in (group_order+1):(2*group_order) # V₁ vertices: |G|+1 to 2|G|
         squares_at_v = Matrix{Int}(undef, 0, 8)
         for square_idx in 1:num_squares 
             square = squares_matrix[square_idx, :]
