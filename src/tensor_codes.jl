@@ -135,7 +135,7 @@ with ``\\Delta^{\\gamma}``-resistance to puncturing. Both `l` and `r` must be ma
 # Example
 
 ```jldoctest
-julia> using Nemo; 
+julia> using Nemo; using QuantumExpanders
 
 julia> R, _ = residue_ring(ZZ, 2);
 
@@ -143,7 +143,7 @@ julia> A = matrix(R, 2, 2, [1, 0, 0, 1])
 
 julia> B = matrix(R, 1, 2, [1, 1]);
 
-julia> kron(A, B)
+julia> A ⊗ B
 [1   1   0   0]
 [0   0   1   1]
 
@@ -152,7 +152,7 @@ julia> kron(A, B)
 - `l::zzModMatrix`: Left matrix in the Kronecker product, typically a generator or parity check matrix of a component code.
 - `r::zzModMatrix`: Right matrix in the Kronecker product, typically a generator or parity check matrix of the other component code.
 """
-const LinearAlgebra.kron = kronecker_product
+const ⊗ = kronecker_product
 
 """Check that two binary parity check matrices X and Z result in a good CSS code
 (i.e., commutation constraints are fulfilled)"""
