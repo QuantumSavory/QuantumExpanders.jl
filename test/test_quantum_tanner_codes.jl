@@ -77,6 +77,48 @@
         @test code_n(c) == 54 == ns && code_k(c) == 7 == ks
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
 
+        # [[54, 11, 4]]
+        H_A = [1 1 1]
+        G_A = [1 1 0; 1 0 1]
+        H_B = [1 1 1; 0 1 1]
+        G_B = [0 1 1]
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab) 
+        @test code_n(c) == 54 == ns && code_k(c) == 11 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
+
+        # [[54, 12, 3]]
+        H_A = [1 1 0]
+        G_A = [1 1 0; 0 0 1]
+        H_B = [0 1 0; 0 0 1]
+        G_B = [1 0 0]
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab) 
+        @test code_n(c) == 54 == ns && code_k(c) == 12 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 3
+
+        # [[54, 8, 5]]
+        H_A = [1 0 1; 1 1 0]
+        G_A = [1 1 1]
+        H_B = [1 1 1; 1 1 0]
+        G_B = [1 1 0]
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab) 
+        @test code_n(c) == 54 == ns && code_k(c) == 8 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 5
+
         # [[72, 16, 4]]
         F = free_group([:s, :r])
         s, r = gens(F)
