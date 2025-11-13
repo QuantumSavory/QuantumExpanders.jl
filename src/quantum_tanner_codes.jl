@@ -301,7 +301,7 @@ struct QuantumTannerCode <: AbstractCSSCode
     A::Vector{<:GroupElem}
     """Symmetric generating set (closed under inverses) not containing the identity"""
     B::Vector{<:GroupElem}
-    """Tuple ((H_A, G_A), (H_B, G_B)) where (H_A, H_B) and (G_A, G_B) are parity-check matrices and generator matrices, respectively."""
+    """Tuple ((H_A, G_A), (H_B, G_B)) where (H_A, H_B) and (G_A, G_B) are parity-check and generator matrices, respectively."""
     classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}}
     function QuantumTannerCode(group::Group,
                               A::Vector{<:GroupElem},
