@@ -382,7 +382,7 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab) 
         @test code_n(c) == 250 == ns && code_k(c) == 14 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 8
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=900)) == 8
 
         # [[250, 30, 5]]
         A = [s*r, r, r^3, r^7, r^9]
