@@ -6,6 +6,7 @@
     using JuMP
     using QuantumExpanders
     using QuantumClifford
+    using QuantumClifford: stab_looks_good, Stabilizer
     using QuantumClifford.ECC
     using QuantumClifford.ECC: code_n, code_k
     using Nemo: zero_matrix, base_ring, transpose, rank
@@ -178,5 +179,20 @@
             @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
             @test describe(G) == "C12 : C4"
         end
+    end
+
+    @testset "New instances of Quantum Tanner codes using Morgenstern generators" begin
+        # [[360, 8, 10]]
+        l, i = 1, 2
+        q = 2^l
+        Δ = q+1
+        SL₂, B = morgenstern_generators(l, i)
+        A = alternative_morgenstern_generators(B, FirstOnly())
+        classical_code_pair = (([0 0 0 1; 1 1 0 0], [1 1 0 0; 0 0 1 0]), ([1 0 1; 0 1 1], [1 1 1])) # found via random search
+        c = QuantumTannerCode(SL₂, A, B, classical_code_pair)
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 360
+        @test code_k(c) == 8
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 10
     end
 end

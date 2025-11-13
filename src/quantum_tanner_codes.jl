@@ -29,7 +29,6 @@ struct QuantumTannerCode <: AbstractCSSCode
                               A::Vector{<:GroupElem},
                               B::Vector{<:GroupElem}, 
                               classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}})
-        @assert length(A) == length(B) "A and B must have the same size"
         H_A, G_A = classical_codes[1]
         H_B, G_B = classical_codes[2]
         @assert size(H_A, 2) == length(A) "H_A parity check columns must match |A|"
@@ -398,15 +397,16 @@ dim(C₁) × |V₁| ≈ 2ρ(1-ρ)Δ²|G| and number of Z-stabs is dim(C₀) × |
 function parity_matrix_xz(c::QuantumTannerCode)
     Q, Q_red = enumerate_squares(c.group, c.A, c.B)
     squares_matrix = convert_squares_to_incidence_matrix(Q_red)
-    group_order = order(c.group)
+    G_order = order(c.group)
     classical_codes = c.classical_codes
     H_A, G_A = classical_codes[1]
     H_B, G_B = classical_codes[2]
-    Δ = size(G_A, 2)
+    Δ_A = length(c.A)
+    Δ_B = length(c.B)
     num_squares = size(squares_matrix, 1)
-    # Number of physical qubits: n = Δ²|G|/2
-    n = Int(Δ^2*group_order/2)
-    # Construct tensor codes as per [radebold2025explicit](@cite).
+    # n = Δ_AΔ_B|G|/2
+    n = Int(Δ_A*Δ_B*G_order/2)
+    # Construct tensor codes as per [radebold2025explicit](@cite)
     # C₀ = C_A ⊗ C_B for Z-stabilizers [radebold2025explicit](@cite)
     # C₁ = C_A^⊥ ⊗ C_B^⊥ for X-stabilizers [radebold2025explicit](@cite)
     β₀ = kron(G_A, G_B) # Basis for C₀ [radebold2025explicit](@cite)
@@ -414,7 +414,7 @@ function parity_matrix_xz(c::QuantumTannerCode)
     hz = Matrix{Int}(undef, 0, n)
     hx = Matrix{Int}(undef, 0, n)
     # Z-type stabilizers on V₀ vertices [radebold2025explicit](@cite)
-    for v in 1:group_order  # V₀ vertices: 1 to |G|
+    for v in 1:G_order  # V₀ vertices: 1 to |G|
         # Collect squares incident to vertex v
         squares_at_v = Matrix{Int}(undef, 0, 8)
         for square_idx in 1:num_squares 
@@ -426,14 +426,13 @@ function parity_matrix_xz(c::QuantumTannerCode)
         # Generate Z-stabilizers from basis of C₀
         for basis_idx in 1:size(β₀, 1)
             β_row = β₀[basis_idx, :]
-            # Reshape to Δ × Δ matrix indexed by generator pairs (a,b)
-            β_matrix = transpose(reshape(β_row, (Δ, Δ)))
+            β_matrix = transpose(reshape(β_row, (size(G_B, 2), size(G_A, 2))))
             stabs_vec = zeros(n)
             for incident_square in eachrow(squares_at_v)
-                qubit_index = incident_square[8] # Physical qubit index
-                aᵢ = incident_square[6] # Generator index from A
-                bᵢ = incident_square[7] # Generator index from B
-                # Set qubit according to classical code
+                qubit_index = incident_square[8] # physical qubit index
+                aᵢ = incident_square[6] # generator index from A
+                bᵢ = incident_square[7] # generator index from B
+                # set qubit according to classical code
                 stabs_vec[qubit_index] = β_matrix[aᵢ, bᵢ]
             end
             hz = [hz; transpose(stabs_vec)]
@@ -441,7 +440,7 @@ function parity_matrix_xz(c::QuantumTannerCode)
         end
     end
     # X-Type stabilizers on V₁ vertices [radebold2025explicit](@cite)
-    for v in (group_order+1):(2*group_order) # V₁ vertices: |G|+1 to 2|G|
+    for v in (G_order+1):(2*G_order) # V₁ vertices: |G|+1 to 2|G|
         squares_at_v = Matrix{Int}(undef, 0, 8)
         for square_idx in 1:num_squares 
             square = squares_matrix[square_idx, :]
@@ -452,12 +451,12 @@ function parity_matrix_xz(c::QuantumTannerCode)
         # Generate X-stabilizers from basis of C₁
         for basis_idx in 1:size(β₁, 1)
             β_row = β₁[basis_idx, :]
-            β_matrix = transpose(reshape(β_row, (Δ, Δ)))
+            β_matrix = transpose(reshape(β_row, (size(G_B, 2), size(G_A, 2))))
             stabs_vec = zeros(n)
             for incident_square ∈ eachrow(squares_at_v)
-                qubit_index = incident_square[8] # Physical qubit index
-                aᵢ = incident_square[6] # Generator index from A
-                bᵢ = incident_square[7] # Generator index from B
+                qubit_index = incident_square[8]
+                aᵢ = incident_square[6]
+                bᵢ = incident_square[7]
                 stabs_vec[qubit_index] = β_matrix[aᵢ, bᵢ]
             end
             hx = [hx; transpose(stabs_vec)]
