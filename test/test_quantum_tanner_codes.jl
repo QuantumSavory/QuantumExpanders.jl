@@ -41,8 +41,10 @@
         # [[36, 8, 3]]
         H_A = [1  0  1; 0  1  1]
         G_A = [1  1  1]
+        @test iszero(mod.(H_A*G_A', 2))
         H_B = [1  1  1]
         G_B = [1  1  0; 1  0  1]
+        @test iszero(mod.(H_B*G_B', 2))
         classical_code_pair = ((H_A, G_A), (H_B, G_B))
         c = QuantumTannerCode(G, A, B, classical_code_pair)
         hx, hz = parity_matrix_x(c), parity_matrix_z(c)
@@ -80,8 +82,10 @@
         # [[54, 11, 4]]
         H_A = [1 1 1]
         G_A = [1 1 0; 1 0 1]
+        @test iszero(mod.(H_A*G_A', 2))
         H_B = [1 1 1; 0 1 1]
         G_B = [0 1 1]
+        @test iszero(mod.(H_B*G_B', 2))
         classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
         c = QuantumTannerCode(G, A, B, classical_code_pair)
         hx, hz = parity_matrix_x(c), parity_matrix_z(c)
@@ -94,8 +98,10 @@
         # [[54, 12, 3]]
         H_A = [1 1 0]
         G_A = [1 1 0; 0 0 1]
+        @test iszero(mod.(H_A*G_A', 2))
         H_B = [0 1 0; 0 0 1]
         G_B = [1 0 0]
+        @test iszero(mod.(H_B*G_B', 2))
         classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
         c = QuantumTannerCode(G, A, B, classical_code_pair)
         hx, hz = parity_matrix_x(c), parity_matrix_z(c)
@@ -108,8 +114,10 @@
         # [[54, 8, 5]]
         H_A = [1 0 1; 1 1 0]
         G_A = [1 1 1]
+        @test iszero(mod.(H_A*G_A', 2))
         H_B = [1 1 1; 1 1 0]
         G_B = [1 1 0]
+        @test iszero(mod.(H_B*G_B', 2))
         classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
         c = QuantumTannerCode(G, A, B, classical_code_pair)
         hx, hz = parity_matrix_x(c), parity_matrix_z(c)
@@ -147,8 +155,10 @@
         # [[72, 10, 4]]
         H_A = [1 1 1; 0 0 1]
         G_A = [1 1 0]
+        @test iszero(mod.(H_A*G_A', 2))
         H_B = [1 1 1; 1 1 0]
         G_B = [1 1 0]
+        @test iszero(mod.(H_B*G_B', 2))
         classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
         c = QuantumTannerCode(G, A, B, classical_code_pair)
         hx, hz = parity_matrix_x(c), parity_matrix_z(c)
@@ -161,8 +171,10 @@
         # [[72, 12, 4]]
         H_A = [1 0 0; 0 1 1]
         G_A = [0 1 1]
+        @test iszero(mod.(H_A*G_A', 2))
         H_B = [1 1 1; 0 1 1]
-        G_B =  [0 1 1]
+        G_B = [0 1 1]
+        @test iszero(mod.(H_B*G_B', 2))
         classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
         c = QuantumTannerCode(G, A, B, classical_code_pair)
         hx, hz = parity_matrix_x(c), parity_matrix_z(c)
@@ -170,6 +182,22 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab) 
         @test code_n(c) == 72 == ns && code_k(c) == 12 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
+
+        # [[72, 14, 4]]
+        H_A = [1 1 1]
+        G_A = [1 1 0; 1 0 1]
+        @test iszero(mod.(H_A*G_A', 2))
+        H_B = [1 1 1; 1 0 1]
+        G_B = [1 0 1]
+        @test iszero(mod.(H_B*G_B', 2))
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab)
+        @test code_n(c) == 72 == ns && code_k(c) == 14 == ks
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
 
         # [[200, 13, 4]]
