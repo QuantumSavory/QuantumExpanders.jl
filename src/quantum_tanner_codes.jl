@@ -397,7 +397,7 @@ Thus, [radebold2025explicit](@cite) uses such dihedral groups  ``\\D_{2p}`` and 
 sets to construct the underlying expander graphs for the quantum Tanner code.
 
 !!! note
-    Through random search of clasical code pairs that are used for the construction of quantum Tanner codes,
+    Through random search of classical code pairs that are used for the construction of quantum Tanner codes,
     we found several new instances of these codes.
 
 ### Arguments
