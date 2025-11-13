@@ -247,6 +247,104 @@ The bijective mapping φ_v: A×B → Q(v) is defined as [radebold2025explicit](@
 This establishes a natural labeling of qubits (*faces*) by generator pairs, allowing classical tensor codes
 to be applied locally at each vertex [radebold2025explicit](@cite).
 
+!!! note
+    This is a newer version of the less well designed function [`gen_code`](@ref)(G, A, B, bipartite=true, use_same_local_code=false).
+    It construct quantum Tanner code given a finite group G equipped with two *symmetric* generating sets A and B,
+    alongside pairs of classical codes — comprising parity check and generator matrices—that are utilized in the
+    construction of classical Tanner codes. To illustrate its application, the implementation can employ generating
+    sets computed from the Morgenstern's explicit construction of Ramanujan graphs for odd prime power `q`generating sets.
+
+Here is an example of new [[360, 8, 10]] quantum Tanner code
+
+```jldoctest
+julia> using QuantumExpanders; using Oscar; using QuantumClifford.ECC;
+
+julia> l, i = 1, 2;
+
+julia> q = 2^l;
+
+julia> Δ = q+1;
+
+julia> SL₂, B = morgenstern_generators(l, i);
+[ Info: |SL₂(𝔽(4))| = 60
+
+julia> A = alternative_morgenstern_generators(B, FirstOnly());
+
+julia> H_A = [0 0 0 1;
+              1 1 0 0];
+
+julia> G_A = [1 1 0 0;
+              0 0 1 0];
+
+julia> H_B = [1 0 1;
+              0 1 1];
+
+julia> G_B = [1 1 1];
+
+julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
+
+julia> c = QuantumTannerCode(SL₂, A, B, classical_code_pair);
+
+julia> import HiGHS; import JuMP
+
+julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 60, |A| = 4, |B| = 3
+[ Info: Physical qubits: 360
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 360 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 60, |A| = 4, |B| = 3
+[ Info: Physical qubits: 360
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 360 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 60, |A| = 4, |B| = 3
+[ Info: Physical qubits: 360
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 360 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 60, |A| = 4, |B| = 3
+[ Info: Physical qubits: 360
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 360 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 60, |A| = 4, |B| = 3
+[ Info: Physical qubits: 360
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 360 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 60, |A| = 4, |B| = 3
+[ Info: Physical qubits: 360
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 360 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 60, |A| = 4, |B| = 3
+[ Info: Physical qubits: 360
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 360 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 60, |A| = 4, |B| = 3
+[ Info: Physical qubits: 360
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 360 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 60, |A| = 4, |B| = 3
+[ Info: Physical qubits: 360
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 360 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+(360, 8, 10)
+```
+
 ### Arguments
 - `G`: A finite group
 - `A`: Symmetric generating set (closed under inverses) not containing the identity
