@@ -200,7 +200,7 @@ dim(C₁) × |V₁| ≈ 2ρ(1-ρ)Δ²|G| and number of Z-stabs is dim(C₀) × |
     construction of classical Tanner codes. To illustrate its application, the implementation can employ generating
     sets computed from the Morgenstern's explicit construction of Ramanujan graphs for odd prime power `q` generating sets.
 
-Here is an example of new `[[360, 8, 10]]` quantum Tanner code using Morgenstern generating sets
+Here is an example of new the `[[360, 8, 10]]` quantum Tanner code using Morgenstern generating sets
 
 ```jldoctest
 julia> using QuantumExpanders; using Oscar; using QuantumClifford.ECC;
@@ -231,7 +231,7 @@ julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
 
 julia> c = QuantumTannerCode(SL₂, A, B, classical_code_pair);
 
-julia> import HiGHS; import JuMP
+julia> import HiGHS; import JuMP;
 
 julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
 [ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
