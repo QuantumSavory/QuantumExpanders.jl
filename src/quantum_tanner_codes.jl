@@ -192,69 +192,15 @@ For component codes C_A[Δ, ρΔ, δΔ] and C_B[Δ, (1-ρ)Δ, δΔ], the number 
 dim(C₁) × |V₁| ≈ 2ρ(1-ρ)Δ²|G| and number of Z-stabs is dim(C₀) × |V₀| ≈ 2ρ(1-ρ)Δ²|G|. The resulting quantum code rate is
 ≥ (2ρ - 1)². For other properties, see [radebold2025explicit](@cite).
 
-### Fields
-    $TYPEDFIELDS
-"""
-struct QuantumTannerCode <: AbstractCSSCode
-    """The order of the underlying *finite* group"""
-    group::Group
-    """Symmetric generating set (closed under inverses) not containing the identity"""
-    A::Vector{<:GroupElem}
-    """Symmetric generating set (closed under inverses) not containing the identity"""
-    B::Vector{<:GroupElem}
-    """Tuple ((H_A, G_A), (H_B, G_B)) where H_A, H_B: parity-check matrices, and G_A, G_B: generator matrices"""
-    classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}}
-    function QuantumTannerCode(group::Group,
-                              A::Vector{<:GroupElem},
-                              B::Vector{<:GroupElem}, 
-                              classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}})
-        H_A, G_A = classical_codes[1]
-        H_B, G_B = classical_codes[2]
-        @assert size(H_A, 2) == length(A) "H_A parity check columns must match |A|"
-        @assert size(G_A, 2) == length(A) "G_A generator columns must match |A|"
-        @assert size(H_B, 2) == length(B) "H_B parity check columns must match |B|"
-        @assert size(G_B, 2) == length(B) "G_B generator columns must match |B|"
-        all(iszero, mod.(H_A*G_A', 2)) || @warn "C_A may not be a valid classical code: H_A*G_A^T ≠ 0"
-        all(iszero, mod.(H_B*G_B', 2)) || @warn "C_B may not be a valid classical code: H_B*G_B^T ≠ 0"
-        return new(group, A, B, classical_codes)
-    end
-end
-
-"""
-Enumerate all square incidences in the Left-Right Cayley Complex
-following introduction by [dinur2022locally](@cite).
-
-The Left-Right Cayley Complex X is an [incidence structure](https://en.wikipedia.org/wiki/Incidence_structure)
-between:
-- Vertices V = V₀ ∪ V₁ where V₀ = G×{0}, V₁ = G×{1}
-- A-edges E_A = {(g,0), (ag,1)} for g ∈ G, a ∈ A ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of left Cayley graph Cay(G,A))
-- B-edges E_B = {(g,0), (gb,1)} for g ∈ G, b ∈ B ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of right Cayley graph Cay(G,B))
-- Squares Q = {(g,0), (ag,1), (gb,1), (agb,0)} for g ∈ G, a ∈ A, b ∈ B
-
-Each square q ∈ Q corresponds to one physical qubit in the quantum Tanner code. Each square appears in two
-natural local views [radebold2025explicit](@cite):
-- From V₀ vertices: defines the graph Γ₀^□ = (V₀, Q) used for Z-stabilizers
-- From V₁ vertices: defines the graph Γ₁^□ = (V₁, Q) used for X-stabilizers
-
-We explicitly enumerates both incidences of each square to facilitate the Tanner code construction.
-
-# Construction Framework
-
-For each vertex v ∈ V, the set of incident faces Q(v) is uniquely determined by pairs (a,b) ∈ A×B.
-
-The bijective mapping φ_v: A×B → Q(v) is defined as [radebold2025explicit](@cite): φ_v(a,b) = {v, av, vb, avb}
-
-This establishes a natural labeling of qubits (*faces*) by generator pairs, allowing classical tensor codes
-to be applied locally at each vertex [radebold2025explicit](@cite).
 
 !!! note
     This is a newer version of the less well designed function [`gen_code`](@ref)(G, A, B, bipartite=true, use_same_local_code=false).
     It construct quantum Tanner code given a finite group G equipped with two *symmetric* generating sets A and B,
     alongside pairs of classical codes — comprising parity check and generator matrices—that are utilized in the
     construction of classical Tanner codes. To illustrate its application, the implementation can employ generating
-    sets computed from the Morgenstern's explicit construction of Ramanujan graphs for odd prime power `q`generating sets.
+    sets computed from the Morgenstern's explicit construction of Ramanujan graphs for odd prime power `q` generating sets.
 
-Here is an example of new [[360, 8, 10]] quantum Tanner code
+Here is an example of new `[[360, 8, 10]]` quantum Tanner code using Morgenstern generating sets
 
 ```jldoctest
 julia> using QuantumExpanders; using Oscar; using QuantumClifford.ECC;
@@ -344,6 +290,61 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
 [ Info: Squares incident to vertices: 720 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
 (360, 8, 10)
 ```
+
+### Fields
+    $TYPEDFIELDS
+"""
+struct QuantumTannerCode <: AbstractCSSCode
+    """The order of the underlying *finite* group"""
+    group::Group
+    """Symmetric generating set (closed under inverses) not containing the identity"""
+    A::Vector{<:GroupElem}
+    """Symmetric generating set (closed under inverses) not containing the identity"""
+    B::Vector{<:GroupElem}
+    """Tuple ((H_A, G_A), (H_B, G_B)) where H_A, H_B: parity-check matrices, and G_A, G_B: generator matrices"""
+    classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}}
+    function QuantumTannerCode(group::Group,
+                              A::Vector{<:GroupElem},
+                              B::Vector{<:GroupElem}, 
+                              classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}})
+        H_A, G_A = classical_codes[1]
+        H_B, G_B = classical_codes[2]
+        @assert size(H_A, 2) == length(A) "H_A parity check columns must match |A|"
+        @assert size(G_A, 2) == length(A) "G_A generator columns must match |A|"
+        @assert size(H_B, 2) == length(B) "H_B parity check columns must match |B|"
+        @assert size(G_B, 2) == length(B) "G_B generator columns must match |B|"
+        all(iszero, mod.(H_A*G_A', 2)) || @warn "C_A may not be a valid classical code: H_A*G_A^T ≠ 0"
+        all(iszero, mod.(H_B*G_B', 2)) || @warn "C_B may not be a valid classical code: H_B*G_B^T ≠ 0"
+        return new(group, A, B, classical_codes)
+    end
+end
+
+"""
+Enumerate all square incidences in the Left-Right Cayley Complex
+following introduction by [dinur2022locally](@cite).
+
+The Left-Right Cayley Complex X is an [incidence structure](https://en.wikipedia.org/wiki/Incidence_structure)
+between:
+- Vertices V = V₀ ∪ V₁ where V₀ = G×{0}, V₁ = G×{1}
+- A-edges E_A = {(g,0), (ag,1)} for g ∈ G, a ∈ A ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of left Cayley graph Cay(G,A))
+- B-edges E_B = {(g,0), (gb,1)} for g ∈ G, b ∈ B ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of right Cayley graph Cay(G,B))
+- Squares Q = {(g,0), (ag,1), (gb,1), (agb,0)} for g ∈ G, a ∈ A, b ∈ B
+
+Each square q ∈ Q corresponds to one physical qubit in the quantum Tanner code. Each square appears in two
+natural local views [radebold2025explicit](@cite):
+- From V₀ vertices: defines the graph Γ₀^□ = (V₀, Q) used for Z-stabilizers
+- From V₁ vertices: defines the graph Γ₁^□ = (V₁, Q) used for X-stabilizers
+
+We explicitly enumerates both incidences of each square to facilitate the Tanner code construction.
+
+# Construction Framework
+
+For each vertex v ∈ V, the set of incident faces Q(v) is uniquely determined by pairs (a,b) ∈ A×B.
+
+The bijective mapping φ_v: A×B → Q(v) is defined as [radebold2025explicit](@cite): φ_v(a,b) = {v, av, vb, avb}
+
+This establishes a natural labeling of qubits (*faces*) by generator pairs, allowing classical tensor codes
+to be applied locally at each vertex [radebold2025explicit](@cite).
 
 ### Arguments
 - `G`: A finite group
