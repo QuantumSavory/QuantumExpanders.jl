@@ -195,8 +195,8 @@ dim(C₁) × |V₁| ≈ 2ρ(1-ρ)Δ²|G| and number of Z-stabs is dim(C₀) × |
 
 !!! note
     This is a newer version of the less well designed function [`gen_code`](@ref)(G, A, B, bipartite=true, use_same_local_code=false).
-    It construct quantum Tanner code given a finite group G equipped with two *symmetric* generating sets A and B,
-    alongside pairs of classical codes — comprising parity check and generator matrices—that are utilized in the
+    It constructs the quantum Tanner code given a finite group G equipped with two *symmetric* generating sets A and B,
+    alongside pairs of classical codes — comprising parity check and generator matrices — that are utilized in the
     construction of classical Tanner codes. To illustrate its application, the implementation can employ generating
     sets computed from the Morgenstern's explicit construction of Ramanujan graphs for odd prime power `q` generating sets.
 
