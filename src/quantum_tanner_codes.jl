@@ -346,6 +346,60 @@ The bijective mapping φ_v: A×B → Q(v) is defined as [radebold2025explicit](@
 This establishes a natural labeling of qubits (*faces*) by generator pairs, allowing classical tensor codes
 to be applied locally at each vertex [radebold2025explicit](@cite).
 
+# Dihedral Ramanujan Graphs
+
+The quantum Tanner code construction of [radebold2025explicit](@cite) utilizes a specific class
+of *[Frobenius groups](https://en.wikipedia.org/wiki/Frobenius_group)*.
+
+A finite group G is a Frobenius group if it can be expressed as a [semidirect product](https://en.wikipedia.org/wiki/Semidirect_product)
+
+```math
+\\begin{aligned}
+G = N \\rtimes H
+\\end{aligned}
+```
+
+where N (the *Frobenius kernel*) and H (the *Frobenius complement*) satisfy the condition that the
+ratio ``r = \\frac{|N|-1}{|H|}`` is a positive integer. A canonical example, and the one primarily
+utilized in ([radebold2025explicit](@cite), [hirano2016ramanujan](@cite)), is the *dihedral group*
+of order 2p for an odd prime p:
+
+```math
+\\begin{aligned} 
+D_{2p} = \\langle x, y \\mid x^p = y^2 = 1, yxy^{-1} = x^{-1} \\rangle.
+\\end{aligned}
+```
+
+For ``D_{2p}``, the kernel is the cyclic subgroup ``N = \\langle x \\rangle \\cong \\mathbb{Z}_p`` and the
+complement is ``H = \\langle y \\rangle \\cong \\mathbb{Z}_2``, yielding ``r = \\frac{p-1}{2}``.
+
+[hirano2016ramanujan](@cite) provides a method to construct Ramanujan graphs from these groups. A Cayley
+graph ``\\text{Cay}(G, S)`` is **Ramanujan** if its non-trivial eigenvalues ``\\lambda`` satisfy
+``|\\lambda| \\leq 2\\sqrt{|S|-1}``. For a Frobenius group ``G = N \\rtimes H`` with ``r \\geq 4``,
+the Theorem 3.3 of [hirano2016ramanujan](@cite) states that the maximum "covalency" ``\\hat{l}_{G, \\mathcal{S}_0}``
+for which all corresponding normal Cayley graphs remain Ramanujan is given by the trivial bound:
+
+```math
+\\begin{aligned} 
+\\hat{l}_{G, \\mathcal{S}_0} = l_0 = \\max \\{ l \\in \\mathcal{L} \\mid l \\le 2(\\sqrt{|G|}-1) \\}.
+\\end{aligned}
+```
+
+For the dihedral group ``D_{2p}`` with ``p \\geq 11``, this bound specializes to Corollary 3.4 of [hirano2016ramanujan](@cite):
+
+```math
+\\begin{aligned} 
+\\hat{l} = 2 \\left\\lfloor \\sqrt{2p} - \\frac{1}{2} \\right\\rfloor - 1.
+\\end{aligned}
+```
+
+Thus, [radebold2025explicit](@cite) uses such dihedral groups  ``\D_{2p}`` and their symmetric generating
+sets to construct the underlying expander graphs for the quantum Tanner code.
+
+!!! note
+    Through random search of clasical code pairs that are used for the construction of quantum Tanner codes,
+    we found several new instances of these codes.
+
 ### Arguments
 - `G`: A finite group
 - `A`: Symmetric generating set (closed under inverses) not containing the identity
