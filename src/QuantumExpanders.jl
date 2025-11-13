@@ -21,6 +21,7 @@ rank, GF, FPGroup, FPGroupElem, Group, GroupElem
 using Graphs: add_edge!, nv, ne, neighbors, Graphs
 using Multigraphs
 using ProgressMeter
+using DocStringExtensions
 
 include("cayley_graphs.jl")
 include("tensor_codes.jl")
