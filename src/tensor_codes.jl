@@ -1,5 +1,3 @@
-const Z2Matrix = zzModMatrix
-
 """
 Generate a random binary parity check matrix for *classical component codes* used in
 quantum Tanner code construction [leverrier2022quantum](@cite).
@@ -50,7 +48,7 @@ julia> H = uniformly_random_code_checkmatrix(0.5, 10)
 - `ρ::Real`: Target rate of the classical component code, determining the code's dimension relative to its block length.
 - `Δ::Integer`: Block length of the classical component code, corresponding to the size of the generating sets in the underlying Cayley graph structure.
 """
-function uniformly_random_code_checkmatrix(ρ, Δ)
+function uniformly_random_code_checkmatrix(ρ::Real, Δ::Int)
     @assert 0<ρ<1
     r = Int(floor(ρ*Δ))
     R, _ = residue_ring(ZZ, 2)
@@ -156,7 +154,7 @@ const ⊗ = kronecker_product
 
 """Check that two binary parity check matrices X and Z result in a good CSS code
 (i.e., commutation constraints are fulfilled)"""
-function good_css(X::Union{Z2Matrix,AbstractMatrix{Bool}}, Z::Union{Z2Matrix,AbstractMatrix{Bool}})
+function good_css(X::Union{zzModMatrix,AbstractMatrix{Bool}}, Z::Union{zzModMatrix,AbstractMatrix{Bool}})
     x = convert_to_bool(X)
     z = convert_to_bool(Z)
     stab = css(X, Z)
@@ -166,7 +164,7 @@ function good_css(X::Union{Z2Matrix,AbstractMatrix{Bool}}, Z::Union{Z2Matrix,Abs
     return true
 end
 
-convert_to_bool(M::Z2Matrix) = Bool.(Int.(lift.(M)))
+convert_to_bool(M::zzModMatrix) = Bool.(Int.(lift.(M)))
 convert_to_bool(M::AbstractAlgebra.MatElem{Bool}) = Matrix(M)
 convert_to_bool(M::AbstractAlgebra.Generic.MatSpaceElem{Bool}) = Matrix{Bool}(M)
 convert_to_bool(M::AbstractMatrix{<:Bool}) = Matrix{Bool}(M)
