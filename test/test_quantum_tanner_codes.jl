@@ -285,7 +285,7 @@
         @test code_n(c) == 200 == ns && code_k(c) == 27 == ks
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 6
 
-        #[[200, 12, 12]]
+        # [[200, 12, 12]]
         H_A = [1  1  1  1  1;
                0  1  1  1  1;
                0  1  1  0  0;
@@ -304,6 +304,26 @@
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 200 == ns && code_k(c) == 12 == ks
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 12
+
+        # [[200, 38, 4]]
+        H_A = [0  1  0  1  1;
+               1  1  1  0  1]
+        G_A = [1  0  1  0  0;
+               1  1  0  1  0;
+               0  1  0  0  1]
+        H_B = [1  0  0  0  0;
+               1  1  1  0  1;
+               0  1  1  1  0;
+               0  1  1  1  1]
+        G_B = [0  1  1  0  0]
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab)
+        @test code_n(c) == 200 == ns && code_k(c) == 38 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 4
 
         # [[250, 14, 6]]
         F = free_group([:s, :r])
