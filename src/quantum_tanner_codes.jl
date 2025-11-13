@@ -248,7 +248,7 @@ sets to construct the underlying expander graphs for the quantum Tanner code.
     Through random search of classical code pairs that are used for the construction of quantum Tanner codes,
     we found several new instances of these codes.
 
-Here is an example of `[[54, 11, 4]]` quantum Tanner code:
+Here is an example of `[[54, 11, 4]]` quantum Tanner code from [radebold2025explicit](@cite):
 
 ```jldoctest examples
 julia> using QuantumExpanders; using Oscar; using QuantumClifford.ECC;
@@ -339,7 +339,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
 (54, 11, 4)
 ```
 
-Here is an example of `[[72, 14, 4]]` quantum Tanner code:
+Here is an example of `[[72, 14, 4]]` quantum Tanner code from [radebold2025explicit](@cite):
 
 ```jldoctest examples
 julia> F = free_group([:s, :r]);
@@ -428,7 +428,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
 (72, 14, 4)
 ```
 
-Here is an example of `[[200, 12, 12]]` quantum Tanner code:
+Here is an example of a new `[[200, 12, 12]]` quantum Tanner code:
 
 ```jldoctest examples
 julia> F = free_group([:s, :r]);
@@ -530,7 +530,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
     construction of classical Tanner codes. To illustrate its application, the implementation can employ generating
     sets computed from the Morgenstern's explicit construction of Ramanujan graphs for odd prime power `q` generating sets.
 
-Here is an example of new the `[[360, 8, 10]]` quantum Tanner code using Morgenstern generating sets
+Here is an example of a new `[[360, 8, 10]]` quantum Tanner code using Morgenstern generating sets
 
 ```jldoctest
 julia> using QuantumExpanders; using Oscar; using QuantumClifford.ECC;
