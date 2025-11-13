@@ -385,6 +385,8 @@
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 8
 
         # [[250, 30, 5]]
+        A = [s*r, r, r^3, r^7, r^9]
+        B = [s*r^6, r^2, r^4, r^6, r^8]
         H_A = [0  1  1  0  1;
                0  0  1  1  1;
                1  0  1  1  1;
