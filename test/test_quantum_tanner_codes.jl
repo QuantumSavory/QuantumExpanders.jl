@@ -243,7 +243,7 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 200 == ns && code_k(c) == 19 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 7
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=900)) == 7
 
         # [[200, 36, 4]]
         H_A = [0  1  0  0  0;
