@@ -1,5 +1,5 @@
 """Construct the Cayleyʳⁱᵍʰᵗ graph for a given group and set of generators."""
-function cayley_right(group,generators)
+function cayley_right(group::Group, generators::Vector{<:GroupElem})
     idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
 
@@ -15,7 +15,7 @@ function cayley_right(group,generators)
 end
 
 """Construct the Cayleyˡᵉᶠᵗ graph for a given group and set of generators."""
-function cayley_left(group,generators)
+function cayley_left(group::Group, generators::Vector{<:GroupElem})
     idx_to_mat = collect(group); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
 
@@ -74,7 +74,7 @@ pairs (g,0) and (agb,0) that appear as opposite corners of squares. Similarly, r
 the graph 𝒢₁□ = (V₁, Q) where edges connect pairs (ag,1) and (gb,1). Both 𝒢₀□ and 𝒢₁□ are Δ²-regular multigraphs
 on |G| vertices, with the total number of squares given by |Q| = Δ²|G|/2.
 """
-function cayley_complex_square_graphs(G,A,B,GraphType=DiMultigraph)
+function cayley_complex_square_graphs(G::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}, GraphType=DiMultigraph)
     @assert is_symmetric_gen(A) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
     @assert is_symmetric_gen(B) "Definition 3.1: Set B must be symmetric generating set [dinur2022locally](@cite)"
     # Identity element of G is neither in A nor in B
@@ -249,7 +249,7 @@ with each vertex having exactly ``\\Delta_A \\Delta_B`` incident edges, where ``
 The local view Q(v) at any vertex v identifies with ``A \\times B``, where the squares incident to v are
 in bijection with pairs ``(a,b) \\in A \\times B`` [leverrier2022quantum](@cite).
 """
-function cayley_complex_square_graphs_quadripartite(G,A,B,GraphType=DiMultigraph)
+function cayley_complex_square_graphs_quadripartite(G::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}, GraphType=DiMultigraph)
     # Mappings between group element as a matrix and as an integer enumerator
     idx_to_mat = collect(G); # TODO see if there is a better (lazy?) way to enumerate
     mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
@@ -422,7 +422,7 @@ the TNC condition requires:
 - `genA`: Symmetric generating set A for G (``A = A^-1``)
 - `genB`: Symmetric generating set B for G (``B = B^-1``)
 """
-function is_nonconjugate(group,genA,genB)
+function is_nonconjugate(group::Group, genA::Vector{<:GroupElem}, genB::Vector{<:GroupElem})
     genset = Set(genB)
     for g in group
         for b in genA
@@ -435,4 +435,4 @@ function is_nonconjugate(group,genA,genB)
 end
 
 """Check the generating set is symmetric."""
-is_symmetric_gen(gens) = Set(Nemo.inv.(gens)) == Set(gens)
+is_symmetric_gen(gens::Vector{<:GroupElem}) = Set(Nemo.inv.(gens)) == Set(gens)

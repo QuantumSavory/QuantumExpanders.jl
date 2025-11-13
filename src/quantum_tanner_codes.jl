@@ -20,203 +20,9 @@ function random_code_pair(ρ::Real, Δ::Int)
     return ((H_A, G_A), (H_B, G_B))
 end
 
-struct QuantumTannerCode <: AbstractCSSCode
-    group::Group
-    A::Vector{<:GroupElem}
-    B::Vector{<:GroupElem}
-    classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}}
-    function QuantumTannerCode(group::Group,
-                              A::Vector{<:GroupElem},
-                              B::Vector{<:GroupElem}, 
-                              classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}})
-        H_A, G_A = classical_codes[1]
-        H_B, G_B = classical_codes[2]
-        @assert size(H_A, 2) == length(A) "H_A parity check columns must match |A|"
-        @assert size(G_A, 2) == length(A) "G_A generator columns must match |A|"
-        @assert size(H_B, 2) == length(B) "H_B parity check columns must match |B|"
-        @assert size(G_B, 2) == length(B) "G_B generator columns must match |B|"
-        all(iszero, mod.(H_A*G_A', 2)) || @warn "C_A may not be a valid classical code: H_A*G_A^T ≠ 0"
-        all(iszero, mod.(H_B*G_B', 2)) || @warn "C_B may not be a valid classical code: H_B*G_B^T ≠ 0"
-        return new(group, A, B, classical_codes)
-    end
-end
-
 """
-Enumerate all square incidences in the Left-Right Cayley Complex
-following introduction by [dinur2022locally](@cite).
-
-The Left-Right Cayley Complex X is an [incidence structure](https://en.wikipedia.org/wiki/Incidence_structure)
-between:
-- Vertices V = V₀ ∪ V₁ where V₀ = G×{0}, V₁ = G×{1}
-- A-edges E_A = {(g,0), (ag,1)} for g ∈ G, a ∈ A ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of left Cayley graph Cay(G,A))
-- B-edges E_B = {(g,0), (gb,1)} for g ∈ G, b ∈ B ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of right Cayley graph Cay(G,B))
-- Squares Q = {(g,0), (ag,1), (gb,1), (agb,0)} for g ∈ G, a ∈ A, b ∈ B
-
-Each square q ∈ Q corresponds to one physical qubit in the quantum Tanner code. Each square appears in two
-natural local views [radebold2025explicit](@cite):
-- From V₀ vertices: defines the graph Γ₀^□ = (V₀, Q) used for Z-stabilizers
-- From V₁ vertices: defines the graph Γ₁^□ = (V₁, Q) used for X-stabilizers
-
-We explicitly enumerates both incidences of each square to facilitate the Tanner code construction.
-
-# Construction Framework
-
-For each vertex v ∈ V, the set of incident faces Q(v) is uniquely determined by pairs (a,b) ∈ A×B.
-
-The bijective mapping φ_v: A×B → Q(v) is defined as [radebold2025explicit](@cite): φ_v(a,b) = {v, av, vb, avb}
-
-This establishes a natural labeling of qubits (*faces*) by generator pairs, allowing classical tensor codes
-to be applied locally at each vertex [radebold2025explicit](@cite).
-
-### Arguments
-- `G`: A finite group
-- `A`: Symmetric generating set (closed under inverses) not containing the identity
-- `B`: Symmetric generating set (closed under inverses) not containing the identity
-"""
-function enumerate_squares(G, A, B)
-    @assert is_symmetric_gen(A) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
-    @assert is_symmetric_gen(B) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
-    @assert !(one(G) in A) "Definition 3.1: Identity must not be in A [dinur2022locally](@cite)"
-    @assert !(one(G) in B) "Definition 3.1: Identity must not be in A [dinur2022locally](@cite)"
-    @assert is_nonconjugate(G, A, B) "Definition 3.6: ∀ a ∈ A, b ∈ B, g ∈ G, g⁻¹ag ≠ b [dinur2022locally](@cite)"
-    idx_to_mat = collect(G)
-    n = length(collect(G))
-    mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
-    Q = []
-    Q_redundant = ([], [])
-    for g in idx_to_mat
-        for a in A
-            for b in B
-                gᵢ = mat_to_idx[g]
-                agᵢ = mat_to_idx[a*g] 
-                gbᵢ = mat_to_idx[g*b]
-                agbᵢ = mat_to_idx[a*g*b]
-                aᵢ, bᵢ = findfirst(==(a), A), findfirst(==(b), B)
-                aᵢₙᵥᵢ, bᵢₙᵥᵢ = findfirst(==(inv(a)), A), findfirst(==(inv(b)), B)
-                # Typeₒ squares ({g₀, (a·g)₁, (g·b)₁, (a·g·b)₀}) represent Z-type stabilizers at V₀ vertices.
-                typeₒ□ = [
-                    0,
-                    [g, a*g, g*b, a*g*b],
-                    [gᵢ, agᵢ+n, gbᵢ+n, agbᵢ],
-                    [a, b],
-                    [aᵢ, bᵢ]
-                ]
-                typeₒ□_alt₁ = [
-                    0, [a*g*b, g*b, a*g, g],
-                    [agbᵢ, gbᵢ+n, agᵢ+n, gᵢ],
-                    [inv(a), inv(b)], [aᵢₙᵥᵢ, bᵢₙᵥᵢ]
-                ]
-                typeₒ□_alt₂ = [
-                    1, [g*b, a*g*b, g, a*g], 
-                    [gbᵢ+n, agbᵢ, gᵢ, agᵢ+n],
-                    [a, inv(b)], [aᵢ, bᵢₙᵥᵢ]
-                ]
-                typeₒ□_alt₃ = [
-                    1, [a*g, g, a*g*b, g*b],
-                    [agᵢ+n, gᵢ, agbᵢ, gbᵢ+n], 
-                    [inv(a), b], [aᵢₙᵥᵢ, bᵢ]
-                ]
-                is_new□ = true
-                for existing□ in Q
-                    if (existing□[3] == typeₒ□[3] || existing□[3] == typeₒ□_alt₁[3] || existing□[3] == typeₒ□_alt₂[3] || existing□[3] == typeₒ□_alt₃[3])
-                        is_new□ = false
-                        break
-                    end
-                end
-                if is_new□
-                    push!(Q, typeₒ□)
-                    □ᵢ = length(Q)
-                    push!(typeₒ□, □ᵢ)
-                    push!(typeₒ□_alt₁, □ᵢ)
-                    push!(typeₒ□_alt₂, □ᵢ)
-                    push!(typeₒ□_alt₃, □ᵢ)
-                    push!(Q_redundant[1], typeₒ□)
-                    push!(Q_redundant[1], typeₒ□_alt₁)
-                    push!(Q_redundant[2], typeₒ□_alt₂)
-                    push!(Q_redundant[2], typeₒ□_alt₃)
-                end
-                # Type 1 squares {g₁, (a·g)₀, (g·b)₀, (a·g·b)₁} represent X-stabilizers at V₁ vertices
-                type□₁ = [
-                    1,
-                    [g, a*g, g*b, a*g*b],
-                    [gᵢ + n, agᵢ, gbᵢ, agbᵢ + n],
-                    [a, b],
-                    [aᵢ, bᵢ]
-                ]
-                type□₁_alt₁ = [
-                    1, [a*g*b, g*b, a*g, g],
-                    [agbᵢ+n, gbᵢ, agᵢ, gᵢ+n],
-                    [inv(a), inv(b)], [aᵢₙᵥᵢ, bᵢₙᵥᵢ]
-                ]
-                type□₁_alt₂ = [
-                    0, [g*b, a*g*b, g, a*g],
-                    [gbᵢ, agbᵢ+n, gᵢ+n, agᵢ],
-                    [a, inv(b)], [aᵢ, bᵢₙᵥᵢ]
-                ]
-                type□₁_alt₃ = [
-                    0, [a*g, g, a*g*b, g*b],
-                    [agᵢ, gᵢ+n, agbᵢ+n, gbᵢ],
-                    [inv(a), b], [aᵢₙᵥᵢ, bᵢ]
-                ]
-                is_new□ = true
-                for existing□ in Q
-                    if (existing□[3] == type□₁[3] || existing□[3] == type□₁_alt₁[3] || existing□[3] == type□₁_alt₂[3] || existing□[3] == type□₁_alt₃[3])
-                        is_new□ = false
-                        break
-                    end
-                end
-                if is_new□
-                    push!(Q, type□₁)
-                    □ᵢ = length(Q)
-                    push!(type□₁, □ᵢ)
-                    push!(type□₁_alt₁, □ᵢ)
-                    push!(type□₁_alt₂, □ᵢ)
-                    push!(type□₁_alt₃, □ᵢ)
-                    push!(Q_redundant[2], type□₁)
-                    push!(Q_redundant[2], type□₁_alt₁)
-                    push!(Q_redundant[1], type□₁_alt₂)
-                    push!(Q_redundant[1], type□₁_alt₃)
-                end
-            end
-        end
-    end
-    @info "Left-right Cayley complex Γ(G,A,B) square enumeration complete"
-    @info "Group order |G| = $(length(collect(G))), |A| = $(length(A)), |B| = $(length(B))"
-    @info "Physical qubits: $(length(Q))"
-    @info "Left-right Cayley complex Γ(G,A,B): enumerated $(length(Q)) faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)"
-    @info "Squares incident to vertices: $(length(Q_redundant[1])) at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)"
-    @info "Squares incident to vertices: $(length(Q_redundant[2])) at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)"
-    return Q, Q_redundant
-end
-
-"""Convert redundant face list to matrix format for stabilizer matrix generation."""
-function convert_squares_to_incidence_matrix(Q_redundant::Tuple)
-    V₀□, V₁□ = Q_redundant
-    total□ = length(V₀□)+length(V₁□)
-    matrix□ = zeros(Int, total□, 8)
-    rowᵢ = 1
-    for (type□, list□) in enumerate([V₀□, V₁□])
-        for square in list□
-            matrix□[rowᵢ, 1] = square[1]
-            matrix□[rowᵢ, 2] = square[3][1] 
-            matrix□[rowᵢ, 3] = square[3][2]
-            matrix□[rowᵢ, 4] = square[3][3]
-            matrix□[rowᵢ, 5] = square[3][4]
-            matrix□[rowᵢ, 6] = square[5][1]
-            matrix□[rowᵢ, 7] = square[5][2]
-            matrix□[rowᵢ, 8] = square[6]
-            rowᵢ += 1
-        end
-    end
-    return matrix□
-end
-
-"""Construct X and Z stabilizer generators for the Quantum Tanner Code introduced in [leverrier2022quantum](@cite).
-
-Returns the matrix for X-type stabilizer generators (dim(C₁) × |V₁| rows) and matrix for Z-type stabilizer generators (dim(C₀) × |V₀| rows).
-
-The quantum code Q = (C₀, C₁) is defined by two classical Tanner codes where Z-stabilizers: C₀ = T(Γ₀^□, (C_A ⊗ C_B)^⊥) and
-X-stabilizers: C₁ = T(Γ₁^□, (C_A^⊥ ⊗ C_B^⊥)^⊥).
+The quantum Tanner code Q = (C₀, C₁) is defined by two classical Tanner codes
+where Z-stabilizers: C₀ = T(Γ₀^□, (C_A ⊗ C_B)^⊥) andmX-stabilizers: C₁ = T(Γ₁^□, (C_A^⊥ ⊗ C_B^⊥)^⊥).
 
 # Left-Right Cayley Complex
 
@@ -386,13 +192,208 @@ For component codes C_A[Δ, ρΔ, δΔ] and C_B[Δ, (1-ρ)Δ, δΔ], the number 
 dim(C₁) × |V₁| ≈ 2ρ(1-ρ)Δ²|G| and number of Z-stabs is dim(C₀) × |V₀| ≈ 2ρ(1-ρ)Δ²|G|. The resulting quantum code rate is
 ≥ (2ρ - 1)². For other properties, see [radebold2025explicit](@cite).
 
+### Fields
+    $TYPEDFIELDS
+"""
+struct QuantumTannerCode <: AbstractCSSCode
+    """The order of the underlying *finite* group"""
+    group::Group
+    """Symmetric generating set (closed under inverses) not containing the identity"""
+    A::Vector{<:GroupElem}
+    """Symmetric generating set (closed under inverses) not containing the identity"""
+    B::Vector{<:GroupElem}
+    """Tuple ((H_A, G_A), (H_B, G_B)) where H_A, H_B: parity-check matrices, and G_A, G_B: generator matrices"""
+    classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}}
+    function QuantumTannerCode(group::Group,
+                              A::Vector{<:GroupElem},
+                              B::Vector{<:GroupElem}, 
+                              classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}})
+        H_A, G_A = classical_codes[1]
+        H_B, G_B = classical_codes[2]
+        @assert size(H_A, 2) == length(A) "H_A parity check columns must match |A|"
+        @assert size(G_A, 2) == length(A) "G_A generator columns must match |A|"
+        @assert size(H_B, 2) == length(B) "H_B parity check columns must match |B|"
+        @assert size(G_B, 2) == length(B) "G_B generator columns must match |B|"
+        all(iszero, mod.(H_A*G_A', 2)) || @warn "C_A may not be a valid classical code: H_A*G_A^T ≠ 0"
+        all(iszero, mod.(H_B*G_B', 2)) || @warn "C_B may not be a valid classical code: H_B*G_B^T ≠ 0"
+        return new(group, A, B, classical_codes)
+    end
+end
+
+"""
+Enumerate all square incidences in the Left-Right Cayley Complex
+following introduction by [dinur2022locally](@cite).
+
+The Left-Right Cayley Complex X is an [incidence structure](https://en.wikipedia.org/wiki/Incidence_structure)
+between:
+- Vertices V = V₀ ∪ V₁ where V₀ = G×{0}, V₁ = G×{1}
+- A-edges E_A = {(g,0), (ag,1)} for g ∈ G, a ∈ A ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of left Cayley graph Cay(G,A))
+- B-edges E_B = {(g,0), (gb,1)} for g ∈ G, b ∈ B ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of right Cayley graph Cay(G,B))
+- Squares Q = {(g,0), (ag,1), (gb,1), (agb,0)} for g ∈ G, a ∈ A, b ∈ B
+
+Each square q ∈ Q corresponds to one physical qubit in the quantum Tanner code. Each square appears in two
+natural local views [radebold2025explicit](@cite):
+- From V₀ vertices: defines the graph Γ₀^□ = (V₀, Q) used for Z-stabilizers
+- From V₁ vertices: defines the graph Γ₁^□ = (V₁, Q) used for X-stabilizers
+
+We explicitly enumerates both incidences of each square to facilitate the Tanner code construction.
+
+# Construction Framework
+
+For each vertex v ∈ V, the set of incident faces Q(v) is uniquely determined by pairs (a,b) ∈ A×B.
+
+The bijective mapping φ_v: A×B → Q(v) is defined as [radebold2025explicit](@cite): φ_v(a,b) = {v, av, vb, avb}
+
+This establishes a natural labeling of qubits (*faces*) by generator pairs, allowing classical tensor codes
+to be applied locally at each vertex [radebold2025explicit](@cite).
+
 ### Arguments
-- `group_size`: The order of the underlying *finite* group
-- `square_incidences`: Matrix from `enumerate_square_incidences` containing the φ_v mappings
-- `classical_code_pair`: Tuple ((H_A, G_A), (H_B, G_B)) where:
-  - H_A, H_B: parity-check matrices
-  - G_A, G_B: generator matrices
-  - C_A = ker(H_A), C_B = ker(H_B) are the classical component codes.
+- `G`: A finite group
+- `A`: Symmetric generating set (closed under inverses) not containing the identity
+- `B`: Symmetric generating set (closed under inverses) not containing the identity
+"""
+function enumerate_squares(G::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem})
+    @assert is_symmetric_gen(A) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
+    @assert is_symmetric_gen(B) "Definition 3.1: Set A must be symmetric generating set [dinur2022locally](@cite)"
+    @assert !(one(G) in A) "Definition 3.1: Identity must not be in A [dinur2022locally](@cite)"
+    @assert !(one(G) in B) "Definition 3.1: Identity must not be in A [dinur2022locally](@cite)"
+    @assert is_nonconjugate(G, A, B) "Definition 3.6: ∀ a ∈ A, b ∈ B, g ∈ G, g⁻¹ag ≠ b [dinur2022locally](@cite)"
+    idx_to_mat = collect(G)
+    n = length(collect(G))
+    mat_to_idx = Dict(mat=>i for (i,mat) in pairs(idx_to_mat))
+    Q = []
+    Q_redundant = ([], [])
+    for g in idx_to_mat
+        for a in A
+            for b in B
+                gᵢ = mat_to_idx[g]
+                agᵢ = mat_to_idx[a*g] 
+                gbᵢ = mat_to_idx[g*b]
+                agbᵢ = mat_to_idx[a*g*b]
+                aᵢ, bᵢ = findfirst(==(a), A), findfirst(==(b), B)
+                aᵢₙᵥᵢ, bᵢₙᵥᵢ = findfirst(==(inv(a)), A), findfirst(==(inv(b)), B)
+                # Typeₒ squares ({g₀, (a·g)₁, (g·b)₁, (a·g·b)₀}) represent Z-type stabilizers at V₀ vertices.
+                typeₒ□ = [
+                    0,
+                    [g, a*g, g*b, a*g*b],
+                    [gᵢ, agᵢ+n, gbᵢ+n, agbᵢ],
+                    [a, b],
+                    [aᵢ, bᵢ]
+                ]
+                typeₒ□_alt₁ = [
+                    0, [a*g*b, g*b, a*g, g],
+                    [agbᵢ, gbᵢ+n, agᵢ+n, gᵢ],
+                    [inv(a), inv(b)], [aᵢₙᵥᵢ, bᵢₙᵥᵢ]
+                ]
+                typeₒ□_alt₂ = [
+                    1, [g*b, a*g*b, g, a*g], 
+                    [gbᵢ+n, agbᵢ, gᵢ, agᵢ+n],
+                    [a, inv(b)], [aᵢ, bᵢₙᵥᵢ]
+                ]
+                typeₒ□_alt₃ = [
+                    1, [a*g, g, a*g*b, g*b],
+                    [agᵢ+n, gᵢ, agbᵢ, gbᵢ+n], 
+                    [inv(a), b], [aᵢₙᵥᵢ, bᵢ]
+                ]
+                is_new□ = true
+                for existing□ in Q
+                    if (existing□[3] == typeₒ□[3] || existing□[3] == typeₒ□_alt₁[3] || existing□[3] == typeₒ□_alt₂[3] || existing□[3] == typeₒ□_alt₃[3])
+                        is_new□ = false
+                        break
+                    end
+                end
+                if is_new□
+                    push!(Q, typeₒ□)
+                    □ᵢ = length(Q)
+                    push!(typeₒ□, □ᵢ)
+                    push!(typeₒ□_alt₁, □ᵢ)
+                    push!(typeₒ□_alt₂, □ᵢ)
+                    push!(typeₒ□_alt₃, □ᵢ)
+                    push!(Q_redundant[1], typeₒ□)
+                    push!(Q_redundant[1], typeₒ□_alt₁)
+                    push!(Q_redundant[2], typeₒ□_alt₂)
+                    push!(Q_redundant[2], typeₒ□_alt₃)
+                end
+                # Type 1 squares {g₁, (a·g)₀, (g·b)₀, (a·g·b)₁} represent X-stabilizers at V₁ vertices
+                type□₁ = [
+                    1,
+                    [g, a*g, g*b, a*g*b],
+                    [gᵢ + n, agᵢ, gbᵢ, agbᵢ + n],
+                    [a, b],
+                    [aᵢ, bᵢ]
+                ]
+                type□₁_alt₁ = [
+                    1, [a*g*b, g*b, a*g, g],
+                    [agbᵢ+n, gbᵢ, agᵢ, gᵢ+n],
+                    [inv(a), inv(b)], [aᵢₙᵥᵢ, bᵢₙᵥᵢ]
+                ]
+                type□₁_alt₂ = [
+                    0, [g*b, a*g*b, g, a*g],
+                    [gbᵢ, agbᵢ+n, gᵢ+n, agᵢ],
+                    [a, inv(b)], [aᵢ, bᵢₙᵥᵢ]
+                ]
+                type□₁_alt₃ = [
+                    0, [a*g, g, a*g*b, g*b],
+                    [agᵢ, gᵢ+n, agbᵢ+n, gbᵢ],
+                    [inv(a), b], [aᵢₙᵥᵢ, bᵢ]
+                ]
+                is_new□ = true
+                for existing□ in Q
+                    if (existing□[3] == type□₁[3] || existing□[3] == type□₁_alt₁[3] || existing□[3] == type□₁_alt₂[3] || existing□[3] == type□₁_alt₃[3])
+                        is_new□ = false
+                        break
+                    end
+                end
+                if is_new□
+                    push!(Q, type□₁)
+                    □ᵢ = length(Q)
+                    push!(type□₁, □ᵢ)
+                    push!(type□₁_alt₁, □ᵢ)
+                    push!(type□₁_alt₂, □ᵢ)
+                    push!(type□₁_alt₃, □ᵢ)
+                    push!(Q_redundant[2], type□₁)
+                    push!(Q_redundant[2], type□₁_alt₁)
+                    push!(Q_redundant[1], type□₁_alt₂)
+                    push!(Q_redundant[1], type□₁_alt₃)
+                end
+            end
+        end
+    end
+    @info "Left-right Cayley complex Γ(G,A,B) square enumeration complete"
+    @info "Group order |G| = $(length(collect(G))), |A| = $(length(A)), |B| = $(length(B))"
+    @info "Physical qubits: $(length(Q))"
+    @info "Left-right Cayley complex Γ(G,A,B): enumerated $(length(Q)) faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)"
+    @info "Squares incident to vertices: $(length(Q_redundant[1])) at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)"
+    @info "Squares incident to vertices: $(length(Q_redundant[2])) at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)"
+    return Q, Q_redundant
+end
+
+"""Convert redundant face list to matrix format for stabilizer matrix generation."""
+function convert_squares_to_incidence_matrix(Q_redundant::Tuple)
+    V₀□, V₁□ = Q_redundant
+    total□ = length(V₀□)+length(V₁□)
+    matrix□ = zeros(Int, total□, 8)
+    rowᵢ = 1
+    for (type□, list□) in enumerate([V₀□, V₁□])
+        for square in list□
+            matrix□[rowᵢ, 1] = square[1]
+            matrix□[rowᵢ, 2] = square[3][1] 
+            matrix□[rowᵢ, 3] = square[3][2]
+            matrix□[rowᵢ, 4] = square[3][3]
+            matrix□[rowᵢ, 5] = square[3][4]
+            matrix□[rowᵢ, 6] = square[5][1]
+            matrix□[rowᵢ, 7] = square[5][2]
+            matrix□[rowᵢ, 8] = square[6]
+            rowᵢ += 1
+        end
+    end
+    return matrix□
+end
+
+"""
+Construct X and Z stabilizer generators for the Quantum Tanner Code introduced in [leverrier2022quantum](@cite).
+
+Returns the matrix for X-type stabilizer generators (dim(C₁) × |V₁| rows) and matrix for Z-type stabilizer generators (dim(C₀) × |V₀| rows).
 """
 function parity_matrix_xz(c::QuantumTannerCode)
     Q, Q_red = enumerate_squares(c.group, c.A, c.B)
