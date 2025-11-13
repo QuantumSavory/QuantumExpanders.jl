@@ -80,7 +80,7 @@ Generate a good Quantum Tanner code meeting minimum weight requirements.
 - `minweight_z`: Minimum weight for Z-stabilizers
 - `max_iterations`: Maximum attempts to find a good code
 """
-function gen_good_code(ρ, group, A, B; minweight_x=1, minweight_z=1, bipartite=true, use_same_local_code=false, max_iterations=100)
+function gen_good_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}; minweight_x=1, minweight_z=1, bipartite=true, use_same_local_code=false, max_iterations=100)
     for i in 1:max_iterations
         𝒞ˣ, 𝒞ᶻ = gen_code(ρ, group, A, B; bipartite, use_same_local_code)
         x_weight = minimum(unique(sum(𝒞ˣ, dims=1)))
