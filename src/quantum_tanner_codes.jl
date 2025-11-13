@@ -242,9 +242,286 @@ For the dihedral group ``D_{2p}`` with ``p \\geq 11``, this bound specializes to
 Thus, [radebold2025explicit](@cite) uses such dihedral groups  ``\\D_{2p}`` and their symmetric generating
 sets to construct the underlying expander graphs for the quantum Tanner code.
 
+# Examples
+
 !!! note
     Through random search of classical code pairs that are used for the construction of quantum Tanner codes,
     we found several new instances of these codes.
+
+Here is an example of `[[54, 11, 4]]` quantum Tanner code:
+
+```jldoctest examples
+julia> using QuantumExpanders; using Oscar; using QuantumClifford.ECC;
+
+julia> F = free_group([:s, :r]);
+
+julia> s, r = gens(F);
+
+julia> rels = [s^2, r^6, s*r*s*r];
+
+julia> G, epimorphism = quo(F, rels);
+
+julia> s, r = epimorphism(s), epimorphism(r);
+
+julia> A = [r, r^3, r^5];
+
+julia> B = [s*r^2, s*r^4, s*r^5];
+
+julia> H_A = [1 1 1];
+
+julia> G_A = [1 1 0; 1 0 1];
+
+julia> H_B = [1 1 1; 0 1 1];
+
+julia> G_B = [0 1 1];
+
+julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
+
+julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
+
+julia> import HiGHS; import JuMP;
+
+julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 12, |A| = 3, |B| = 3
+[ Info: Physical qubits: 54
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 54 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 12, |A| = 3, |B| = 3
+[ Info: Physical qubits: 54
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 54 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 12, |A| = 3, |B| = 3
+[ Info: Physical qubits: 54
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 54 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 12, |A| = 3, |B| = 3
+[ Info: Physical qubits: 54
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 54 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 12, |A| = 3, |B| = 3
+[ Info: Physical qubits: 54
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 54 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 12, |A| = 3, |B| = 3
+[ Info: Physical qubits: 54
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 54 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 12, |A| = 3, |B| = 3
+[ Info: Physical qubits: 54
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 54 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 12, |A| = 3, |B| = 3
+[ Info: Physical qubits: 54
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 54 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 12, |A| = 3, |B| = 3
+[ Info: Physical qubits: 54
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 54 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 108 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+(54, 11, 4)
+```
+
+Here is an example of `[[72, 14, 4]]` quantum Tanner code:
+
+```jldoctest examples
+julia> F = free_group([:s, :r]);
+
+julia> s, r = gens(F);
+
+julia> rels = [s^2, r^8, s*r*s*r];
+
+julia> G, epimorphism = quo(F, rels);
+
+julia> s, r = epimorphism(s), epimorphism(r);
+
+julia> A = [s, s*r^4, r^4];
+
+julia> B = [s*r, s*r^3, s*r^7];
+
+julia> H_A = [1 1 1];
+
+julia> G_A = [1 1 0; 1 0 1];
+
+julia> H_B = [1 1 1; 1 0 1];
+
+julia> G_B = [1 0 1];
+
+julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
+
+julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
+
+julia> import HiGHS; import JuMP;
+
+julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 3, |B| = 3
+[ Info: Physical qubits: 72
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 72 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 3, |B| = 3
+[ Info: Physical qubits: 72
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 72 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 3, |B| = 3
+[ Info: Physical qubits: 72
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 72 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 3, |B| = 3
+[ Info: Physical qubits: 72
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 72 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 3, |B| = 3
+[ Info: Physical qubits: 72
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 72 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 3, |B| = 3
+[ Info: Physical qubits: 72
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 72 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 3, |B| = 3
+[ Info: Physical qubits: 72
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 72 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 3, |B| = 3
+[ Info: Physical qubits: 72
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 72 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 3, |B| = 3
+[ Info: Physical qubits: 72
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 72 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 144 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+(72, 14, 4)
+```
+
+Here is an example of `[[200, 12, 12]]` quantum Tanner code:
+
+```jldoctest examples
+julia> F = free_group([:s, :r]);
+
+julia> s, r = gens(F);
+
+julia> rels = [s^2, r^8, s*r*s*r];
+
+julia> G, epimorphism = quo(F, rels);
+
+julia> s, r = epimorphism(s), epimorphism(r);
+
+julia> A = [s*r^6, r, r^3, r^5, r^7];
+
+julia> B = [s*r, s*r^3, s*r^7, r^2, r^6];
+
+julia> H_A = [1  1  1  1  1;
+              0  1  1  1  1;
+              0  1  1  0  0;
+              0  1  1  0  1];
+
+julia> G_A = [0  1  1  0  0];
+
+julia> H_B = [0  1  1  1  0;
+              1  1  0  0  0;
+              1  1  0  1  1];
+
+julia> G_B = [1  1  1  0  0;
+              1  1  0  1  1];
+   
+julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
+
+julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
+
+julia> import HiGHS; import JuMP;
+
+julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300))
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 5, |B| = 5
+[ Info: Physical qubits: 200
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 200 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 5, |B| = 5
+[ Info: Physical qubits: 200
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 200 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 5, |B| = 5
+[ Info: Physical qubits: 200
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 200 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 5, |B| = 5
+[ Info: Physical qubits: 200
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 200 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 5, |B| = 5
+[ Info: Physical qubits: 200
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 200 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 5, |B| = 5
+[ Info: Physical qubits: 200
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 200 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 5, |B| = 5
+[ Info: Physical qubits: 200
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 200 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 5, |B| = 5
+[ Info: Physical qubits: 200
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 200 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 16, |A| = 5, |B| = 5
+[ Info: Physical qubits: 200
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 200 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 400 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+(200, 12, 12)
+```
 
 This is a newer version of the less well designed function `[`gen_code`](@ref)(G, A, B, bipartite=true, use_same_local_code=false)`.
 It constructs the quantum Tanner code given a finite group G equipped with two *symmetric* generating sets A and B,
