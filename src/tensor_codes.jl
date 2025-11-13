@@ -150,14 +150,7 @@ julia> kron(A, B)
 - `l::zzModMatrix`: Left matrix in the Kronecker product, typically a generator or parity check matrix of a component code.
 - `r::zzModMatrix`: Right matrix in the Kronecker product, typically a generator or parity check matrix of the other component code.
 """
-function LinearAlgebra.kron(l::Z2Matrix, r::Z2Matrix)
-    l1, l2 = size(l)
-    r1, r2 = size(r)
-    s1 = l1*r1
-    s2 = l2*r2
-    M = matrix_space(base_ring(l), s1, s2)
-    M(kron(Matrix(l), Matrix(r)))
-end
+const kron = kronecker_product
 
 """Check that two binary parity check matrices X and Z result in a good CSS code
 (i.e., commutation constraints are fulfilled)"""
