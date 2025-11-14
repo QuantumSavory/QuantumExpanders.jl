@@ -1,6 +1,7 @@
 @testitem "Ramanujan Cayley graphs using Frobenius groups" begin
     using Oscar
     using LinearAlgebra
+    using Graphs
     using Graphs: degree, is_connected
     using QuantumExpanders
     using QuantumClifford
