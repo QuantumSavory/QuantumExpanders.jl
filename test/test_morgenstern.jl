@@ -4,7 +4,11 @@
     using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color
     using GraphsColoring: DSATUR, color, Greedy
     using IGraphs: IGraph, IGVectorInt, LibIGraph
+    using NautyGraphs: NautyGraph, is_isomorphic
     using LinearAlgebra
+    using QECCore
+    using QuantumClifford: stab_looks_good, Stabilizer
+    using QuantumClifford.ECC
     using QuantumExpanders
     using SimpleGraphConverter
     using SimpleGraphAlgorithms: chromatic_number, UG
@@ -21,7 +25,7 @@
         ]
         for (l, i) in test_cases
             @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
-                _, gens = morgenstern_generators(l, i)
+                SL₂, gens = morgenstern_generators(l, i)
                 q = 2^l
                 @test length(gens) == q + 1
                 Fq = finite_field(2, l, :a)[1]
@@ -31,8 +35,18 @@
                 @test all(((γ,δ),) -> γ^2 + γ*δ + ε*δ^2 == one(Fq), sols)
                 A_first = alternative_morgenstern_generators(gens, FirstOnly())
                 @test length(A_first) == 2*q
+                gensₐₗₗ = vcat(gens, A_first)
+                H, _ = sub(SL₂, gensₐₗₗ)
+                @test H == SL₂
                 A_pairs = alternative_morgenstern_generators(gens, AllPairs())
                 @test length(A_pairs) == q*(q+1)
+                @test is_nonconjugate(SL₂, A_first, gens)
+                @test is_nonconjugate(SL₂, A_pairs, gens)
+                @test is_symmetric_gen(A_pairs)
+                @test is_symmetric_gen(A_first)
+                gensₐₗₗ = vcat(gens, A_pairs)
+                H, _ = sub(SL₂, gensₐₗₗ)
+                @test H == SL₂
             end
         end
     end
@@ -208,6 +222,62 @@
             @test length(sols_fast) == length(sols_slow) == order(F) + 1
             @test all(((γ, δ),) -> γ^2+γ*δ+δ^2*ε == one(F), sols_fast)
             @test all(((γ, δ),) -> γ^2+γ*δ+δ^2*ε == one(F), sols_slow)
+        end
+    end
+
+    @testset "Cayley Graph Isomorphism: Remark 3.2 of [dinur2022locally](@cite)" begin
+        test_cases = [
+            (1, 2), # PSL(2,4)
+            (1, 4), # PSL(2,16)
+            (2, 2)  # PSL(2,16)
+        ]
+        for (l, i) in test_cases
+            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+                SL₂, gens = morgenstern_generators(l, i)
+                q = 2^l
+                cayleyᵣ = cayley_right(SL₂, gens)
+                cayleyₗ = cayley_left(SL₂, gens)
+                cgᵣ = NautyGraph(cayleyᵣ)
+                cgₗ = NautyGraph(cayleyₗ)
+                @test is_isomorphic(cgᵣ, cgₗ)
+                A_first = alternative_morgenstern_generators(gens, FirstOnly())
+                cayleyᵣ = cayley_right(SL₂, A_first)
+                cayleyₗ = cayley_left(SL₂, A_first)
+                cgᵣ = NautyGraph(cayleyᵣ)
+                cgₗ = NautyGraph(cayleyₗ)
+                @test is_isomorphic(cgᵣ, cgₗ)
+                A_pairs = alternative_morgenstern_generators(gens, AllPairs())
+                cayleyᵣ = cayley_right(SL₂, A_pairs)
+                cayleyₗ = cayley_left(SL₂, A_pairs)
+                cgᵣ = NautyGraph(cayleyᵣ)
+                cgₗ = NautyGraph(cayleyₗ)
+                @test is_isomorphic(cgᵣ, cgₗ)
+            end
+        end
+    end
+
+    @testset "Quantum Tanner codes based on Morgenstern Generators" begin
+        test_cases = [
+            (1, 2), # PSL(2,4)
+            # (1, 4) # PSL(2,16) takes long time
+        ]
+        for (l, i) in test_cases
+            @testset "l=$l, i=$i (q=$(2^l)^$i=$(2^(l*i)))" begin
+                q = 2^l
+                Δ = q+1
+                SL₂, B = morgenstern_generators(l, i)
+                A = alternative_morgenstern_generators(B, FirstOnly())
+                for _ in 1:5
+                    for rate in [0.4, 0.5, 0.6, 0.7]
+                        hx, hz = gen_code(rate, SL₂, A, B)
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                        hx, hz = gen_good_code(rate, SL₂, A, B)
+                        c = Stabilizer(CSS(hx, hz))
+                        @test stab_looks_good(c, remove_redundant_rows=true)
+                    end
+                end
+            end
         end
     end
 end
