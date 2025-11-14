@@ -358,7 +358,7 @@ As depicted in [dinur2022locally](@cite), [leverrier2022quantum](@cite), and [gu
 - `edge_ab_index`: A dictionary mapping `(vertex, vertex, multiplicity)` tuples to local coordinate indices. This provides the identification of each edge with an element of `A×B` in the local view.
 - `local_code`: A binary matrix representing the parity check matrix of the local code. For quantum Tanner codes, this is C₀ = C_A ⊗ C_B for Z-stabilizers or C₁ = C_A⊥ ⊗ C_B⊥ for X-stabilizers.
 """
-function tanner_code(mgraph::Multigraphs.DiMultigraph{Int64}, edge_q_index::Dict{Tuple{Int64, Int64, Int64}, Int64}, edge_ab_index::Dict{Tuple{Int64, Int64, Int64}, Int64}, local_code)
+function tanner_code(mgraph::Multigraphs.DiMultigraph{Int64}, edge_q_index::Dict{Tuple{Int64, Int64, Int64}, Int64}, edge_ab_index::Dict{Tuple{Int64, Int64, Int64}, Int64}, local_code::AbstractMatrix)
     V = nv(mgraph)
     E = ne(mgraph, count_mul=true)÷2 # edges are double counted
     r, Δ = size(local_code)
@@ -384,7 +384,7 @@ The edge numbering is a map from (vertex, vertex, multiplicity) to index.
 Most convenient when used with [`cayley_complex_square_graphs_quadripartite`](@ref).
 
 As depicted in [dinur2022locally](@cite), [leverrier2022quantum](@cite), and [gu2022efficient](@cite)."""
-function tanner_code_quadripartite(mgraph::Multigraphs.DiMultigraph{Int64}, edge_q_index::Dict{Tuple{Int64, Int64, Int64}, Int64}, edge_ab_index::Dict{Tuple{Int64, Int64, Int64}, Int64}, local_code)
+function tanner_code_quadripartite(mgraph::Multigraphs.DiMultigraph{Int64}, edge_q_index::Dict{Tuple{Int64, Int64, Int64}, Int64}, edge_ab_index::Dict{Tuple{Int64, Int64, Int64}, Int64}, local_code::AbstractMatrix)
     V = nv(mgraph)
     E = ne(mgraph, count_mul=true) # edges are not double counted here
     r, Δ = size(local_code)
