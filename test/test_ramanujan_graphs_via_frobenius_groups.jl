@@ -7,6 +7,16 @@
     using QuantumClifford
     using QuantumClifford.ECC
 
+    function _is_ramanujanᵧ(g::SimpleGraph, k::Int)
+        A = adjacency_matrix(g)
+        λ = real.(eigvals(Matrix(A)))
+        sorted_λ = sort(λ, rev=true)
+        non_trivial = sorted_λ[2:end]
+        bound = 2 * sqrt(k - 1)
+        is_ram = all(λ_i -> abs(λ_i) <= bound + 1e-10, non_trivial)
+        return is_ram
+    end
+
     @testset "Cayley Graph Construction" begin
         for o in [2, 4, 6]
             for g in [dihedral_group, cyclic_group, symmetric_group]
@@ -31,8 +41,8 @@
             S = normal_cayley_subset(G)
             g = cayley_right(G, S)
             k = length(S)
-            is_ram = is_ramanujan(g, k)
-            @test is_ram == true
+            is_ram = _is_ramanujanᵧ(g, k)
+            @test is_ram
         end
     end
     
@@ -44,8 +54,8 @@
             S = normal_cayley_subset(G)
             g = cayley_right(G, S)
             k = length(S)
-            is_ram = is_ramanujan(g, k)
-            @test is_ram == true
+            is_ram = _is_ramanujanᵧ(g, k)
+            @test is_ram
             l = order(G) - k
             go = Float64(order(G))
             trivial_bound = 2 * (sqrt(go) - 1)
