@@ -2,7 +2,7 @@
     using Oscar
     using LinearAlgebra
     using Graphs
-    using Graphs: degree, is_connected
+    using Graphs: degree, is_connected, adjacency_matrix
     using QuantumExpanders
     using QuantumClifford
     using QuantumClifford.ECC
