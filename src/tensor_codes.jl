@@ -106,7 +106,7 @@ true
 ### Arguments
 - `H::zzModMatrix`: Parity check matrix of a classical linear code, typically one of the component codes ``C_A`` or ``C_B``.
 """
-function dual_code(H::AbstractMatrix)
+function dual_code(H)
     r, Δ = size(H)
     R, _ = residue_ring(ZZ, 2)
     H = matrix_space(R, r, Δ)(R.(H)) # TODO there must be a cleaner way to write this
@@ -170,7 +170,7 @@ convert_to_bool(M::AbstractAlgebra.Generic.MatSpaceElem{Bool}) = Matrix{Bool}(M)
 convert_to_bool(M::AbstractMatrix{<:Bool}) = Matrix{Bool}(M)
 
 """Create a CSS code from two binary parity check matrices, X and Z"""
-function css(X::AbstractMatrix, Z::AbstractMatrix)
+function css(X, Z)
     Xb = Matrix{Bool}(convert_to_bool(X))
     Zb = Matrix{Bool}(convert_to_bool(Z))
     vcat(Stabilizer(zeros(Bool, size(Xb)), Xb), Stabilizer(Zb, zeros(Bool, size(Zb))))
