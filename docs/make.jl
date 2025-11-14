@@ -1,8 +1,15 @@
+using Revise
 push!(LOAD_PATH,"../src/")
 
 using Documenter
 using DocumenterCitations
 using QuantumExpanders
+using Oscar
+using JuMP
+using HiGHS
+using QECCore
+using QuantumClifford
+using QuantumClifford.ECC
 
 #bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"))
 
@@ -20,7 +27,7 @@ sitename = "QuantumExpanders.jl",
 format = Documenter.HTML(),
 authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
 pages = ["API" => "API.md"],
-linkcheck = true,
+linkcheck = true
 )
 
 deploydocs(
