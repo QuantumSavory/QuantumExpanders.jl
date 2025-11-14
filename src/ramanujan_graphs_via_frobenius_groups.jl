@@ -1,8 +1,7 @@
 """
 Generate a normal Cayley subset of a finite group G. A Cayley subset S is called
 normal if it is a union of [conjugacy classes](https://en.wikipedia.org/wiki/Conjugacy_class)
-of G. [hirano2016ramanujan](@cite) which studies the spectral properties of Cayley graphs
-built from such subsets.
+of G. [hirano2016ramanujan](@cite) studies the spectral properties of Cayley graphs built from such subsets.
 
 We take all conjugacy classes of G and excluding the trivial conjugacy class containing
 only the identity element. The resulting set S automatically satisfies several important
