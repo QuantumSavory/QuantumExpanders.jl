@@ -49,9 +49,9 @@
                     Hₙ = uniformly_random_code_checkmatrix(ρ, Δ)
                     Gₙ = dual_code(Hₙ)
                     # Cₘ ⊗ 𝔽₂ⁿ
-                    col_code = kron(Gₘ, matrix_space(base_ring(Gₘ), 1, Δ)(ones(Int, 1, Δ)))
+                    col_code = kronecker_product(Gₘ, matrix_space(base_ring(Gₘ), 1, Δ)(ones(Int, 1, Δ)))
                     # 𝔽₂ᵐ ⊗ Cₙ
-                    row_code = kron(matrix_space(base_ring(Gₙ), 1, Δ)(ones(Int, 1, Δ)), Gₙ)
+                    row_code = kronecker_product(matrix_space(base_ring(Gₙ), 1, Δ)(ones(Int, 1, Δ)), Gₙ)
                     # Dual tensor code: Cₘ ⊗ 𝔽₂ⁿ + 𝔽₂ᵐ ⊗ Cₙ
                     dual_tensor_rank = rank(vcat(col_code, row_code))
                     @test dual_tensor_rank ≥ 0
@@ -71,9 +71,9 @@
                     Hₙ = uniformly_random_code_checkmatrix(ρ, Δ)
                     Gₙ = dual_code(Hₙ)
                     # C₀ = Cₘ ⊗ Cₙ
-                    C0 = kron(Gₘ, Gₙ)
+                    C0 = kronecker_product(Gₘ, Gₙ)
                     # C₁⊥ = Cₘ⊥ ⊗ Cₙ⊥
-                    C1_dual = kron(Hₘ, Hₙ)
+                    C1_dual = kronecker_product(Hₘ, Hₙ)
                     # C₁ ⊃ C₀⊥ => (Cₘ ⊗ Cₙ)⋅(Cₘ⊥ ⊗ Cₙ⊥)^T = 0
                     @test all(iszero, C0*transpose(C1_dual))
                     # Verify non-trivial codes
