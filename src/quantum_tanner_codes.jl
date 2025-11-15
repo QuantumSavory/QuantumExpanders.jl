@@ -523,6 +523,98 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 (200, 12, 12)
 ```
 
+Here is an example of a new `[[250, 14, 10]]` quantum Tanner code:
+
+```jldoctest examples
+julia> F = free_group([:s, :r]);
+
+julia> s, r = gens(F);
+
+julia> rels = [s^2, r^10, s*r*s*r];
+
+julia> G, epimorphism = quo(F, rels);
+
+julia> s, r = epimorphism(s), epimorphism(r);
+
+julia> A = [s*r, r, r^3, r^7, r^9];
+
+julia> B = [s*r^6, r^2, r^4, r^6, r^8];
+
+julia> H_A = [1  0  0  0  0;
+              1  1  0  1  1];
+julia> G_A = [0  0  1  0  0;
+              0  1  0  1  0;
+              0  1  0  0  1];
+julia> H_B = [0  1  0  1  0;
+              1  1  1  0  1];
+julia> G_B = [1  0  1  0  0;
+              1  1  0  1  0;
+              1  0  0  0  1];
+
+julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
+
+julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
+
+julia> import HiGHS; import JuMP;
+
+julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300))
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 20, |A| = 5, |B| = 5
+[ Info: Physical qubits: 250
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 250 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 20, |A| = 5, |B| = 5
+[ Info: Physical qubits: 250
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 250 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 20, |A| = 5, |B| = 5
+[ Info: Physical qubits: 250
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 250 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 20, |A| = 5, |B| = 5
+[ Info: Physical qubits: 250
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 250 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 20, |A| = 5, |B| = 5
+[ Info: Physical qubits: 250
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 250 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 20, |A| = 5, |B| = 5
+[ Info: Physical qubits: 250
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 250 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 20, |A| = 5, |B| = 5
+[ Info: Physical qubits: 250
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 250 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 20, |A| = 5, |B| = 5
+[ Info: Physical qubits: 250
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 250 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 20, |A| = 5, |B| = 5
+[ Info: Physical qubits: 250
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 250 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 500 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+(250, 10, 14)
+```
+
 !!! note
     This is a newer version of the less well designed function `[`gen_code`](@ref)(G, A, B, bipartite=true, use_same_local_code=false)`.
     It constructs the quantum Tanner code given a finite group G equipped with two *symmetric* generating sets A and B,
