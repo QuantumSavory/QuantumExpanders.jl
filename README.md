@@ -28,7 +28,7 @@ QuantumExpanders is a &nbsp;
         <img src="https://raw.githubusercontent.com/JuliaLang/julia-logo-graphics/master/images/julia.ico" width="16em">
         Julia Language
     </a>
-    &nbsp; package for constructing quantum Tanner codes and related expander-based quantum error correcting codes. To install QuantumExpanders,
+    &nbsp; package for constructing quantum Tanner codes. To install QuantumExpanders,
     please <a href="https://docs.julialang.org/en/v1/manual/getting-started/">open
     Julia's interactive session (known as REPL)</a> and press the <kbd>]</kbd> key in the REPL to use the package mode, and then type:
 </p>
