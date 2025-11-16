@@ -29,6 +29,7 @@ include("morgenstern.jl")
 include("quantum_tanner_codes.jl")
 include("quantum_tanner_code_multigraphs.jl")
 include("lubotzky_phillips_sarnak_ramanujan.jl")
+include("ramanujan_graphs_via_frobenius_groups.jl")
 
 export
     gen_code, gen_good_code, tanner_code, tanner_code_quadripartite,
@@ -47,6 +48,7 @@ export
     enumerate_squares, random_code_pair, convert_squares_to_incidence_matrix, QuantumTannerCode,
     parity_matrix, parity_matrix_x, parity_matrix_z, parity_matrix_xz, code_n, code_k,
     # tensor codes
-    uniformly_random_code_checkmatrix, dual_code, good_css
+    uniformly_random_code_checkmatrix, dual_code, good_css,
+    normal_cayley_subset
 
 end #module
