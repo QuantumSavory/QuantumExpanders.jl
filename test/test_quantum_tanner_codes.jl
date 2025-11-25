@@ -405,8 +405,8 @@
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 30 == ks
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 5
-        
-        # [[250, 40, 5]]
+
+       # [[250, 40, 5]]
         H_A = [0  0  0  1  0;
                0  0  1  0  1;
                0  1  0  0  0;
@@ -425,6 +425,146 @@
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 40 == ks
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 5
+
+        # [[250, 33, 8]]
+        H_A = [1  1  1  1  0;
+               1  1  0  1  1;
+               0  0  0  1  1;
+               1  1  0  1  0];
+        G_A = [1  1  0  0  0];
+        H_B = [1  1  0  0  1;
+               1  0  0  1  0];
+        G_B = [0  0  1  0  0;
+               1  1  0  1  0;
+               0  1  0  0  1];
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab)
+        @test code_n(c) == 250 == ns && code_k(c) == 33 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300)) == 8
+   
+       # [[250, 13, 10]]
+       H_A =[0  1  1  0  1;
+             1  0  0  0  0;
+             1  1  1  1  0];
+       G_A = [0  1  1  0  0;
+              0  1  0  1  1];
+       H_B = [1  1  1  0  0;
+              1  0  0  1  1]
+       G_B = [0  1  1  0  0;
+              1  1  0  1  0;
+              1  1  0  0  1];
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab)
+        @test code_n(c) == 250 == ns && code_k(c) == 13 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300)) == 10
+
+        # [[250, 93, 4]]
+        H_A = [1  1  1  1  1]
+        G_A = [1  1  0  0  0;
+               1  0  1  0  0;
+               1  0  0  1  0;
+               1  0  0  0  1]
+        H_B = [1  1  0  1  0;
+               1  1  0  0  1;
+               0  1  1  0  1;
+               0  0  1  1  0]
+        G_B = [1  0  1  1  1]
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab)
+        @test code_n(c) == 250 == ns && code_k(c) == 93 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300)) == 4
+
+        # [[250, 39, 4]]
+        H_A = [1  0  1  1  1;
+               0  0  1  1  1;
+               1  0  1  1  0;
+               1  0  1  0  0];
+        G_A = [0  1  0  0  0];
+        H_B = [1  1  1  0  1;
+               0  0  1  1  0]
+        G_B = [1  1  0  0  0;
+               1  0  1  1  0;
+               1  0  0  0  1]
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab)
+        @test code_n(c) == 250 == ns && code_k(c) == 39 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300)) == 4
+
+        # [[250, 10, 14]]
+        H_A = [1  0  0  0  0;
+               1  1  0  1  1];
+        G_A = [0  0  1  0  0;
+               0  1  0  1  0;
+               0  1  0  0  1];
+        H_B = [0  1  0  1  0;
+               1  1  1  0  1];
+        G_B = [1  0  1  0  0;
+               1  1  0  1  0;
+               1  0  0  0  1]
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab)
+        @test code_n(c) == 250 == ns && code_k(c) == 10 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300)) == 14
+
+        # [[250, 39, 10]]
+        H_A = [1  0  0  0  1;
+               1  0  1  0  0;
+               1  1  0  0  1;
+               0  1  1  0  0]
+        G_A = [0  0  0  1  0];
+        H_B = [0  1  1  1  1;
+               1  1  0  0  1];
+        G_B = [1  1  1  0  0;
+               1  1  0  1  0;
+               0  1  0  0  1];
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab)
+        @test code_n(c) == 250 == ns && code_k(c) == 39 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300)) == 10
+
+        # [[250, 36, 10]]
+        H_A = [0  1  0  1  1;
+               0  1  0  1  0;
+               1  0  0  1  0;
+               0  0  0  1  0]
+        G_A = [0  0  1  0  0]
+        H_B = [1  1  0  0  1;
+               1  0  1  1  1]
+        G_B = [1  1  1  0  0;
+               1  1  0  1  0;
+               1  0  0  0  1];
+        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
+        @test iszero(mod.(hx*hz',2))
+        stab = parity_checks(c)
+        ns, ks = code_n(stab), code_k(stab)
+        @test code_n(c) == 250 == ns && code_k(c) == 36 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300)) == 10
 
         @testset "New codes found via other non-abelian groups" begin
             # [[216, 30, 4]]

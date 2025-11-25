@@ -39,12 +39,16 @@ function gen_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:Gr
     rate_H_B = ρ
     Hᴬ = uniformly_random_code_checkmatrix(rate_H_A, Δ_A)
     Hᴮ = uniformly_random_code_checkmatrix(rate_H_B, Δ_B)
+    @show Hᴬ
+    @show Hᴮ
     if use_same_local_code
         Hᴮ = Hᴬ
     end
     # "The dual code of a code C is defined as C^⊥ = {x ∈ 𝔽₂ⁿ: ⟨x,y⟩=0 ∀ y ∈ C}" [gu2022efficient](@cite).
     Cᴬ = dual_code(Hᴬ)
     Cᴮ = dual_code(Hᴮ)
+    @show Cᴬ
+    @show Cᴮ
     # "An X-type stabilizer generator is defined as a codeword from a generating set of
     # C₀ = C_A ⊗ C_B, with support on the faces incident to a given vertex in V₀ = V₀₀ ∪ V₁₁" [gu2022efficient](@cite)
     C_X = kronecker_product(Cᴬ, Cᴮ)

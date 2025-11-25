@@ -23,5 +23,21 @@
     </tr><tr></tr>
 </table>
 
+QuantumExpanders is a &nbsp;
+    <a href="https://julialang.org">
+        <img src="https://raw.githubusercontent.com/JuliaLang/julia-logo-graphics/master/images/julia.ico" width="16em">
+        Julia Language
+    </a>
+    &nbsp; package for constructing quantum Tanner codes. To install QuantumExpanders,
+    please <a href="https://docs.julialang.org/en/v1/manual/getting-started/">open
+    Julia's interactive session (known as REPL)</a> and press the <kbd>]</kbd> key in the REPL to use the package mode, and then type:
+</p>
+
+```julia
+pkg> add https://github.com/QuantumSavory/QuantumExpanders.jl.git
+```
+
+To update, just type `up` in the package mode.
+
 - `gen_code` - Create a CSS code out of two Tanner codes 𝒞ᶻ and 𝒞ˣ, each constructed out of two related graphs 𝒢₀□, 𝒢₁□, the graphs build out of a Cayley complex, which itself was based on a group G=SL₂qⁱ and two generator sets A and B. For consistency of indexing of "qubits" ≈ "graph edges" ≈ "squares" and "local bits" ≈ "generator pairs" we have the `edge_*_idx` maps.
 
