@@ -4,8 +4,12 @@
     using Graphs
     using Graphs: degree, is_connected, adjacency_matrix
     using QuantumExpanders
+    using QECCore
     using QuantumClifford
+    using QuantumClifford: stab_looks_good, Stabilizer
     using QuantumClifford.ECC
+    using QuantumClifford.ECC: code_n, code_k
+    using Nemo: zero_matrix, base_ring, transpose, rank
 
     function _is_ramanujanᵧ(g::SimpleGraph, k::Int)
         A = adjacency_matrix(g)
