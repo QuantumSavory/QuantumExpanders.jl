@@ -66,7 +66,7 @@
 
     @testset "Quantum Tanner codes from Frobenius Groups" begin
         primes =  [3, 5, 7, 11, 13, 17, 19, 23, 29]
-        for p in large_primes
+        for p in primes
             for rate in [0.5, 0.6, 0.7]
                 G = dihedral_group(2*p)
                 S = normal_cayley_subset(G)
