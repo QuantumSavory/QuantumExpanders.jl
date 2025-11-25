@@ -63,4 +63,20 @@
             @test Float64(l) <= trivial_bound + 1e-10
         end
     end
+
+    @testset "Quantum Tanner codes from Frobenius Groups" begin
+        primes =  [3, 5, 7, 11, 13, 17, 19, 23, 29]
+        for p in large_primes
+            for rate in [0.5, 0.6, 0.7]
+                G = dihedral_group(2*p)
+                S = normal_cayley_subset(G)
+                hx, hz = gen_code(rate, G, S, S, bipartite=false)
+                c = Stabilizer(CSS(hx, hz))
+                @test stab_looks_good(c, remove_redundant_rows=true)
+                hx, hz = gen_good_code(rate, G, S, S, use_same_local_code=true, bipartite=false)
+                c = Stabilizer(CSS(hx, hz))
+                @test stab_looks_good(c, remove_redundant_rows=true)
+            end
+        end
+    end
 end
