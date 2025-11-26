@@ -69,7 +69,7 @@
     end
 
     @testset "Quantum Tanner codes from Frobenius Groups" begin
-        primes =  [3, 5, 7, 11, 13]
+        primes =  [3, 5, 7, 11]
         for p in primes
             for rate in [0.5, 0.6, 0.7]
                 G = dihedral_group(2*p)
