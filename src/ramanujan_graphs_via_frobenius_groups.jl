@@ -63,6 +63,13 @@ julia> all(g^-1 * s * g in S for s in S, g in G)
 true
 ```
 
+[mehry2023ramanujan](@cite) investigates the construction of Ramanujan Cayley graphs for
+*sporadic* groups and *linear* groups, with a particular focus on the *Mathieu* groups M(9), M(10),
+and M(11), as well as the *Suzuki* groups \\text{Sz}(q). Additionally, they examines the special
+linear group SL(2, q). By leveraging the character tables of these groups and identifying
+appropriate normal symmetric generating subsets, the [mehry2023ramanujan](@cite) derive conditions
+under which the corresponding Cayley graphs satisfy the Ramanujan property.
+
 ### Arguments
 - `G::Group`: A finite group
 """
