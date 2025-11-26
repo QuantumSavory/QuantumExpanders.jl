@@ -65,10 +65,19 @@ true
 
 [mehry2023ramanujan](@cite) investigates the construction of Ramanujan Cayley graphs for
 *sporadic* groups and *linear* groups, with a particular focus on the *Mathieu* groups M(9), M(10),
-and M(11), as well as the *Suzuki* groups \\text{Sz}(q). Additionally, they examines the special
+and M(11), as well as the *Suzuki* groups ``\\text{Sz}(q)``. Additionally, they examines the special
 linear group SL(2, q). By leveraging the character tables of these groups and identifying
 appropriate normal symmetric generating subsets, the [mehry2023ramanujan](@cite) derive conditions
 under which the corresponding Cayley graphs satisfy the Ramanujan property.
+
+[droll2010classification](@cite) classifies all unitary Cayley graphs ``X_n`` that are Ramanujan.
+The unitary Cayley graph ``X_n`` is constructed on the additive group ``\\mathbb{Z}/n\\mathbb{Z}``,
+where vertices represent integers modulo n, and edges connect two vertices if their difference is
+a multiplicative unit modulo n (i.e., ``\\gcd(a-b, n) = 1``). [droll2010classification](@cite) provides
+a complete characterization: ``X_n`` is Ramanujan—meaning it satisfies the optimal spectral gap
+condition ``\\lambda(X_n) \\leq 2\\sqrt{k-1}`` for k-regular graphs—if and only if n belongs to
+one of six explicit families based on its prime factorization, such as powers of 2, primes, or
+products of two primes under specific constraints. 
 
 ### Arguments
 - `G::Group`: A finite group
