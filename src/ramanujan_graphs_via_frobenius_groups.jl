@@ -63,6 +63,9 @@ julia> all(g^-1 * s * g in S for s in S, g in G)
 true
 ```
 
+The properties of normal Cayley subsets find direct application in the construction
+of Ramanujan graphs for specific group families, as demonstrated in the following results:
+
 [mehry2023ramanujan](@cite) investigates the construction of Ramanujan Cayley graphs for
 *sporadic* groups and *linear* groups, with a particular focus on the *Mathieu* groups M(9), M(10),
 and M(11), as well as the *Suzuki* groups ``\\text{Sz}(q)``. Additionally, they examines the special
@@ -78,6 +81,10 @@ a complete characterization: ``X_n`` is Ramanujan—meaning it satisfies the opt
 condition ``\\lambda(X_n) \\leq 2\\sqrt{k-1}`` for k-regular graphs—if and only if n belongs to
 one of six explicit families based on its prime factorization, such as powers of 2, primes, or
 products of two primes under specific constraints. 
+
+[wang1998normal](cite) prove that every finite group admits a normal Cayley grap*, except for
+``\\mathbb{Z}_4 \\times \\mathbb{Z}_2`` and ``Q_8 \\times \\mathbb{Z}_2^r``, and that every finite
+group has a normal Cayley digraph. 
 
 ### Arguments
 - `G::Group`: A finite group
