@@ -82,7 +82,7 @@ condition ``\\lambda(X_n) \\leq 2\\sqrt{k-1}`` for k-regular graphs—if and onl
 one of six explicit families based on its prime factorization, such as powers of 2, primes, or
 products of two primes under specific constraints. 
 
-[wang1998normal](cite) prove that every finite group admits a normal Cayley grap*, except for
+[wang1998normal](cite) prove that every finite group admits a normal Cayley graph, except for
 ``\\mathbb{Z}_4 \\times \\mathbb{Z}_2`` and ``Q_8 \\times \\mathbb{Z}_2^r``, and that every finite
 group has a normal Cayley digraph. 
 
