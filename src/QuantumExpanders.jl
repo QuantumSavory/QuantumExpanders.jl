@@ -47,6 +47,7 @@ export
     enumerate_squares, random_code_pair, convert_squares_to_incidence_matrix, QuantumTannerCode,
     parity_matrix, parity_matrix_x, parity_matrix_z, parity_matrix_xz, code_n, code_k,
     # tensor codes
-    uniformly_random_code_checkmatrix, dual_code, good_css
+    uniformly_random_code_checkmatrix, dual_code, good_css,
+    GeneralizedQuantumTannerCode
 
 end #module
