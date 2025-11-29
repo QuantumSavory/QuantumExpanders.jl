@@ -89,7 +89,7 @@ parity_matrix_x(c::GeneralizedQuantumTannerCode) = parity_matrix_xz(c)[1]
 
 parity_matrix_z(c::GeneralizedQuantumTannerCode) = parity_matrix_xz(c)[2]
 
-function gen_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}; bipartite=true, use_same_local_code=false)
+function random_quantum_Tanner_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}; bipartite=true, use_same_local_code=false)
     @show length(group), length(A), length(B)
     @show length(group)*length(A)*length(B)
     if bipartite
@@ -155,7 +155,7 @@ Generate a good Quantum Tanner code meeting minimum weight requirements.
 """
 function gen_good_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}; minweight_x=1, minweight_z=1, bipartite=true, use_same_local_code=false, max_iterations=100)
     for i in 1:max_iterations
-        𝒞ˣ, 𝒞ᶻ = gen_code(ρ, group, A, B; bipartite, use_same_local_code)
+        𝒞ˣ, 𝒞ᶻ = random_quantum_Tanner_code(ρ, group, A, B; bipartite, use_same_local_code)
         x_weight = minimum(unique(sum(𝒞ˣ, dims=1)))
         z_weight = minimum(unique(sum(𝒞ᶻ, dims=1)))
         if x_weight >= minweight_x && z_weight >= minweight_z
