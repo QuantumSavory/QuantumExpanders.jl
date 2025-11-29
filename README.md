@@ -40,7 +40,7 @@ pkg> add https://github.com/QuantumSavory/QuantumExpanders.jl.git
 To update, just type `up` in the package mode.
 
 - `random_quantum_Tanner_code` constructs a quantum CSS code by instantiating two classical
-Tanner codes, 𝒞ᶻ and 𝒞ˣ, on the graphs 𝒢₀□ and 𝒢₁□ of a left-right Cayley complex [leverrier2022quantum](@cite).
+Tanner codes, 𝒞ᶻ and 𝒞ˣ, on the graphs 𝒢₀□ and 𝒢₁□ of a left-right Cayley complex [leverrier2022quantum](https://arxiv.org/pdf/2202.13641).
 This complex is generated from a group G, and two generating sets A and B of sizes Δ_A and Δ_B, which,
 need not satisfy the Total No-Conjugacy condition because of *quadripartite* construction of LRCC. 
 The code's qubits bijectively correspond to the squares Q of the complex, with the `edge_*_idx` output
@@ -52,8 +52,8 @@ enforced at vertices of V₁. When the Cayley graphs Cay(G,A) and Cay(G,B) are R
 component codes C_A and C_B are randomly chosen with *robust* dual tensor properties, this
 construction produces an asymptotically good quantum LDPC code with parameters [[n, Θ(n), Θ(n)]]. The
 QT code implementation provides a simplified variant of the Panteleev-Kalachev quantum LDPC codes
-[panteleev2022asymptoticallygoodquantumlocally](@cite) and is related to the locally testable
-code of [dinur2022locally](@cite).
+[panteleev2022asymptoticallygoodquantumlocally](https://arxiv.org/pdf/2111.03654) and is related to
+the locally testable code of [dinur2022locally](https://arxiv.org/pdf/2111.04808).
 
 Here is the `[[360, 10, 4]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
 for even prime power q.
@@ -92,8 +92,9 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 
 ## Quantum Tanner codes using other Frobenius groups
 
-Expanding upon the work of [radebold2025explicit](@cite), which was confined to [dihedral groups](https://en.wikipedia.org/wiki/Dihedral_group),
-we have constructed new explicit quantum Tanner codes based on a broader class of [Frobenius groups](https://en.wikipedia.org/wiki/Frobenius_group).
+Expanding upon the work of [radebold2025explicit](https://arxiv.org/pdf/2508.05095), which was confined to
+[dihedral groups](https://en.wikipedia.org/wiki/Dihedral_group), we have constructed new explicit quantum Tanner
+codes based on a broader class of [Frobenius groups](https://en.wikipedia.org/wiki/Frobenius_group).
 
 ### Symmetric Group
 
