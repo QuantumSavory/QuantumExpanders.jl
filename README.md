@@ -41,6 +41,8 @@ To update, just type `up` in the package mode.
 
 - `random_quantum_Tanner_code` - Create a CSS code out of two Tanner codes 𝒞ᶻ and 𝒞ˣ, each constructed out of two related graphs 𝒢₀□, 𝒢₁□, the graphs build out of a Cayley complex, which itself was based on a group G=SL₂qⁱ and two generator sets A and B. For consistency of indexing of "qubits" ≈ "graph edges" ≈ "squares" and "local bits" ≈ "generator pairs" we have the `edge_*_idx` maps.
 
+Here is the `[[360, 10, 4]]` quantum Tanner code constructed from Morgenstern Ramanujan graphs for even prime power q.
+
 ```jldoctest
 julia> l = 1; i = 2;
 
@@ -108,7 +110,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 ### Permutation Group
 
 Here is the `[[36, 16, 3]]` code based on permutation group of order 4 that improves upon the
-[[36, 8, 3]] parameters presented in `Table 5` of [radebold2025explicit](@cite), achieving
+`[[36, 8, 3]]` parameters presented in `Table 5` of [radebold2025explicit](@cite), achieving
 twice the number of logical qubits while maintaining the same distance.
 
 ```jldoctest
