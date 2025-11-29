@@ -4,6 +4,7 @@
     using QECCore
     using HiGHS
     using JuMP
+    using Random
     using QuantumExpanders
     using QuantumClifford
     using QuantumClifford: stab_looks_good, Stabilizer
@@ -640,5 +641,60 @@
         @test code_n(c) == 360
         @test code_k(c) == 22
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 6
+    end
+
+    @testset "New instances of Quantum Tanner codes using other Frobenius groups" begin
+        # [[150, 48, 4]]
+        G = symmetric_group(3)
+        rng = MersenneTwister(43)
+        S = normal_cayley_subset(G);
+        Hᴬ = [1 1 0 1 1]
+        Cᴬ = [1 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 1 0 0 0 1]
+        classical_code_pair = ((Hᴬ, Cᴬ), (Hᴬ, Cᴬ))
+        c = GeneralizedQuantumTannerCode(G, S, S, classical_code_pair, bipartite=false, use_same_local_code=true);
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 150
+        @test code_k(c) == 48
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 4
+
+        # [[36, 16, 3]]
+        x = cperm([1,2,3,4])
+        G = permutation_group(4, [x])
+        rng = MersenneTwister(52)
+        S = normal_cayley_subset(G)
+        Hᴬ = [1 1 1]
+        Cᴬ = [1 1 0; 1 0 1]
+        classical_code_pair = ((Hᴬ, Cᴬ), (Hᴬ, Cᴬ))
+        c = GeneralizedQuantumTannerCode(G, S, S, classical_code_pair, bipartite=false, use_same_local_code=true);
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 36
+        @test code_k(c) == 16
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS)) == 3
+
+        # [[252, 70, 6]]
+        rng = MersenneTwister(54)
+        G = cyclic_group(7)
+        S = normal_cayley_subset(G)
+        Hᴬ = [1 1 1 1 1 1]
+        Cᴬ = [1 1 0 0 0 0; 1 0 1 0 0 0; 1 0 0 1 0 0; 1 0 0 0 1 0; 1 0 0 0 0 1]
+        classical_code_pair = ((Hᴬ, Cᴬ), (Hᴬ, Cᴬ))
+        c = GeneralizedQuantumTannerCode(G, S, S, classical_code_pair, bipartite=false, use_same_local_code=true);
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 250
+        @test code_k(c) == 70
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 6
+
+       # [[392, 96, 5]]
+        rng = MersenneTwister(42)
+        G = small_group(8, 4)
+        S = normal_cayley_subset(G)
+        Hᴬ = [0 1 0 1 1 1 1]
+        Cᴬ = [1 0 0 0 0 0 0; 0 0 1 0 0 0 0; 0 1 0 1 0 0 0; 0 1 0 0 1 0 0; 0 1 0 0 0 1 0; 0 1 0 0 0 0 1]
+        classical_code_pair = ((Hᴬ, Cᴬ), (Hᴬ, Cᴬ))
+        c = GeneralizedQuantumTannerCode(G, S, S, classical_code_pair, bipartite=false, use_same_local_code=true);
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 392
+        @test code_k(c) == 96
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 5
     end
 end

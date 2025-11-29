@@ -103,6 +103,10 @@ Here is the `[[150, 48, 4]]` using symmetric group of order 3.
 ```jldoctest
 julia> rng = MersenneTwister(43);
 
+julia> G = symmetric_group(3);
+
+julia> S = normal_cayley_subset(G);
+
 julia> hx, hz = random_quantum_Tanner_code(0.65, G, S, S, bipartite=false, use_same_local_code=true, rng=deepcopy(rng));
 (length(group), length(A), length(B)) = (6, 5, 5)
 length(group) * length(A) * length(B) = 150
