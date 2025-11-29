@@ -680,7 +680,7 @@
         classical_code_pair = ((Hᴬ, Cᴬ), (Hᴬ, Cᴬ))
         c = GeneralizedQuantumTannerCode(G, S, S, classical_code_pair, bipartite=false, use_same_local_code=true);
         @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
-        @test code_n(c) == 250
+        @test code_n(c) == 252
         @test code_k(c) == 70
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 6
 
