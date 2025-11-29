@@ -4,6 +4,7 @@
     using Graphs
     using Graphs: degree, is_connected, adjacency_matrix
     using QuantumExpanders
+    using QuantumExpanders: normal_cayley_subset
     using QECCore
     using QuantumClifford
     using QuantumClifford: stab_looks_good, Stabilizer
@@ -74,7 +75,7 @@
             for rate in [0.5, 0.6, 0.7]
                 G = dihedral_group(2*p)
                 S = normal_cayley_subset(G)
-                hx, hz = gen_code(rate, G, S, S, bipartite=false)
+                hx, hz = random_quantum_Tanner_code(rate, G, S, S, bipartite=false)
                 c = Stabilizer(CSS(hx, hz))
                 @test stab_looks_good(c, remove_redundant_rows=true)
                 hx, hz = gen_good_code(rate, G, S, S, use_same_local_code=true, bipartite=false)

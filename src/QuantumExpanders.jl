@@ -29,10 +29,9 @@ include("morgenstern.jl")
 include("quantum_tanner_codes.jl")
 include("quantum_tanner_code_multigraphs.jl")
 include("lubotzky_phillips_sarnak_ramanujan.jl")
-include("ramanujan_graphs_via_frobenius_groups.jl")
 
 export
-    gen_code, gen_good_code, tanner_code, tanner_code_quadripartite,
+    random_quantum_Tanner_code, gen_good_code, tanner_code, tanner_code_quadripartite,
     # Cayley graphs
     cayley_right, cayley_left, is_nonconjugate, is_ramanujan, is_symmetric_gen,
     cayley_complex_square_graphs, cayley_complex_square_graphs_quadripartite,

@@ -269,7 +269,7 @@
                 A = alternative_morgenstern_generators(B, FirstOnly())
                 for _ in 1:5
                     for rate in [0.4, 0.5, 0.6, 0.7]
-                        hx, hz = gen_code(rate, SL₂, A, B) # Q = 360
+                        hx, hz = random_quantum_Tanner_code(rate, SL₂, A, B) # Q = 360
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
                         hx, hz = gen_good_code(rate, SL₂, A, B)
@@ -285,10 +285,10 @@
                 A = alternative_morgenstern_generators(B, FirstOnly())
                 for _ in 1:5
                     for rate in [0.5, 0.6, 0.7]
-                        hx, hz = gen_code(rate, SL₂, A, A, bipartite=false) # Q = 960
+                        hx, hz = random_quantum_Tanner_code(rate, SL₂, A, A, bipartite=false) # Q = 960
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
-                        hx, hz = gen_code(0.4, SL₂, A, A, use_same_local_code=true, bipartite=false)
+                        hx, hz = random_quantum_Tanner_code(0.4, SL₂, A, A, use_same_local_code=true, bipartite=false)
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
                         hx, hz = gen_good_code(rate, SL₂, A, A, use_same_local_code=true, bipartite=false)
@@ -303,10 +303,10 @@
                 SL₂, B = morgenstern_generators(l, i)
                 A = alternative_morgenstern_generators(B, FirstOnly())
                 for _ in 1:5
-                    hx, hz = gen_code(0.4, SL₂, B, B, bipartite=false) # Q = 540
+                    hx, hz = random_quantum_Tanner_code(0.4, SL₂, B, B, bipartite=false) # Q = 540
                     c = Stabilizer(CSS(hx, hz))
                     @test stab_looks_good(c, remove_redundant_rows=true)
-                    hx, hz = gen_code(0.4, SL₂, B, B, use_same_local_code=true, bipartite=false)
+                    hx, hz = random_quantum_Tanner_code(0.4, SL₂, B, B, use_same_local_code=true, bipartite=false)
                     c = Stabilizer(CSS(hx, hz))
                     @test stab_looks_good(c, remove_redundant_rows=true)
                     hx, hz = gen_good_code(0.4, SL₂, B, B, use_same_local_code=true, bipartite=false)
@@ -321,7 +321,7 @@
                 A = alternative_morgenstern_generators(B, FirstOnly())
                 for _ in 1:5
                     for rate in [0.4, 0.5, 0.6, 0.7]
-                        hx, hz = gen_code(rate, SL₂, A, B, bipartite=false) # Q = 720
+                        hx, hz = random_quantum_Tanner_code(rate, SL₂, A, B, bipartite=false) # Q = 720
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
                     end
@@ -334,7 +334,7 @@
                 A = alternative_morgenstern_generators(B, FirstOnly())
                 for _ in 1:5
                     for rate in [0.4, 0.5, 0.6]
-                        hx, hz = gen_code(rate, SL₂, B, A, bipartite=false) # Q = 720
+                        hx, hz = random_quantum_Tanner_code(rate, SL₂, B, A, bipartite=false) # Q = 720
                         c = Stabilizer(CSS(hx, hz))
                         @test stab_looks_good(c, remove_redundant_rows=true)
                     end
