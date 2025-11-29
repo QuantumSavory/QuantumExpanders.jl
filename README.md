@@ -176,3 +176,40 @@ julia> import JuMP; import HiGHS;
 julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120))
 (252, 70, 6)
 ```
+
+### Small Groups
+
+Here is a `[[392, 96, 5]]` code using quaternion group of order 8.
+
+```jldoctest
+julia> rng = MersenneTwister(42);
+
+julia> G = small_group(8, 4);
+
+julia> describe(G), small_group_identification(G)
+("Q8", (8, 4))
+
+julia> S = normal_cayley_subset(G);
+
+julia> hx, hz = random_quantum_Tanner_code(0.72, G, S, S, bipartite=false, use_same_local_code=true, rng=deepcopy(rng));
+(length(group), length(A), length(B)) = (8, 7, 7)
+length(group) * length(A) * length(B) = 392
+[ Info: |Q| = |G||A||B| = 392
+Hᴬ = [0 1 0 1 1 1 1]
+Hᴮ = [1 0 0 1 0 1 0; 0 0 1 0 0 0 1; 0 0 1 0 1 0 1; 0 0 0 1 0 0 1; 1 1 1 1 0 1 0]
+Cᴬ = [1 0 0 0 0 0 0; 0 0 1 0 0 0 0; 0 1 0 1 0 0 0; 0 1 0 0 1 0 0; 0 1 0 0 0 1 0; 0 1 0 0 0 0 1]
+Cᴮ = [1 0 0 0 0 0 0; 0 0 1 0 0 0 0; 0 1 0 1 0 0 0; 0 1 0 0 1 0 0; 0 1 0 0 0 1 0; 0 1 0 0 0 0 1]
+size(Cˣ) = (36, 49)
+size(Cᶻ) = (1, 49)
+r1 = rank(𝒞ˣ) = 288
+r2 = rank(𝒞ᶻ) = 8
+
+julia> c = CSS(hx, hz);
+
+julia> import JuMP; import HiGHS;
+
+julia> c = CSS(hx, hz);
+
+julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120))
+(392, 96, 5)
+```
