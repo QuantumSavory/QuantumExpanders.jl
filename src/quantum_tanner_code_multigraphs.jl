@@ -89,7 +89,7 @@ parity_matrix_x(c::GeneralizedQuantumTannerCode) = parity_matrix_xz(c)[1]
 
 parity_matrix_z(c::GeneralizedQuantumTannerCode) = parity_matrix_xz(c)[2]
 
-function random_quantum_Tanner_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}; bipartite=true, use_same_local_code=false, rng::AbstractRNG)
+function random_quantum_Tanner_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}; bipartite=true, use_same_local_code=false, rng::AbstractRNG=GLOBAL_RNG)
     @show length(group), length(A), length(B)
     @show length(group)*length(A)*length(B)
     if bipartite
