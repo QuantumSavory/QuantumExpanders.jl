@@ -39,7 +39,24 @@ pkg> add https://github.com/QuantumSavory/QuantumExpanders.jl.git
 
 To update, just type `up` in the package mode.
 
-- `random_quantum_Tanner_code` - Create a CSS code out of two Tanner codes 𝒞ᶻ and 𝒞ˣ, each constructed out of two related graphs 𝒢₀□, 𝒢₁□, the graphs build out of a Cayley complex, which itself was based on a group G=SL₂qⁱ and two generator sets A and B. For consistency of indexing of "qubits" ≈ "graph edges" ≈ "squares" and "local bits" ≈ "generator pairs" we have the `edge_*_idx` maps.
+- `random_quantum_Tanner_code` constructs a quantum CSS code by instantiating two classical
+Tanner codes, ``\\mathcal{C}^Z`` and ``\\mathcal{C}^X``, on the graphs ``\\mathcal{G}_0^\\square``
+and ``\\mathcal{G}_1^\\square`` of a left-right Cayley complex [leverrier2022quantum](@cite). This
+complex is generated from a group G, and two generating sets A and B of sizes ``\\Delta_A`` and
+``\\Delta_B``, which need not satisfy the Total No-Conjugacy condition because of *quadripartite*
+construction of LRCC. The code's qubits bijectively correspond to the squares Q of the complex, with
+the `edge_*_idx` output providing the mappings between qubit indices, graph edges in ``\\mathcal{G}_0^\\square``
+and ``\\mathcal{G}_1^\\square``, and the local coordinate sets ``A \\times B`` at each vertex. The
+Z-parity checks of the quantum code are defined as the generators of
+``\\mathcal{C}^Z = T(\\mathcal{G}_0^\\square, (C_A \\otimes C_B)^\\perp)``, enforcing local constraints
+from the dual tensor code at each vertex of ``V_0``. Similarly, the X-parity checks are generators of
+``\\mathcal{C}^X = T(\\mathcal{G}_1^\\square, (C_A^\\perp \\otimes C_B^\\perp)^\\perp)``, enforced at
+vertices of ``V_1``. When the Cayley graphs ``\\mathrm{Cay}(G,A)`` and ``\\mathrm{Cay}(G,B)`` are Ramanujan
+and the component codes ``C_A`` and ``C_B`` are randomly chosen with *robust* dual tensor properties,
+this construction produces an asymptotically good quantum LDPC code with parameters
+``[[n, \\Theta(n), \\Theta(n)]``. The QT code provides a simplified variant of the Panteleev-Kalachev quantum
+LDPC codes [panteleev2022asymptoticallygoodquantumlocally](@cite) and is related to the locally testable
+code of [dinur2022locally](@cite).
 
 Here is the `[[360, 10, 4]]` quantum Tanner code constructed from Morgenstern Ramanujan graphs for even prime power q.
 
