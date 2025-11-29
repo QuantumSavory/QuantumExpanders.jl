@@ -7,11 +7,13 @@ module QuantumExpanders
 using Nemo
 using Oscar
 using QECCore
-import QECCore: code_n, code_k, parity_matrix, parity_matrix_z, parity_matrix_x, distance, AbstractCSSCode
+import QECCore: code_n, code_k, parity_matrix, parity_matrix_z, parity_matrix_x, distance, AbstractCSSCode, CSS
 using QuantumClifford
 using QuantumClifford: Stabilizer, comm
+using QuantumClifford.ECC: DistanceMIPAlgorithm
 using LinearAlgebra
 using Random
+using Random: AbstractRNG, GLOBAL_RNG
 using Graphs
 using Graphs: add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix, add_vertex!, has_edge,
 vertices, induced_subgraph, AbstractGraph, is_bipartite, bipartite_map, has_edge
@@ -32,7 +34,7 @@ include("lubotzky_phillips_sarnak_ramanujan.jl")
 include("ramanujan_graphs_via_frobenius_groups.jl")
 
 export
-    gen_code, gen_good_code, tanner_code, tanner_code_quadripartite,
+    random_quantum_Tanner_code, gen_good_code, tanner_code, tanner_code_quadripartite,
     # Cayley graphs
     cayley_right, cayley_left, is_nonconjugate, is_ramanujan, is_symmetric_gen,
     cayley_complex_square_graphs, cayley_complex_square_graphs_quadripartite,
@@ -49,6 +51,6 @@ export
     parity_matrix, parity_matrix_x, parity_matrix_z, parity_matrix_xz, code_n, code_k,
     # tensor codes
     uniformly_random_code_checkmatrix, dual_code, good_css,
-    normal_cayley_subset
+    normal_cayley_subset, GeneralizedQuantumTannerCode
 
 end #module

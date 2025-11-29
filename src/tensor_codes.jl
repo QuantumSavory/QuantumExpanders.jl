@@ -48,14 +48,14 @@ julia> H = uniformly_random_code_checkmatrix(0.5, 10)
 - `ρ::Real`: Target rate of the classical component code, determining the code's dimension relative to its block length.
 - `Δ::Integer`: Block length of the classical component code, corresponding to the size of the generating sets in the underlying Cayley graph structure.
 """
-function uniformly_random_code_checkmatrix(ρ::Real, Δ::Int)
+function uniformly_random_code_checkmatrix(ρ::Real, Δ::Int; rng::AbstractRNG=GLOBAL_RNG)
     @assert 0<ρ<1
     r = Int(floor(ρ*Δ))
     R, _ = residue_ring(ZZ, 2)
     M = matrix_space(R, r, Δ)
     local H
     while true
-        H = rand(M)
+        H = rand(rng, M)
         rank(H) == r && break
     end
     H
