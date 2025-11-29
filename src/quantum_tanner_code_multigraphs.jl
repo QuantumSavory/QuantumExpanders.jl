@@ -89,7 +89,7 @@ parity_matrix_x(c::GeneralizedQuantumTannerCode) = parity_matrix_xz(c)[1]
 
 parity_matrix_z(c::GeneralizedQuantumTannerCode) = parity_matrix_xz(c)[2]
 
-function random_quantum_Tanner_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}; bipartite=true, use_same_local_code=false)
+function random_quantum_Tanner_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}; bipartite=true, use_same_local_code=false, rng::AbstractRNG)
     @show length(group), length(A), length(B)
     @show length(group)*length(A)*length(B)
     if bipartite
@@ -106,8 +106,8 @@ function random_quantum_Tanner_code(ρ::Real, group::Group, A::Vector{<:GroupEle
     # We consider H_B (parity check for C_B) defines C_B^⊥ which has rate ρ.
     rate_Hᴬ = 1-ρ
     rate_Hᴮ = ρ
-    Hᴬ = uniformly_random_code_checkmatrix(rate_Hᴬ, Δᴬ)
-    Hᴮ = uniformly_random_code_checkmatrix(rate_Hᴮ, Δᴮ)
+    Hᴬ = uniformly_random_code_checkmatrix(rate_Hᴬ, Δᴬ; rng=rng)
+    Hᴮ = uniformly_random_code_checkmatrix(rate_Hᴮ, Δᴮ; rng=rng)
     @show Hᴬ
     @show Hᴮ
     if use_same_local_code
