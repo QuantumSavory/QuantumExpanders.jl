@@ -6,22 +6,100 @@ Returns a pair of symmetric sets (A, B) that generate G and satisfy the non-conj
 Both A and B are symmetric (closed under inversion), the union A ∪ B generates G, A and B are disjoint,
 and the pair (A, B) satisfies the total non-conjugacy condition: for all a ∈ A, b ∈ B, g ∈ G, a ≠ gbg⁻¹.
 
-```jldoctest
+```jldoctest examples
 julia> using QuantumExpanders; using Oscar; using Random;
 
 julia> G = symmetric_group(4);
 
-julia> rng = MersenneTwister(42);
+julia> rng = MersenneTwister(68);
 
-julia> find_random_generating_sets(G, 3, 2; rng=deepcopy(rng))
+julia> A, B = find_random_generating_sets(G, 3, 2; rng=deepcopy(rng))
 2-element Vector{Vector{PermGroupElem}}:
- [(2,4,3), (2,3,4), (2,3)]
- [(1,3,4,2), (1,2,4,3)]
+ [(1,3)(2,4), (1,2,4,3), (1,3,4,2)]
+ [(2,4), (2,3)]
 
-julia> find_random_generating_sets(G, 3; rng=deepcopy(rng))
+julia> A, B = find_random_generating_sets(G, 3; rng=deepcopy(rng))
 2-element Vector{Vector{PermGroupElem}}:
- [(2,4,3), (2,3,4), (2,3)]
- [(1,3,4,2), (1,2,4,3), (1,3)(2,4)]
+ [(1,2,4,3), (1,3,4,2), (1,4)(2,3)]
+ [(1,4,3), (1,3,4), (1,2)]
+```
+
+Here is a new `[[108, 11, 6]]` quantum Tanner code can now be generated using these symmetric generating sets, A and B, as follows:
+
+```jldoctest examples
+julia> H_A = [1 0 1; 1 1 0];
+
+julia> G_A = [1 1 1];
+
+julia> H_B = [1 1 1; 1 1 0];
+
+julia> G_B = [1 1 0];
+
+julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
+
+julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
+
+julia> code_n(c), code_k(c)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 24, |A| = 3, |B| = 3
+[ Info: Physical qubits: 108
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 108 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 24, |A| = 3, |B| = 3
+[ Info: Physical qubits: 108
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 108 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+(108, 11)
+
+julia> import JuMP; import HiGHS;
+
+julia> distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 24, |A| = 3, |B| = 3
+[ Info: Physical qubits: 108
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 108 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 24, |A| = 3, |B| = 3
+[ Info: Physical qubits: 108
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 108 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 24, |A| = 3, |B| = 3
+[ Info: Physical qubits: 108
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 108 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 24, |A| = 3, |B| = 3
+[ Info: Physical qubits: 108
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 108 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 24, |A| = 3, |B| = 3
+[ Info: Physical qubits: 108
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 108 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 24, |A| = 3, |B| = 3
+[ Info: Physical qubits: 108
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 108 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Left-right Cayley complex Γ(G,A,B) square enumeration complete
+[ Info: Group order |G| = 24, |A| = 3, |B| = 3
+[ Info: Physical qubits: 108
+[ Info: Left-right Cayley complex Γ(G,A,B): enumerated 108 faces placed on 4-cycles {gᵢ, (a·g)ⱼ, (g·b)ⱼ, (a·g·b)ᵢ} where i,j ∈ {0,1}, i≠j [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₀ vertices (Z-type stabilizers) [radebold2025explicit](@cite)
+[ Info: Squares incident to vertices: 216 at V₁ vertices (X-type stabilizers) [radebold2025explicit](@cite)
+6
 ```
 
 ### Arguments
