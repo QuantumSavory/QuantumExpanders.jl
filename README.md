@@ -236,3 +236,38 @@ julia> c = CSS(hx, hz);
 julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120))
 (392, 96, 5)
 ```
+
+Here is a `[[576, 126, 7]]` code using the [direct product](https://en.wikipedia.org/wiki/Direct_product_of_groups) of two cyclic groups (**C₃ × C₃**).
+
+```jldoctest
+julia> rng = MersenneTwister(20);
+
+julia> G = small_group(9, 2);
+
+julia> describe(G), small_group_identification(G)
+("C3 x C3", (9, 2))
+
+julia> S = normal_cayley_subset(G);
+
+julia> hx, hz = random_quantum_Tanner_code(0.8, G, S, S, bipartite=false, use_same_local_code=true, rng=deepcopy(rng));
+(length(group), length(A), length(B)) = (9, 8, 8)
+length(group) * length(A) * length(B) = 576
+[ Info: |Q| = |G||A||B| = 576
+Hᴬ = [1 1 1 0 1 1 1 1]
+Hᴮ = [0 0 0 1 0 1 1 1; 1 1 0 1 1 1 0 0; 1 0 1 0 1 1 1 1; 1 0 1 0 0 0 1 0; 1 1 1 0 1 1 1 1; 1 0 1 1 1 0 1 0]
+Cᴬ = [1 1 0 0 0 0 0 0; 1 0 1 0 0 0 0 0; 0 0 0 1 0 0 0 0; 1 0 0 0 1 0 0 0; 1 0 0 0 0 1 0 0; 1 0 0 0 0 0 1 0; 1 0 0 0 0 0 0 1]
+Cᴮ = [1 1 0 0 0 0 0 0; 1 0 1 0 0 0 0 0; 0 0 0 1 0 0 0 0; 1 0 0 0 1 0 0 0; 1 0 0 0 0 1 0 0; 1 0 0 0 0 0 1 0; 1 0 0 0 0 0 0 1]
+size(Cˣ) = (49, 64)
+size(Cᶻ) = (1, 64)
+r1 = rank(𝒞ˣ) = 441
+r2 = rank(𝒞ᶻ) = 9
+
+julia> c = CSS(hx, hz);
+
+julia> import JuMP; import HiGHS;
+
+julia> c = CSS(hx, hz);
+
+julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120))
+(576, 126, 7)
+```
