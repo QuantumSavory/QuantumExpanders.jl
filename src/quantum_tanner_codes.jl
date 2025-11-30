@@ -1,7 +1,7 @@
 """
 Generate a pair of symmetric generating sets for group G of sizes δ_A and δ_B.
 
-Returns a pair of symmetric sets (A, B) that generate G and satisfy the non-conjugacy condition.
+Returns a pair of symmetric generating sets (A, B) that generate G and satisfy the non-conjugacy condition.
 
 Both A and B are symmetric (closed under inversion), the union A ∪ B generates G, A and B are disjoint,
 and the pair (A, B) satisfies the total non-conjugacy condition: for all a ∈ A, b ∈ B, g ∈ G, a ≠ gbg⁻¹.
@@ -24,7 +24,7 @@ julia> A, B = find_random_generating_sets(G, 3; rng=deepcopy(rng))
  [(1,4,3), (1,3,4), (1,2)]
 ```
 
-Here is a new `[[108, 11, 6]]` quantum Tanner code be generated using these symmetric generating sets, A and B, as follows:
+Here is a new `[[108, 11, 6]]` quantum Tanner code generated using these symmetric generating sets, A and B, as follows:
 
 ```jldoctest examples
 julia> H_A = [1 0 1; 1 1 0];
