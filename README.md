@@ -40,25 +40,23 @@ pkg> add https://github.com/QuantumSavory/QuantumExpanders.jl.git
 To update, just type `up` in the package mode.
 
 - `random_quantum_Tanner_code` constructs a quantum CSS code by instantiating two classical
-Tanner codes, ``\\mathcal{C}^Z`` and ``\\mathcal{C}^X``, on the graphs ``\\mathcal{G}_0^\\square``
-and ``\\mathcal{G}_1^\\square`` of a left-right Cayley complex [leverrier2022quantum](@cite). This
-complex is generated from a group G, and two generating sets A and B of sizes ``\\Delta_A`` and
-``\\Delta_B``, which need not satisfy the Total No-Conjugacy condition because of *quadripartite*
-construction of LRCC. The code's qubits bijectively correspond to the squares Q of the complex, with
-the `edge_*_idx` output providing the mappings between qubit indices, graph edges in ``\\mathcal{G}_0^\\square``
-and ``\\mathcal{G}_1^\\square``, and the local coordinate sets ``A \\times B`` at each vertex. The
-Z-parity checks of the quantum code are defined as the generators of
-``\\mathcal{C}^Z = T(\\mathcal{G}_0^\\square, (C_A \\otimes C_B)^\\perp)``, enforcing local constraints
-from the dual tensor code at each vertex of ``V_0``. Similarly, the X-parity checks are generators of
-``\\mathcal{C}^X = T(\\mathcal{G}_1^\\square, (C_A^\\perp \\otimes C_B^\\perp)^\\perp)``, enforced at
-vertices of ``V_1``. When the Cayley graphs ``\\mathrm{Cay}(G,A)`` and ``\\mathrm{Cay}(G,B)`` are Ramanujan
-and the component codes ``C_A`` and ``C_B`` are randomly chosen with *robust* dual tensor properties,
-this construction produces an asymptotically good quantum LDPC code with parameters
-``[[n, \\Theta(n), \\Theta(n)]``. The QT code provides a simplified variant of the Panteleev-Kalachev quantum
-LDPC codes [panteleev2022asymptoticallygoodquantumlocally](@cite) and is related to the locally testable
-code of [dinur2022locally](@cite).
+Tanner codes, 𝒞ᶻ and 𝒞ˣ, on the graphs 𝒢₀□ and 𝒢₁□ of a left-right Cayley complex [leverrier2022quantum](https://arxiv.org/pdf/2202.13641).
+This complex is generated from a group G, and two generating sets A and B of sizes Δ_A and Δ_B, which,
+need not satisfy the Total No-Conjugacy condition because of *quadripartite* construction of LRCC. 
+The code's qubits bijectively correspond to the squares Q of the complex, with the `edge_*_idx` output
+providing the essential mappings between qubit indices, graph edges in 𝒢₀□ and 𝒢₁□, and the local
+coordinate sets A×B at each vertex. The Z-parity checks of the quantum code are defined as the
+generators of 𝒞ᶻ = T(𝒢₀□, (C_A⊗C_B)⊥), enforcing local constraints from the dual tensor code at
+each vertex of V₀. Similarly, the X-parity checks are generators of 𝒞ˣ = T(𝒢₁□, (C_A⊥⊗C_B⊥)⊥),
+enforced at vertices of V₁. When the Cayley graphs Cay(G,A) and Cay(G,B) are Ramanujan and the
+component codes C_A and C_B are randomly chosen with *robust* dual tensor properties, this
+construction produces an asymptotically good quantum LDPC code with parameters [[n, Θ(n), Θ(n)]]. The
+QT code implementation provides a simplified variant of the Panteleev-Kalachev quantum LDPC codes
+[panteleev2022asymptoticallygoodquantumlocally](https://arxiv.org/pdf/2111.03654) and is related to
+the locally testable code of [dinur2022locally](https://arxiv.org/pdf/2111.04808).
 
-Here is the `[[360, 10, 4]]` quantum Tanner code constructed from Morgenstern Ramanujan graphs for even prime power q.
+Here is the `[[360, 10, 4]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
+for even prime power q.
 
 ```jldoctest
 julia> l = 1; i = 2;
@@ -94,11 +92,13 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 
 ## Quantum Tanner codes using other Frobenius groups
 
-Expanding upon the work of [radebold2025explicit](@cite), which was confined to dihedral groups, we have constructed new explicit quantum Tanner codes based on a broader class of Frobenius groups.
+Expanding upon the work of [radebold2025explicit](https://arxiv.org/pdf/2508.05095), which was confined to
+[dihedral groups](https://en.wikipedia.org/wiki/Dihedral_group), we have constructed new explicit quantum Tanner
+codes based on a broader class of [Frobenius groups](https://en.wikipedia.org/wiki/Frobenius_group).
 
 ### Symmetric Group
 
-Here is the `[[150, 48, 4]]` using symmetric group of order 3.
+Here is the `[[150, 48, 4]]` using [symmetric group](https://en.wikipedia.org/wiki/Symmetric_group) of order 3.
 
 ```jldoctest
 julia> rng = MersenneTwister(43);
@@ -130,9 +130,9 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 
 ### Permutation Group
 
-Here is the `[[36, 16, 3]]` code based on permutation group of order 4 that improves upon the
-`[[36, 8, 3]]` parameters presented in `Table 5` of [radebold2025explicit](@cite), achieving
-twice the number of logical qubits while maintaining the same distance.
+Here is the `[[36, 16, 3]]` code based on [permutation group](https://en.wikipedia.org/wiki/Permutation_group)
+of order 4 that improves upon the `[[36, 8, 3]]` parameters presented in `Table 5` of [radebold2025explicit](@cite),
+achieving twice the number of logical qubits while maintaining the same distance.
 
 ```jldoctest
 julia> rng = MersenneTwister(52);
@@ -170,7 +170,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 
 ### Cyclic Group
 
-Here is the `[[252, 70, 6]]` using cyclic group of order 7.
+Here is the `[[252, 70, 6]]` using [cyclic group](https://en.wikipedia.org/wiki/Cyclic_group) of order 7.
 
 ```jldoctest
 julia> rng = MersenneTwister(54);
@@ -202,7 +202,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 
 ### Small Groups
 
-Here is a `[[392, 96, 5]]` code using quaternion group of order 8.
+Here is a `[[392, 96, 5]]` code using [quaternion group](https://en.wikipedia.org/wiki/Quaternion_group) of order 8.
 
 ```jldoctest
 julia> rng = MersenneTwister(42);
