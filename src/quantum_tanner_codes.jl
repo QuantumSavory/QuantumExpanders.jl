@@ -24,7 +24,7 @@ julia> A, B = find_random_generating_sets(G, 3; rng=deepcopy(rng))
  [(1,4,3), (1,3,4), (1,2)]
 ```
 
-Here is a new `[[108, 11, 6]]` quantum Tanner code can now be generated using these symmetric generating sets, A and B, as follows:
+Here is a new `[[108, 11, 6]]` quantum Tanner code be generated using these symmetric generating sets, A and B, as follows:
 
 ```jldoctest examples
 julia> H_A = [1 0 1; 1 1 0];
