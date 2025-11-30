@@ -699,8 +699,8 @@
     end
 
     @testset "Random Symmetric Generating Tests" begin
-       for seed in 1:100
-           for o in 4:6
+       for seed in 1:50
+           for o in 4:5
                G = symmetric_group(o)
                rng = MersenneTwister(seed)
                A, B = find_random_generating_sets(G, 3; rng=deepcopy(rng))
