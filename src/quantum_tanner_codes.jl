@@ -17,6 +17,11 @@ julia> find_random_generating_sets(G, 3, 2; rng=deepcopy(rng))
 2-element Vector{Vector{PermGroupElem}}:
  [(2,4,3), (2,3,4), (2,3)]
  [(1,3,4,2), (1,2,4,3)]
+
+julia> find_random_generating_sets(G, 3; rng=deepcopy(rng))
+2-element Vector{Vector{PermGroupElem}}:
+ [(2,4,3), (2,3,4), (2,3)]
+ [(1,3,4,2), (1,2,4,3), (1,3)(2,4)]
 ```
 
 ### Arguments
