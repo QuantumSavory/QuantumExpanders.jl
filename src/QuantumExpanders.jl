@@ -51,6 +51,6 @@ export
     parity_matrix, parity_matrix_x, parity_matrix_z, parity_matrix_xz, code_n, code_k,
     # tensor codes
     uniformly_random_code_checkmatrix, dual_code, good_css,
-    normal_cayley_subset, GeneralizedQuantumTannerCode
+    normal_cayley_subset, GeneralizedQuantumTannerCode, find_random_generating_sets
 
 end #module

@@ -6,12 +6,25 @@ Returns a pair of symmetric sets (A, B) that generate G and satisfy the non-conj
 Both A and B are symmetric (closed under inversion), the union A ∪ B generates G, A and B are disjoint,
 and the pair (A, B) satisfies the total non-conjugacy condition: for all a ∈ A, b ∈ B, g ∈ G, a ≠ gbg⁻¹.
 
+```jldoctest
+julia> using QuantumExpanders; using Oscar; using Random;
+
+julia> G = symmetric_group(4);
+
+julia> rng = MersenneTwister(42);
+
+julia> find_random_generating_sets(G, 3, 2; rng=deepcopy(rng))
+2-element Vector{Vector{PermGroupElem}}:
+ [(2,4,3), (2,3,4), (2,3)]
+ [(1,3,4,2), (1,2,4,3)]
+```
+
 ### Arguments
 - `G`: A finite group
 - `δ_A`: The size of the first symmetric generating set
 - `δ_B`: The size of the second symmetric generating set (defaults to δ_A)
 """
-function find_random_generating_sets(G::Group, δ_A::Iny, δ_B::Int=δ_A)
+function find_random_generating_sets(G::Group, δ_A::Int, δ_B::Int=δ_A; rng::AbstractRNG=GLOBAL_RNG)
     elems = collect(G)
     non_identity = [g for g in elems if g != one(G)]
     ord2 = [g for g in non_identity if order(g) == 2]
@@ -34,7 +47,7 @@ function find_random_generating_sets(G::Group, δ_A::Iny, δ_B::Int=δ_A)
     for attempt in 1:10000
         A = elem_type(G)[]
         B = elem_type(G)[]
-        shuffled = shuffle(elems)
+        shuffled = shuffle(rng, elems)
         for elem in shuffled
             elem == one(G) && continue
             if order(elem) == 2
