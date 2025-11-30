@@ -697,4 +697,21 @@
         @test code_k(c) == 96
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 5
     end
+
+    @testset "Random Symmetric Generating Tests" begin
+       for seed in 1:100
+           for o in 4:6
+               G = symmetric_group(o)
+               rng = MersenneTwister(seed)
+               A, B = find_random_generating_sets(G, 3; rng=deepcopy(rng))
+               H_A = [1 0 1; 1 1 0]
+               G_A = [1 1 1]
+               H_B = [1 1 1; 1 1 0]
+               G_B = [1 1 0]
+               classical_code_pair = ((H_A, G_A), (H_B, G_B))
+               c = QuantumTannerCode(G, A, B, classical_code_pair)
+               @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+           end
+       end
+    end
 end
