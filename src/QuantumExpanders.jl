@@ -13,7 +13,7 @@ using QuantumClifford: Stabilizer, comm
 using QuantumClifford.ECC: DistanceMIPAlgorithm
 using LinearAlgebra
 using Random
-using Random: AbstractRNG, GLOBAL_RNG
+using Random: AbstractRNG, GLOBAL_RNG, shuffle
 using Graphs
 using Graphs: add_edge!, nv, ne, neighbors, Graphs, edges, Edge, src, dst, degree, adjacency_matrix, add_vertex!, has_edge,
 vertices, induced_subgraph, AbstractGraph, is_bipartite, bipartite_map, has_edge
