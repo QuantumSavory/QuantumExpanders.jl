@@ -13,7 +13,8 @@ concurrency:
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
 env:
-  PYTHON: ~
+  PYTHON: ""
+  PYCALL_DEBUG_BUILD: yes
 jobs:
   test:
     name: Julia ${{ matrix.version }} - t=${{ matrix.threads }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -23,20 +24,15 @@ jobs:
       matrix:
         version:
           - '1'
-          - '1.10'
+          - '1.12'
         os:
           - ubuntu-latest
         threads:
-          - '1'
           - '5'
         arch:
           - x64
         include:
           - arch: aarch64
-            os: macos-latest
-            version: '1'
-            threads: '1'
-          - arch: x64
             os: macos-latest
             version: '1'
             threads: '1'
