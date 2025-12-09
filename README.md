@@ -58,7 +58,7 @@ the locally testable code of [dinur2022locally](https://arxiv.org/pdf/2111.04808
 Here is the `[[360, 10, 4]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
 for even prime power q.
 
-```jldoctest
+```julia
 julia> l = 1; i = 2;
 
 julia> q = 2^l
@@ -100,7 +100,7 @@ codes based on a broader class of [Frobenius groups](https://en.wikipedia.org/wi
 
 Here is the `[[150, 48, 4]]` using [symmetric group](https://en.wikipedia.org/wiki/Symmetric_group) of order 3.
 
-```jldoctest
+```julia
 julia> rng = MersenneTwister(43);
 
 julia> G = symmetric_group(3);
@@ -134,7 +134,7 @@ Here is the `[[36, 16, 3]]` code based on [permutation group](https://en.wikiped
 of order 4 that improves upon the `[[36, 8, 3]]` parameters presented in `Table 5` of [radebold2025explicit](@cite),
 achieving twice the number of logical qubits while maintaining the same distance.
 
-```jldoctest
+```julia
 julia> rng = MersenneTwister(52);
 
 julia> x = cperm([1,2,3,4]);
@@ -172,7 +172,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 
 Here is the `[[252, 70, 6]]` using [cyclic group](https://en.wikipedia.org/wiki/Cyclic_group) of order 7.
 
-```jldoctest
+```julia
 julia> rng = MersenneTwister(54);
 
 julia> G = cyclic_group(7);
@@ -204,7 +204,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 
 Here is a `[[392, 96, 5]]` code using [quaternion group](https://en.wikipedia.org/wiki/Quaternion_group) of order 8.
 
-```jldoctest
+```julia
 julia> rng = MersenneTwister(42);
 
 julia> G = small_group(8, 4);
@@ -239,7 +239,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 
 Here is a `[[576, 126, 7]]` code using the [direct product](https://en.wikipedia.org/wiki/Direct_product_of_groups) of two cyclic groups (**C₃ × C₃**).
 
-```jldoctest
+```julia
 julia> rng = MersenneTwister(20);
 
 julia> G = small_group(9, 2);
