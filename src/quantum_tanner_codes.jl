@@ -3,8 +3,10 @@ Generate a pair of symmetric generating sets for group G of sizes δ_A and δ_B.
 
 Returns a pair of symmetric generating sets (A, B) that generate G and satisfy the non-conjugacy condition.
 
-Both A and B are symmetric (closed under inversion), the union A ∪ B generates G, A and B are disjoint,
-and the pair (A, B) satisfies the total non-conjugacy condition: for all a ∈ A, b ∈ B, g ∈ G, a ≠ gbg⁻¹.
+Both A and B are symmetric, A and B are disjoint, and the pair (A, B) satisfies the total non-conjugacy condition: for all a ∈ A, b ∈ B, g ∈ G, a ≠ gbg⁻¹.
+
+!!! note
+     This is slow random sampling and might fail.
 
 ```jldoctest examples
 julia> using QuantumExpanders; using Oscar; using Random;

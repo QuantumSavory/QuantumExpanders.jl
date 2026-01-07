@@ -702,7 +702,7 @@
        for seed in 1:50
            for o in 4:5
                G = symmetric_group(o)
-               rng = MersenneTwister(seed)
+               rng = seed!(seed) 
                A, B = find_random_generating_sets(G, 3; rng=deepcopy(rng))
                H_A = [1 0 1; 1 1 0]
                G_A = [1 1 1]
