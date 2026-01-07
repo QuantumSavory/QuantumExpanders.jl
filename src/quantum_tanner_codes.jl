@@ -55,7 +55,7 @@ julia> distance(c, DistanceMIPAlgorithm(solver=HiGHS))
 - `δ_A`: The size of the first symmetric generating set
 - `δ_B`: The size of the second symmetric generating set (defaults to δ_A)
 """
-function find_random_generating_sets(G::Group, δ_A::Int, δ_B::Int=δ_A; rng::AbstractRNG=GLOBAL_RNG)
+function find_random_generating_sets(G::Group, δ_A::Int, δ_B::Int=δ_A; rng::AbstractRNG=GLOBAL_RNG, samples::Int=10000)
     elems = collect(G)
     non_identity = [g for g in elems if g != one(G)]
     ord2 = [g for g in non_identity if order(g) == 2]
@@ -75,7 +75,7 @@ function find_random_generating_sets(G::Group, δ_A::Int, δ_B::Int=δ_A; rng::A
         @info "Requested δ_A=$δ_A and δ_B=$δ_B require $((δ_A + δ_B)) symmetric elements, but only $total_symmetric_elements available"
         return false
     end
-    for attempt in 1:10000
+    for attempt in 1:samples
         A = elem_type(G)[]
         B = elem_type(G)[]
         shuffled = shuffle(rng, elems)
