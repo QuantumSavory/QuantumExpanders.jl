@@ -5,6 +5,7 @@
     using HiGHS
     using JuMP
     using Random
+    using Random: seed!
     using QuantumExpanders
     using QuantumClifford
     using QuantumClifford: stab_looks_good, Stabilizer
