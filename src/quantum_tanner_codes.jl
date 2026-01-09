@@ -1,4 +1,123 @@
 """
+Generate a pair of symmetric generating sets for group G of sizes δ_A and δ_B.
+
+Returns a pair of symmetric generating sets (A, B) that generate G and satisfy the non-conjugacy condition.
+
+Both A and B are symmetric, A and B are disjoint, and the pair (A, B) satisfies the total non-conjugacy condition: for all a ∈ A, b ∈ B, g ∈ G, a ≠ gbg⁻¹.
+
+!!! note
+     This is slow random sampling and might fail.
+
+```jldoctest examples
+julia> using QuantumExpanders; using Oscar; using Random;
+
+julia> G = symmetric_group(4);
+
+julia> rng = MersenneTwister(68);
+
+julia> A, B = find_random_generating_sets(G, 3, 2; rng=deepcopy(rng))
+2-element Vector{Vector{PermGroupElem}}:
+ [(1,3)(2,4), (1,2,4,3), (1,3,4,2)]
+ [(2,4), (2,3)]
+
+julia> A, B = find_random_generating_sets(G, 3; rng=deepcopy(rng))
+2-element Vector{Vector{PermGroupElem}}:
+ [(1,2,4,3), (1,3,4,2), (1,4)(2,3)]
+ [(1,4,3), (1,3,4), (1,2)]
+```
+
+Here is a new `[[108, 11, 6]]` quantum Tanner code generated using these symmetric generating sets, A and B, as follows:
+
+```jldoctest examples
+julia> H_A = [1 0 1; 1 1 0];
+
+julia> G_A = [1 1 1];
+
+julia> H_B = [1 1 1; 1 1 0];
+
+julia> G_B = [1 1 0];
+
+julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
+
+julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
+
+julia> code_n(c), code_k(c)
+(108, 11)
+
+julia> import JuMP; import HiGHS;
+
+julia> distance(c, DistanceMIPAlgorithm(solver=HiGHS))
+6
+```
+
+### Arguments
+- `G`: A finite group
+- `δ_A`: The size of the first symmetric generating set
+- `δ_B`: The size of the second symmetric generating set (defaults to δ_A)
+"""
+function find_random_generating_sets(G::Group, δ_A::Int, δ_B::Int=δ_A; rng::AbstractRNG=GLOBAL_RNG, samples::Int=10000)
+    elems = collect(G)
+    non_identity = [g for g in elems if g != one(G)]
+    ord2 = [g for g in non_identity if order(g) == 2]
+    pairs = []
+    used = Set{elem_type(G)}()
+    for g in non_identity
+        if order(g) > 2 && !(g in used)
+            inv_g = inv(g)
+            if g != inv_g
+                push!(pairs, (g, inv_g))
+                push!(used, g, inv_g)
+            end
+        end
+    end
+    total_symmetric_elements = length(ord2)+2*length(pairs)
+    if δ_A+δ_B > total_symmetric_elements
+        @info "Requested δ_A=$δ_A and δ_B=$δ_B require $((δ_A + δ_B)) symmetric elements, but only $total_symmetric_elements available"
+        return false
+    end
+    for attempt in 1:samples
+        A = elem_type(G)[]
+        B = elem_type(G)[]
+        shuffled = shuffle(rng, elems)
+        for elem in shuffled
+            elem == one(G) && continue
+            if order(elem) == 2
+                if !(elem in A) && !(elem in B) && length(A) < δ_A
+                    push!(A, elem)  
+                elseif !(elem in A) && !(elem in B) && length(B) < δ_B
+                    push!(B, elem)
+                end
+            else
+                inv_elem = inv(elem)
+                if elem != inv_elem
+                    if !(elem in A) && !(elem in B) && !(inv_elem in A) && !(inv_elem in B) && 
+                       length(A) < δ_A-1
+                        push!(A, elem, inv_elem)
+                    elseif !(elem in A) && !(elem in B) && !(inv_elem in A) && !(inv_elem in B) && 
+                           length(B) < δ_B-1
+                        push!(B, elem, inv_elem)
+                    end
+                end
+            end
+            if length(A) == δ_A && length(B) == δ_B
+                break
+            end
+        end
+        if length(A) == δ_A && length(B) == δ_B
+            if is_symmetric_gen(A) && 
+               is_symmetric_gen(B) && isempty(intersect(Set(A), Set(B))) && is_nonconjugate(G, A, B)
+                all_gens = vcat(A, B)
+                H, emb = sub(G, all_gens)
+                if order(H) == order(G)
+                    return [A, B]
+                end
+            end
+        end
+    end
+    return false
+end
+
+"""
 Generate a pair of random classical codes (C_A, C_B) for quantum Tanner code construction [radebold2025explicit](@cite)
 
 Returns a tuple (C_A, C_B) where each code is represented as a tuple (parity check matrix, generator matrix).
