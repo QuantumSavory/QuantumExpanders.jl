@@ -90,6 +90,16 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time
 (360, 10, 4)
 ```
 
+# Comparison with existing work
+
+Our method produces quantum Tanner codes with **significantly higher rates** than those reported in recent literature (Leverrier et al., *[Small quantum Tanner codes from left–right Cayley complexes](https://arxiv.org/pdf/2512.20532)*). For example:
+
+- `[[252, 70, 6]]` → higher rate than `[[252, 2, 20]]`  
+- `[[392, 96, 5]]` → higher rate than `[[396, 2, 29]]`  
+- `[[576, 126, 7]]` → higher rate than `[[576, 28, 24]]`
+
+While [recent work](https://arxiv.org/pdf/2512.20532) showcases codes with high distance, our method achieves higher rates, offering a complementary approach in the quantum Tanner code design.
+
 ## Quantum Tanner codes using other Frobenius groups
 
 Expanding upon the work of [radebold2025explicit](https://arxiv.org/pdf/2508.05095), which was confined to
