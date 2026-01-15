@@ -55,7 +55,7 @@ QT code implementation provides a simplified variant of the Panteleev-Kalachev q
 [panteleev2022asymptoticallygoodquantumlocally](https://arxiv.org/pdf/2111.03654) and is related to
 the locally testable code of [dinur2022locally](https://arxiv.org/pdf/2111.04808).
 
-Here is the `[[360, 10, 4]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
+Here is the novel `[[360, 61, 10]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
 for even prime power q.
 
 ```julia
@@ -69,25 +69,38 @@ julia> Δ = q+1
 
 julia> SL₂, B = morgenstern_generators(l, i)
 [ Info: |SL₂(𝔽(4))| = 60
-(SL(2,4), MatrixGroupElem{FqFieldElem, FqMatrix}[[o+1 o+1; 1 o+1], [o+1 1; o+1 o+1], [o+1 o; o o+1]])
+(SL(2,4), Oscar.MatrixGroupElem{Nemo.FqFieldElem, Nemo.FqMatrix}[[o+1 o+1; 1 o+1], [o+1 1; o+1 o+1], [o+1 o; o o+1]])
 
 julia> A = alternative_morgenstern_generators(B, FirstOnly())
-4-element Vector{MatrixGroupElem{FqFieldElem, FqMatrix}}:
+4-element Vector{Oscar.MatrixGroupElem{Nemo.FqFieldElem, Nemo.FqMatrix}}:
  [0 1; 1 o+1]
  [o+1 1; 1 0]
  [o+1 o+1; o 0]
  [0 o+1; o o+1]
 
-julia> rng = MersenneTwister(10);
+julia> rng = MersenneTwister(21);
 
-julia> hx, hz = random_quantum_Tanner_code(0.4, SL₂, A, B, rng=deepcopy(rng));
+julia> hx, hz = random_quantum_Tanner_code(0.74, SL₂, A, B, rng=rng);
+(length(group), length(A), length(B)) = (60, 4, 3)
+length(group) * length(A) * length(B) = 720
+[ Info: |V₀| = |V₁| = |G| = 60
+[ Info: |E_A| = Δ|G| = 240, |E_B| = Δ|G| = 180
+[ Info: |Q| = Δ²|G|/2 = 360
+Hᴬ = [0 1 1 0]
+Hᴮ = [1 1 0; 0 1 1]
+Cᴬ = [1 0 0 0; 0 1 1 0; 0 0 0 1]
+Cᴮ = [1 1 1]
+size(Cˣ) = (3, 12)
+size(Cᶻ) = (2, 12)
+r1 = rank(𝒞ˣ) = 179
+r2 = rank(𝒞ᶻ) = 120
 
 julia> c = CSS(hx, hz);
 
 julia> import JuMP; import HiGHS;
 
 julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120))
-(360, 10, 4)
+(360, 61, 10)
 ```
 
 # Comparison with existing work
@@ -117,7 +130,7 @@ julia> G = symmetric_group(3);
 
 julia> S = normal_cayley_subset(G);
 
-julia> hx, hz = random_quantum_Tanner_code(0.65, G, S, S, bipartite=false, use_same_local_code=true, rng=deepcopy(rng));
+julia> hx, hz = random_quantum_Tanner_code(0.65, G, S, S, bipartite=false, use_same_local_code=true, rng=rng);
 (length(group), length(A), length(B)) = (6, 5, 5)
 length(group) * length(A) * length(B) = 150
 [ Info: |Q| = |G||A||B| = 150
@@ -157,7 +170,7 @@ julia> S = normal_cayley_subset(G)
  (1,3)(2,4)
  (1,4,3,2)
 
-julia> hx, hz = random_quantum_Tanner_code(0.65, G, S, S, bipartite=false, use_same_local_code=true, rng=deepcopy(rng));
+julia> hx, hz = random_quantum_Tanner_code(0.65, G, S, S, bipartite=false, use_same_local_code=true, rng=rng);
 (length(group), length(A), length(B)) = (4, 3, 3)
 length(group) * length(A) * length(B) = 36
 [ Info: |Q| = |G||A||B| = 36
@@ -189,7 +202,7 @@ julia> G = cyclic_group(7);
 
 julia> S = normal_cayley_subset(G);
 
-julia> hx, hz = random_quantum_Tanner_code(0.7, G, S, S, bipartite=false, use_same_local_code=true, rng=deepcopy(rng));
+julia> hx, hz = random_quantum_Tanner_code(0.7, G, S, S, bipartite=false, use_same_local_code=true, rng=rng);
 (length(group), length(A), length(B)) = (7, 6, 6)
 length(group) * length(A) * length(B) = 252
 [ Info: |Q| = |G||A||B| = 252
@@ -224,7 +237,7 @@ julia> describe(G), small_group_identification(G)
 
 julia> S = normal_cayley_subset(G);
 
-julia> hx, hz = random_quantum_Tanner_code(0.72, G, S, S, bipartite=false, use_same_local_code=true, rng=deepcopy(rng));
+julia> hx, hz = random_quantum_Tanner_code(0.72, G, S, S, bipartite=false, use_same_local_code=true, rng=rng);
 (length(group), length(A), length(B)) = (8, 7, 7)
 length(group) * length(A) * length(B) = 392
 [ Info: |Q| = |G||A||B| = 392
@@ -259,7 +272,7 @@ julia> describe(G), small_group_identification(G)
 
 julia> S = normal_cayley_subset(G);
 
-julia> hx, hz = random_quantum_Tanner_code(0.8, G, S, S, bipartite=false, use_same_local_code=true, rng=deepcopy(rng));
+julia> hx, hz = random_quantum_Tanner_code(0.8, G, S, S, bipartite=false, use_same_local_code=true, rng=rng);
 (length(group), length(A), length(B)) = (9, 8, 8)
 length(group) * length(A) * length(B) = 576
 [ Info: |Q| = |G||A||B| = 576
