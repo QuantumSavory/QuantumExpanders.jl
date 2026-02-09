@@ -715,4 +715,41 @@
            end
        end
     end
+
+    @testset "Quantum Tanner codes from https://www.arxiv.org/pdf/2601.15446" begin
+        # [[72, 16, 4]]
+        F = free_group([:s, :r])
+        s, r = gens(F)
+        rels = [s^2, r^8, s*r*s*r]
+        G, epimorphism = quo(F, rels)
+        s = epimorphism(s)
+        r = epimorphism(r)
+        A = [s, s*r^4, r^4]
+        B = [s*r, s*r^3, s*r^7]
+        H_A = Matrix{Int}(parity_matrix(RepCode(3)))
+        G_A = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_A))))
+        H_B = [1  1  1  1];
+        G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
+        classical_code_pair = ((H_A, G_A), (H_B, G_B))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+    end
+
+    @testset "Quantum Tanner codes from https://www.arxiv.org/pdf/2601.15446" begin
+        # [[96, 30, 4]]
+        G = dihedral_group(12)
+        rng = MersenneTwister(1);
+        A, B = find_random_generating_sets(G, 4, 4, rng=rng)
+        H_A = Matrix{Int}(parity_matrix(RepCode(4)))
+        G_A = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_A))))
+        H_B = Matrix{Int}(parity_matrix(ReedMuller(1,2)))
+        G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
+        classical_code_pair = ((H_A, G_A), (H_B, G_B))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 96
+        @test code_k(c) == 30
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 4
+        @test maximum(sum(Matrix(parity_matrix_x(c)), dims=2)) == 8 
+        @test maximum(sum(Matrix(parity_matrix_z(c)), dims=2)) == 8
+    end
 end
