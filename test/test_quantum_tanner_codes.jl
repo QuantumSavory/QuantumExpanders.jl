@@ -731,7 +731,7 @@
         @test code_n(c) == 72
         @test code_k(c) == 19
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 4
-        @test maximum(sum(Matrix(parity_matrix_x(c)), dims=2)) == 8 
+        @test maximum(sum(Matrix(parity_matrix_x(c)), dims=2)) == 8
         @test maximum(sum(Matrix(parity_matrix_z(c)), dims=2)) == 6
 
         # [[96, 30, 4]]
@@ -748,7 +748,58 @@
         @test code_n(c) == 96
         @test code_k(c) == 30
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 4
-        @test maximum(sum(Matrix(parity_matrix_x(c)), dims=2)) == 8 
+        @test maximum(sum(Matrix(parity_matrix_x(c)), dims=2)) == 8
+        @test maximum(sum(Matrix(parity_matrix_z(c)), dims=2)) == 8
+
+        # [[96, 24, 4]]
+        G = direct_product(cyclic_group(8), cyclic_group(2))
+        rng = MersenneTwister(15);
+        A, B = find_random_generating_sets(G, 3, 4, rng=rng)
+        H_A = Matrix{Int}(parity_matrix(RepCode(3)))
+        G_A = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_A))))
+        H_B = Matrix{Int}(parity_matrix(ReedMuller(1,2)))
+        G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
+        classical_code_pair = ((H_A, G_A), (H_B, G_B))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 96
+        @test code_k(c) == 24
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 4
+        @test maximum(sum(Matrix(parity_matrix_x(c)), dims=2)) == 8
+        @test maximum(sum(Matrix(parity_matrix_z(c)), dims=2)) == 6
+
+        # [[128, 40, 4]]
+        G = cyclic_group(16)
+        rng = MersenneTwister(27);
+        A, B = find_random_generating_sets(G, 4, 4, rng=rng)
+        H_A = Matrix{Int}(parity_matrix(RepCode(4)))
+        G_A = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_A))))
+        H_B = Matrix{Int}(parity_matrix(ReedMuller(1,2)))
+        G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
+        classical_code_pair = ((H_A, G_A), (H_B, G_B))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 128
+        @test code_k(c) == 40
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 4
+        @test maximum(sum(Matrix(parity_matrix_x(c)), dims=2)) == 8
+        @test maximum(sum(Matrix(parity_matrix_z(c)), dims=2)) == 8
+
+        # [[120, 34, 4]]
+        G = cyclic_group(15)
+        rng = MersenneTwister(27);
+        A, B = find_random_generating_sets(G, 4, 4, rng=rng)
+        H_A = Matrix{Int}(parity_matrix(RepCode(4)))
+        G_A = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_A))))
+        H_B = Matrix{Int}(parity_matrix(ReedMuller(1,2)))
+        G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
+        classical_code_pair = ((H_A, G_A), (H_B, G_B))
+        c = QuantumTannerCode(G, A, B, classical_code_pair)
+        @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+        @test code_n(c) == 120
+        @test code_k(c) == 34
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120)) == 4
+        @test maximum(sum(Matrix(parity_matrix_x(c)), dims=2)) == 8
         @test maximum(sum(Matrix(parity_matrix_z(c)), dims=2)) == 8
     end
 end
