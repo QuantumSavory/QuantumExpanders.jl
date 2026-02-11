@@ -11,9 +11,9 @@ using QECCore
 using QuantumClifford
 using QuantumClifford.ECC
 
-#bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"))
+DocMeta.setdocmeta!(QuantumExpanders, :DocTestSetup, :(using QuantumClifford, QuantumExpanders); recursive=true)
 
-ENV["LINES"] = 80    # for forcing `displaysize(io)` to be big enough
+ENV["LINES"] = 80
 ENV["COLUMNS"] = 80
 
 bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"),style=:authoryear)
