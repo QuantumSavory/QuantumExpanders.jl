@@ -26,9 +26,9 @@ julia> H_new = shorten(H, [6])
 
 julia> rank(matrix(GF(2), H_new))
 3
- ```
+```
 
-Now, it is a [5,3,3] code. This distance is verified from dist-m4ri program.
+Now, it is a [5,3,3] code. This distance is verified from [dist-m4ri](https://github.com/QEC-pages/dist-m4ri) program.
 """
 function shorten(H::AbstractMatrix, cols::AbstractVector{<:Integer})
     keep = setdiff(1:size(H,2), cols)
@@ -61,9 +61,9 @@ julia> H_new = puncture(H, [6])
 
 julia> rank(matrix(GF(2), H_new))
 2
- ```
+```
 
-Now, it is a [5,2,2] code. This distance is verified from dist-m4ri program.
+Now, it is a [5,2,2] code. This distance is verified from [dist-m4ri](https://github.com/QEC-pages/dist-m4ri) program.
 
 """
 function puncture(H::AbstractMatrix, cols::AbstractVector{<:Integer})
