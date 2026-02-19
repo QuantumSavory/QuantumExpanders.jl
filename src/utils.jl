@@ -3,7 +3,7 @@ Puncturing and shortening are standard techniques for constructing new linear co
 from existing ones.
 
 Let C be an [n,k,d] linear code over GF(q) with parity-check matrix H, and let t ⊆ {1,…,n}
-be a set of coordinate positions specified by `cols`. 
+be a set of coordinate positions specified by `cols`. See [Gundersen_2025](@cite). 
 
 The shortened code C_t is obtained by restricting C to codewords that are zero on t and
 then puncturing those coordinates, resulting in a code of length n − |t|.
