@@ -25,7 +25,7 @@ using Multigraphs
 using ProgressMeter
 using DocStringExtensions
 
-include("utils")
+include("utils.jl")
 include("cayley_graphs.jl")
 include("tensor_codes.jl")
 include("morgenstern.jl")
