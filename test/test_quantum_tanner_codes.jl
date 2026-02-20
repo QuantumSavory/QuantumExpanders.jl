@@ -715,4 +715,35 @@
            end
        end
     end
+
+    @testset "Test Puncture" begin
+       for seed in 1:50
+           G = small_group(12,1)
+           rng = MersenneTwister(seed)
+           A, B = find_random_generating_sets(G, 6, 5; rng=rng)
+           H_A = [1 0 0 0 1 1;
+                  0 1 0 1 0 1;
+                  0 0 1 1 1 0];
+           G_A = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_A))))
+           H_B = puncture(H, [6])
+           G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
+           classical_code_pair = ((Matrix{Int}(H_A), G_A), (H_B, G_B))
+           c = QuantumTannerCode(G, A, B, classical_code_pair)
+           @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
+       end
+       
+       # Here is an example of novel [[180, 2, 8]] code
+       G = small_group(12,1)
+       rng = MersenneTwister(1)
+       A, B = find_random_generating_sets(G, 6, 5; rng=rng)
+       H_A = [1 0 0 0 1 1;
+              0 1 0 1 0 1;
+              0 0 1 1 1 0];
+       G_A = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_A))))
+       H_B = puncture(H, [6])
+       G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
+       classical_code_pair = ((Matrix{Int}(H_A), G_A), (H_B, G_B))
+       c = QuantumTannerCode(G, A, B, classical_code_pair)
+       @test stab_looks_good(parity_checks(c), remove_redundant_rows=true) 
+    end
 end
