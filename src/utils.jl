@@ -1,5 +1,5 @@
 """
-Puncturing is a standard technique for constructing new linear codes from existing ones ([liu2020shortenedlinearcodesfinit](@cite), [Gundersen_2025](@cite)).
+Puncturing is a standard technique for constructing new linear codes from existing ones ([liu2020shortenedlinearcodesfinite](@cite), [Gundersen_2025](@cite)).
 
 Let C be an [n, k, d] linear code over Galois field with characteristic 2 with parity-check matrix
 ``H_B``, and let t be a set of coordinates given by `cols`. The punctured code ``C_t`` is obtained
