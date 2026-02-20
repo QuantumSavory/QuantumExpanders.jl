@@ -740,7 +740,7 @@
               0 1 0 1 0 1;
               0 0 1 1 1 0];
        G_A = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_A))))
-       H_B = puncture(H, [6])
+       H_B = puncture(H_A, [6])
        G_B = Matrix{Int}(lift.(dual_code(matrix(ZZ, H_B))))
        classical_code_pair = ((Matrix{Int}(H_A), G_A), (H_B, G_B))
        c = QuantumTannerCode(G, A, B, classical_code_pair)
