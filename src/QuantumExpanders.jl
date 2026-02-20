@@ -53,7 +53,7 @@ export
     # tensor codes
     uniformly_random_code_checkmatrix, dual_code, good_css,
     normal_cayley_subset, GeneralizedQuantumTannerCode, find_random_generating_sets,
-    # shortening, puncturing
-    shorten, puncture
+    # puncturing
+    puncture
 
 end #module
