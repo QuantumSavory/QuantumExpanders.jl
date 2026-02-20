@@ -1,11 +1,13 @@
 """
-Let C be an [n, k, d] linear code over GF(q) with parity-check matrix H_B, and let t be a
-set of coordinates given by `cols`. The punctured code Cₜ is obtained by deleting the
-coordinates in t from every codeword of C. The resulting code is linear and has length
+Puncturing is a standard techniques for constructing new linear codes from existing ones ([liu2020shortenedlinearcodesfinit](@cite), [Gundersen_2025](@cite)).
+
+Let C be an [n, k, d] linear code over Galois field with characteristic 2 with parity-check matrix
+``H_B``, and let t be a set of coordinates given by `cols`. The punctured code ``C_t`` is obtained
+by deleting the coordinates in t from every codeword of C. The resulting code is linear and has length
 n − |t|.
 
-Returns a parity-check matrix for the punctured code Cₜ. The construction proceeds by
-computing a generator matrix G of C from H_B, deleting the columns indexed by t, and then
+Returns a parity-check matrix for the punctured code ``C_t``. The construction proceeds by
+computing a generator matrix G of C from ``H_B``, deleting the columns indexed by t, and then
 computing a parity-check matrix for the resulting punctured code.
 
 Here is an example of puncturing the classical [6,3,3] code:
