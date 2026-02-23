@@ -25,6 +25,7 @@ using Multigraphs
 using ProgressMeter
 using DocStringExtensions
 
+include("utils.jl")
 include("cayley_graphs.jl")
 include("tensor_codes.jl")
 include("morgenstern.jl")
@@ -51,6 +52,8 @@ export
     parity_matrix, parity_matrix_x, parity_matrix_z, parity_matrix_xz, code_n, code_k,
     # tensor codes
     uniformly_random_code_checkmatrix, dual_code, good_css,
-    normal_cayley_subset, GeneralizedQuantumTannerCode, find_random_generating_sets
+    normal_cayley_subset, GeneralizedQuantumTannerCode, find_random_generating_sets,
+    # puncturing
+    puncture
 
 end #module
