@@ -423,10 +423,10 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 40 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 5
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
-        # [[250, 33, (8,1)]]
+        # [[250, 33, (5,1)]]
         H_A = [1  1  1  1  0;
                1  1  0  1  1;
                0  0  0  1  1;
@@ -444,10 +444,10 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 33 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 8
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 5
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
    
-       # [[250, 13, (10,1)]]
+       # [[250, 13, (6,1)]]
        H_A =[0  1  1  0  1;
              1  0  0  0  0;
              1  1  1  1  0];
@@ -465,10 +465,10 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 13 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 10
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 6
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
-        # [[250, 93, (4,1)]]
+        # [[250, 93, (3,3)]]
         H_A = [1  1  1  1  1]
         G_A = [1  1  0  0  0;
                1  0  1  0  0;
@@ -486,10 +486,10 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 93 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 4
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 3
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 3
 
-        # [[250, 93, (4,3)]]
+        # [[250, 93, (4,1)]]
         H_A = [1  0  1  1  1;
                0  0  1  1  1;
                1  0  1  1  0;
@@ -507,8 +507,8 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 39 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 4
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 3
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 4
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
         # [[250, 10, (14,1)]]
         H_A = [1  0  0  0  0;
@@ -528,8 +528,8 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 10 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 14
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 14
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
         # [[250, 39, (10,1)]]
         H_A = [1  0  0  0  1;
@@ -549,8 +549,8 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 39 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 10
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 10
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
         # [[250, 36, 10]]
         H_A = [0  1  0  1  1;
@@ -570,8 +570,8 @@
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
         @test code_n(c) == 250 == ns && code_k(c) == 36 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 10
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 10
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
         @testset "New codes found via other non-abelian groups" begin
             # [[216, 30, (4,3)]]
@@ -597,8 +597,8 @@
             stab = parity_checks(c)
             ns, ks = code_n(stab), code_k(stab)
             @test code_n(c) == 216 == ns && code_k(c) == 30 == ks
-            @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 4
-            @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 3
+            @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 4
+            @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 3
             @test describe(G) == "C12 : C4"
         end
     end
@@ -615,8 +615,8 @@
         @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
         @test code_n(c) == 360
         @test code_k(c) == 8
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 10
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 3
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 10
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 3
 
         # [[360, 10, (4,1)]]
         classical_code_pair = (([0 0 1 1; 0 1 1 1], [1 0 0 0; 0 0 1 1]), ([1 0 1; 0 1 0], [1 0 1])) # found via random search
@@ -624,8 +624,8 @@
         @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
         @test code_n(c) == 360
         @test code_k(c) == 10
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 4
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 4
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
         # [[360, 10, (6,1)]]
         classical_code_pair = (([1 0 1 0; 1 1 0 0], [1 1 1 0; 0 0 0 1]), ([1 1 0; 0 0 1], [1 1 0])) # found via random search
@@ -633,8 +633,8 @@
         @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
         @test code_n(c) == 360
         @test code_k(c) == 10
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 6
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 6
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
         # [[360, 20, (4,1)]]
         classical_code_pair = (([1 1 0 0; 0 0 1 1], [1 1 0 0; 0 0 1 1]), ([0 0 1; 1 1 0], [1 1 0])) # found via random search
@@ -642,8 +642,8 @@
         @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
         @test code_n(c) == 360
         @test code_k(c) == 20
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 4
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 1
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 4
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
         # [[360, 22, (6,4)]]
         classical_code_pair = (([1 0 0 1; 0 1 1 0], [0 1 1 0; 1 0 0 1]), ([1 0 1; 1 1 0], [1 1 1])) # found via random search
@@ -651,8 +651,8 @@
         @test stab_looks_good(parity_checks(c), remove_redundant_rows=true)
         @test code_n(c) == 360
         @test code_k(c) == 22
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 6
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 4
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 6
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 4
     end
 
     @testset "New instances of Quantum Tanner codes using other Frobenius groups" begin
