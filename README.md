@@ -80,15 +80,15 @@ julia> A = alternative_morgenstern_generators(B, FirstOnly())
 
 julia> rng = MersenneTwister(892529278);
 
-julia> hx, hz = random_quantum_Tanner_code(0.74, SL₂, A, B, rng=rng);
+julia> hx, hz = random_quantum_Tanner_code(0.75, SL₂, A, B, rng=rng);
 (length(group), length(A), length(B)) = (60, 4, 3)
 length(group) * length(A) * length(B) = 720
 [ Info: |V₀| = |V₁| = |G| = 60
 [ Info: |E_A| = Δ|G| = 240, |E_B| = Δ|G| = 180
 [ Info: |Q| = Δ²|G|/2 = 360
-Hᴬ = [0 1 1 0]
-Hᴮ = [1 1 0; 0 1 1]
-Cᴬ = [1 0 0 0; 0 1 1 0; 0 0 0 1]
+Hᴬ = [1 1 1 0]
+Hᴮ = [0 1 1; 1 1 0]
+Cᴬ = [1 1 0 0; 1 0 1 0; 0 0 0 1]
 Cᴮ = [1 1 1]
 size(Cˣ) = (3, 12)
 size(Cᶻ) = (2, 12)
