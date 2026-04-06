@@ -405,7 +405,7 @@
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X)) == 8
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)) == 4
 
-       # [[250, 40, (5,1)]]
+       # [[250, 40, (1,1)]]
         H_A = [0  0  0  1  0;
                0  0  1  0  1;
                0  1  0  0  0;
@@ -426,7 +426,7 @@
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 1
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
-        # [[250, 33, (5,1)]]
+        # [[250, 39, (5,1)]]
         H_A = [1  1  1  1  0;
                1  1  0  1  1;
                0  0  0  1  1;
@@ -443,11 +443,11 @@
         @test iszero(mod.(hx*hz',2))
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
-        @test code_n(c) == 250 == ns && code_k(c) == 33 == ks
+        @test code_n(c) == 250 == ns && code_k(c) == 39 == ks
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 5
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
    
-       # [[250, 13, (6,1)]]
+       # [[250, 12, (10,1)]]
        H_A =[0  1  1  0  1;
              1  0  0  0  0;
              1  1  1  1  0];
@@ -464,8 +464,8 @@
         @test iszero(mod.(hx*hz',2))
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
-        @test code_n(c) == 250 == ns && code_k(c) == 13 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 6
+        @test code_n(c) == 250 == ns && code_k(c) == 12 == ks
+        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 10
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
         # [[250, 93, (3,3)]]
