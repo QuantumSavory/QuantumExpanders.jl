@@ -55,7 +55,7 @@ QT code implementation provides a simplified variant of the Panteleev-Kalachev q
 [panteleev2022asymptoticallygoodquantumlocally](https://arxiv.org/pdf/2111.03654) and is related to
 the locally testable code of [dinur2022locally](https://arxiv.org/pdf/2111.04808).
 
-Here is the novel `[[360, 61, 10]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
+Here is the novel `[[360, 61, (3, 10)]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
 for even prime power q.
 
 ```julia
@@ -78,7 +78,7 @@ julia> A = alternative_morgenstern_generators(B, FirstOnly())
  [o+1 o+1; o 0]
  [0 o+1; o o+1]
 
-julia> rng = MersenneTwister(21);
+julia> rng = MersenneTwister(892529278);
 
 julia> hx, hz = random_quantum_Tanner_code(0.74, SL₂, A, B, rng=rng);
 (length(group), length(A), length(B)) = (60, 4, 3)
@@ -99,8 +99,11 @@ julia> c = CSS(hx, hz);
 
 julia> import JuMP; import HiGHS;
 
-julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=120))
-(360, 61, 10)
+julia> code_n(c), code_k(c)
+(360, 61)
+
+julia> distance(c, DistanceMIPAlgorithm(solver = name ,logical_operator_type = :Z,time_limit = 900)), distance(c, DistanceMIPAlgorithm(solver = name ,logical_operator_type = :X,time_limit = 900))
+(3, 10)
 ```
 
 # Comparison with existing work
