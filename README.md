@@ -39,6 +39,22 @@ pkg> add https://github.com/QuantumSavory/QuantumExpanders.jl.git
 
 To update, just type `up` in the package mode.
 
+The library provides the following methods to construct explicit instances of *Quantum Tanner codes*.
+```mermaid
+graph TD
+    QuantumTannerCodes["Quantum Tanner Codes"] --> RandomMethods["Random Methods"]
+    QuantumTannerCodes --> DeterministicMethods["Deterministic Methods"]
+
+    subgraph "Random construction"
+        RandomMethods --> RandomQuantumTannerCode["`random_quantum_Tanner_code`"]
+    end
+
+    subgraph "Deterministic construction"
+        DeterministicMethods --> QuantumTannerCode["`QuantumTannerCode`"]
+        DeterministicMethods --> GeneralizedQuantumTannerCode["`GeneralizedQuantumTannerCode`"]
+    end
+```
+
 - `random_quantum_Tanner_code` constructs a quantum CSS code by instantiating two classical
 Tanner codes, 𝒞ᶻ and 𝒞ˣ, on the graphs 𝒢₀□ and 𝒢₁□ of a left-right Cayley complex [leverrier2022quantum](https://arxiv.org/pdf/2202.13641).
 This complex is generated from a group G, and two generating sets A and B of sizes Δ_A and Δ_B, which,
