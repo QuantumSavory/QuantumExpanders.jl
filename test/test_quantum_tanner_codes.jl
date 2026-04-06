@@ -480,7 +480,7 @@
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 3
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 3
 
-        # [[250, 93, (4,1)]]
+        # [[250, 39, (4,1)]]
         H_A = [1  0  1  1  1;
                0  0  1  1  1;
                1  0  1  1  0;
