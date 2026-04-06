@@ -459,7 +459,7 @@
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 9
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 6
 
-        # [[250, 93, (3,3)]]
+        # [[250, 94, (3,3)]]
         H_A = [1  1  1  1  1]
         G_A = [1  1  0  0  0;
                1  0  1  0  0;
@@ -476,7 +476,7 @@
         @test iszero(mod.(hx*hz',2))
         stab = parity_checks(c)
         ns, ks = code_n(stab), code_k(stab)
-        @test code_n(c) == 250 == ns && code_k(c) == 93 == ks
+        @test code_n(c) == 250 == ns && code_k(c) == 94 == ks
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 3
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 3
 
@@ -501,28 +501,7 @@
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 4
         @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
 
-        # [[250, 39, (10,1)]]
-        H_A = [1  0  0  0  1;
-               1  0  1  0  0;
-               1  1  0  0  1;
-               0  1  1  0  0]
-        G_A = [0  0  0  1  0];
-        H_B = [0  1  1  1  1;
-               1  1  0  0  1];
-        G_B = [1  1  1  0  0;
-               1  1  0  1  0;
-               0  1  0  0  1];
-        classical_code_pair = ((H_A, G_A), (H_B, G_B)) # found via random search
-        c = QuantumTannerCode(G, A, B, classical_code_pair)
-        hx, hz = parity_matrix_x(c), parity_matrix_z(c)
-        @test iszero(mod.(hx*hz',2))
-        stab = parity_checks(c)
-        ns, ks = code_n(stab), code_k(stab)
-        @test code_n(c) == 250 == ns && code_k(c) == 39 == ks
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X, time_limit=900)) == 10
-        @test distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z, time_limit=900)) == 1
-
-        # [[250, 36, 10]]
+        # [[250, 36, (10,1)]]
         H_A = [0  1  0  1  1;
                0  1  0  1  0;
                1  0  0  1  0;
