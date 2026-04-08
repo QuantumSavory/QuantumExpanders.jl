@@ -11,22 +11,22 @@ Both A and B are symmetric, A and B are disjoint, and the pair (A, B) satisfies 
 ```jldoctest examples
 julia> using QuantumExpanders; using Oscar; using Random;
 
-julia> G = symmetric_group(4);
+julia> G = dihedral_group(8);
 
-julia> rng = MersenneTwister(68);
+julia> rng = MersenneTwister(23);
 
-julia> A, B = find_random_generating_sets(G, 3, 2; rng=deepcopy(rng))
-2-element Vector{Vector{PermGroupElem}}:
- [(1,3)(2,4), (1,2,4,3), (1,3,4,2)]
- [(2,4), (2,3)]
+julia> A, B = find_random_generating_sets(G, 3, 3; rng=deepcopy(rng))
+2-element Vector{Vector{PcGroupElem}}:
+ [f1*f2, f1*f2*f3, f1*f3]
+ [f3, f2, f2*f3]
 
 julia> A, B = find_random_generating_sets(G, 3; rng=deepcopy(rng))
-2-element Vector{Vector{PermGroupElem}}:
- [(1,2,4,3), (1,3,4,2), (1,4)(2,3)]
- [(1,4,3), (1,3,4), (1,2)]
+2-element Vector{Vector{PcGroupElem}}:
+ [f1*f2, f1*f2*f3, f1*f3]
+ [f3, f2, f2*f3]
 ```
 
-Here is a new `[[108, 11, 6]]` quantum Tanner code generated using these symmetric generating sets, A and B, as follows:
+Here is a new `[[36, 1, 3]]` quantum Tanner code generated using these symmetric generating sets, A and B, as follows:
 
 ```jldoctest examples
 julia> H_A = [1 0 1; 1 1 0];
@@ -42,12 +42,12 @@ julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
 julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
 
 julia> code_n(c), code_k(c)
-(108, 11)
+(36, 1)
 
 julia> import JuMP; import HiGHS;
 
 julia> distance(c, DistanceMIPAlgorithm(solver=HiGHS))
-6
+3
 ```
 
 ### Arguments
@@ -367,158 +367,39 @@ sets to construct the underlying expander graphs for the quantum Tanner code.
     Through random search of classical code pairs that are used for the construction of quantum Tanner codes,
     we found several new instances of these codes.
 
-Here is an example of `[[54, 11, 4]]` quantum Tanner code from [radebold2025explicit](@cite):
+Here is new `[[36, 8, (3,3)]]` code found via random search:
 
 ```jldoctest examples
-julia> using QuantumExpanders; using Oscar; using QuantumClifford.ECC;
-
 julia> F = free_group([:s, :r]);
 
 julia> s, r = gens(F);
 
-julia> rels = [s^2, r^6, s*r*s*r];
+julia> rels = [s^2, r^4, s*r*s*r];
 
 julia> G, epimorphism = quo(F, rels);
 
 julia> s, r = epimorphism(s), epimorphism(r);
 
-julia> A = [r, r^3, r^5];
+julia> A = [s, r, r^3];
 
-julia> B = [s*r^2, s*r^4, s*r^5];
+julia> B = [s*r, s*r^3, r^2];
 
-julia> H_A = [1 1 1];
+julia> H_A = [1  0  1; 0  1  1];
 
-julia> G_A = [1 1 0; 1 0 1];
+julia> G_A = [1  1  1];
 
-julia> H_B = [1 1 1; 0 1 1];
+julia> H_B = [1  1  1];
 
-julia> G_B = [0 1 1];
+julia> G_B = [1  1  0; 1  0  1];
 
 julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
 
 julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
 
-julia> import HiGHS; import JuMP;
+julia> import JuMP; import HiGHS;
 
 julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
-(54, 11, 4)
-```
-
-Here is an example of `[[72, 14, 4]]` quantum Tanner code from [radebold2025explicit](@cite):
-
-```jldoctest examples
-julia> F = free_group([:s, :r]);
-
-julia> s, r = gens(F);
-
-julia> rels = [s^2, r^8, s*r*s*r];
-
-julia> G, epimorphism = quo(F, rels);
-
-julia> s, r = epimorphism(s), epimorphism(r);
-
-julia> A = [s, s*r^4, r^4];
-
-julia> B = [s*r, s*r^3, s*r^7];
-
-julia> H_A = [1 1 1];
-
-julia> G_A = [1 1 0; 1 0 1];
-
-julia> H_B = [1 1 1; 1 0 1];
-
-julia> G_B = [1 0 1];
-
-julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
-
-julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
-
-julia> import HiGHS; import JuMP;
-
-julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
-(72, 14, 4)
-```
-
-Here is an example of a new `[[200, 12, 12]]` quantum Tanner code:
-
-```jldoctest examples
-julia> F = free_group([:s, :r]);
-
-julia> s, r = gens(F);
-
-julia> rels = [s^2, r^8, s*r*s*r];
-
-julia> G, epimorphism = quo(F, rels);
-
-julia> s, r = epimorphism(s), epimorphism(r);
-
-julia> A = [s*r^6, r, r^3, r^5, r^7];
-
-julia> B = [s*r, s*r^3, s*r^7, r^2, r^6];
-
-julia> H_A = [1  1  1  1  1;
-              0  1  1  1  1;
-              0  1  1  0  0;
-              0  1  1  0  1];
-
-julia> G_A = [0  1  1  0  0];
-
-julia> H_B = [0  1  1  1  0;
-              1  1  0  0  0;
-              1  1  0  1  1];
-
-julia> G_B = [1  1  1  0  0;
-              1  1  0  1  1];
-   
-julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
-
-julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
-
-julia> import HiGHS; import JuMP;
-
-julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300))
-(200, 12, 12)
-```
-
-Here is an example of a new `[[250, 14, 10]]` quantum Tanner code:
-
-```jldoctest examples
-julia> F = free_group([:s, :r]);
-
-julia> s, r = gens(F);
-
-julia> rels = [s^2, r^10, s*r*s*r];
-
-julia> G, epimorphism = quo(F, rels);
-
-julia> s, r = epimorphism(s), epimorphism(r);
-
-julia> A = [s*r, r, r^3, r^7, r^9];
-
-julia> B = [s*r^6, r^2, r^4, r^6, r^8];
-
-julia> H_A = [1  0  0  0  0;
-              1  1  0  1  1];
-
-julia> G_A = [0  0  1  0  0;
-              0  1  0  1  0;
-              0  1  0  0  1];
-
-julia> H_B = [0  1  0  1  0;
-              1  1  1  0  1];
-
-julia> G_B = [1  0  1  0  0;
-              1  1  0  1  0;
-              1  0  0  0  1];
-
-julia> classical_code_pair = ((H_A, G_A), (H_B, G_B));
-
-julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
-
-julia> import HiGHS; import JuMP;
-
-julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, time_limit=300))
-(250, 10, 14)
+(36, 8, 3)
 ```
 
 !!! note
@@ -544,14 +425,14 @@ julia> SL₂, B = morgenstern_generators(l, i);
 
 julia> A = alternative_morgenstern_generators(B, FirstOnly());
 
-julia> H_A = [0 0 0 1;
-              1 1 0 0];
+julia> H_A = [1 1 1 0];
 
 julia> G_A = [1 1 0 0;
-              0 0 1 0];
+              1 0 1 0;
+              0 0 0 1];
 
-julia> H_B = [1 0 1;
-              0 1 1];
+julia> H_B = [0 1 1;
+              1 1 0];
 
 julia> G_B = [1 1 1];
 
@@ -561,8 +442,8 @@ julia> c = QuantumTannerCode(SL₂, A, B, classical_code_pair);
 
 julia> import HiGHS; import JuMP;
 
-julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
-(360, 8, 10)
+julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)), distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X))
+(360, 8, 10, 3)
 ```
 
 ### Fields
