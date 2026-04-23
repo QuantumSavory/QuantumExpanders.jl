@@ -1,0 +1,33 @@
+env:
+  CODECOV_TOKEN: 711776ca-8660-4af9-a82a-435fc31d2acc
+  JULIA_NUM_THREADS: auto,auto
+  PYTHON: ""
+  PYCALL_DEBUG_BUILD: yes
+
+steps:
+  - label: "QuantumExpanders Tests - {{matrix.LABEL}}"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1"
+          compiled_size_limit: 10737418240 # 10GiB
+      - JuliaCI/julia-test#v1:
+      - JuliaCI/julia-coverage#v1:
+          codecov: true
+          dirs: './src,./ext'
+    commands:
+      - echo "Julia depot path $${JULIA_DEPOT_PATH}"
+      - echo "TERM=$${TERM} | PYTHON=$${PYTHON} | PYCALL_DEBUG_BUILD=$${PYCALL_DEBUG_BUILD}"
+    env:
+      JET_TEST: "{{matrix.JET_TEST}}"
+    agents:
+      queue: "{{matrix.QUEUE}}"
+    matrix:
+      setup:
+        LABEL: ["base tests"]
+        QUEUE: ["default"]
+        JET_TEST: ["false"]
+      adjustments:
+        - with:
+            LABEL: "JET"
+            QUEUE: default
+            JET_TEST: true
