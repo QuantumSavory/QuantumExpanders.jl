@@ -30,7 +30,7 @@ authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory c
 pages = [
     "QuantumExpanders.jl" => "index.md",
     "API" => "API.md",
-]
+],
 linkcheck = true
 )
 
