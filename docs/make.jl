@@ -16,6 +16,7 @@ using QuantumClifford.ECC
 ENV["LINES"] = 80    # for forcing `displaysize(io)` to be big enough
 ENV["COLUMNS"] = 80
 
+
 bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"),style=:authoryear)
 
 makedocs(
@@ -26,7 +27,10 @@ warnonly = :missing_docs,
 sitename = "QuantumExpanders.jl",
 format = Documenter.HTML(),
 authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
-pages = ["API" => "API.md"],
+pages = [
+    "QuantumExpanders.jl" => "index.md",
+    "API" => "API.md",
+],
 linkcheck = true
 )
 
