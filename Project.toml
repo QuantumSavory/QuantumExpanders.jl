@@ -3,6 +3,9 @@ uuid = "144928dd-1f60-4b66-8c4c-f5ae7409097b"
 authors = ["Feroz Ahmed Mian <fmian@umass.edu>", "Stefan Krastanov <stefan@krastanov.org>", "Vaishnavi Addala <vaddala9@mit.edu>", "QuantumSavory community members"]
 version = "0.1.0"
 
+[workspace]
+projects = ["docs"]
+
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
