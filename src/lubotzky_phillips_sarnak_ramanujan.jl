@@ -343,7 +343,7 @@ d\\mu_{p+1}(t) =
 As detailed in [lubotzky1988ramanujan](@cite), for a prime ``p \\equiv 1 \\pmod{4}``,
 there exists a set S of p + 1 integral quaternions of norm p, unique up to units
 and satisfying ``\\alpha \\equiv 1 \\pmod{2}``. [lubotzky1988ramanujan](@cite) establishes
-that every quaternion ``\\alpha \\in ``H(\\mathbb{Z})`` with ``N(\\alpha) = p^k``
+that every quaternion ``\\alpha \\in H(\\mathbb{Z})`` with ``N(\\alpha) = p^k``
 can be expressed uniquely in the form ``\\alpha = \\varepsilon p^r R_m(\\alpha_1, \\ldots, \\bar{\alpha}_s)``
 where ``\\varepsilon`` is a unit, ``2r + m = k``, and ``R_m`` is a *reduced word*
 in the elements of ``S`` and their conjugates, where "reduced" means no generator

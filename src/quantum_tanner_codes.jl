@@ -140,30 +140,37 @@ function random_code_pair(ρ::Real, Δ::Int)
 end
 
 """
-The quantum Tanner code Q = (C₀, C₁) is defined by two classical Tanner codes
-where Z-stabilizers: C₀ = T(Γ₀^□, (C_A ⊗ C_B)^⊥) andmX-stabilizers: C₁ = T(Γ₁^□, (C_A^⊥ ⊗ C_B^⊥)^⊥).
+The quantum Tanner code ``\\mathcal{Q} = (\\mathcal{C}_0, \\mathcal{C}_1)`` is defined by
+two classical Tanner codes, where
+```math
+\\begin{aligned}
+  \\text{Z-stabilizers:} \\quad &\\mathcal{C}_0 = T\\!\\left(\\Gamma_0^{\\square},\\, (C_A \\otimes C_B)^{\\perp}\\right), \\\\
+  \\text{X-stabilizers:} \\quad &\\mathcal{C}_1 = T\\!\\left(\\Gamma_1^{\\square},\\, (C_A^{\\perp} \\otimes C_B^{\\perp})^{\\perp}\\right).
+\\end{aligned}
+```
+
 
 # Left-Right Cayley Complex
 
-A Cayley graph `\\Gamma(V,E)`` provides a graph-theoretic representation
-of a group G via a fixed generating set S that excludes the identity element.
-The vertex set V corresponds to elements of G, with an edge connecting vertices
-g and g' if and only if there exists ``s \\in S`` such that `g \\cdot s = g'``,
+A Cayley graph ``\\Gamma(V,E)`` provides a graph-theoretic representation
+of a group ``G`` via a fixed generating set ``S`` that excludes the identity element.
+The vertex set ``V`` corresponds to elements of ``G``, with an edge connecting vertices
+``g`` and ``g'`` if and only if there exists ``s \\in S`` such that ``g \\cdot s = g'``,
 where ``\\cdot`` denotes the group operation. Edges are undirected if S is symmetric,
 i.e., ``S = S^{-1}``.
 
 A left-right Cayley complex extends this construction by incorporating both left
-and right group actions. Specifically, we consider two symmetric generating sets A
-and B and define a *bipartite* structure on the vertices.
+and right group actions. Specifically, we consider two symmetric generating sets ``A``
+and ``B`` and define a *bipartite* structure on the vertices.
 
-Consider G be a finite group with symmetric generating sets ``A, B \\subseteq G``
+Consider ``G`` be a finite group with symmetric generating sets ``A, B \\subseteq G``
 such that ``\\langle A, B \\rangle = G`` and ``A = A^{-1}``, ``B = B^{-1}``. The
 left-right Cayley complex ``\\Gamma(G,A,B)`` is defined as:
 
 - Vertex set: ``V = V_0 \\cup V_1 = \\{g_i \\mid g \\in G, i \\in \\{0,1\\}\\}``
 - Edge sets:
-   - E_A = \\{(g_i, (ag)_j) \\mid a \\in A, g \\in G, i \\neq j\\}
-   - E_B = \\{(g_i, (gb)_j) \\mid b \\in B, g \\in G, i \\neq j\\}
+   - ``E_A = \\{(g_i, (ag)_j) \\mid a \\in A, g \\in G, i \\neq j\\}``
+   - ``E_B = \\{(g_i, (gb)_j) \\mid b \\in B, g \\in G, i \\neq j\\}``
 
 This construction yields a 2-dimensional complex whose faces are 4-cycles of the form:
 
@@ -173,7 +180,7 @@ This construction yields a 2-dimensional complex whose faces are 4-cycles of the
 \\end{aligned}
 ```
 
-To ensure distinct opposite vertices in each face, we require that elements of A and B are not conjugates:
+To ensure distinct opposite vertices in each face, we require that elements of ``A`` and ``B`` are not conjugates:
 
 ```math
 \\begin{aligned}
@@ -283,33 +290,50 @@ basis elements of ``C_1`` to produce ``\\dim(C_1)|V_1|`` X-type stabilizers at e
 
 # Stabilizer Matrices
 
-For each vertex v ∈ V₀ and basis element β ∈ C₀, we define the support set [radebold2025explicit](@cite): Z(β) = {(a,b) ∈ A×B | β_(a,b) = 1}
+For each vertex ``v \\in V_0`` and basis element ``\\beta \\in C_0``, we define the
+support set [radebold2025explicit](@cite):
+```math
+\\begin{aligned}
+  Z(\\beta) = \\{(a,b) \\in A \\times B \\mid \\beta_{(a,b)} = 1\\}.
+\\end{aligned}
+```
 
-The corresponding Z-stabilizer generator has support φ_v(Z(β)), where φ_v: A×B → Q(v) is the bijective mapping
-from generator pairs to incident faces [radebold2025explicit](@cite).
+The corresponding ``Z``-stabilizer generator has support ``\\varphi_v(Z(\\beta))``,
+where ``\\varphi_v \\colon A \\times B \\to Q(v)`` is the bijective mapping from
+generator pairs to incident faces [radebold2025explicit](@cite).
 
-Similarly, for each vertex v ∈ V₁ and basis element β ∈ C₁, we define X-stabilizer generators
-with support φ_v(Z(β)) [radebold2025explicit](@cite).
+Similarly, for each vertex ``v \\in V_1`` and basis element ``\\beta \\in C_1``, we
+define ``X``-stabilizer generators with support
+``\\varphi_v(Z(\\beta))`` [radebold2025explicit](@cite).
 
-This yields dim(C₀) × |V₀| Z-type stabilizer generators and dim(C₁) × |V₁| X-type stabilizer generators
+This yields ``\\dim(C_0) \\times |V_0|`` ``Z``-type stabilizer generators and
+``\\dim(C_1) \\times |V_1|`` ``X``-type stabilizer generators.
 
-The resulting quantum code exhibits the Low-Density Parity-Check because each stabilizer generator
-acts on at most Δ² qubits (where Δ = |A| = |B|) and each qubit is involved in at most 4ρ(1-ρ)Δ² stabilizer
-generators. These bounds remain constant as |G| → ∞, ensuring the LDPC property [radebold2025explicit](@cite). 
+The resulting quantum code exhibits the low-density parity-check (LDPC)
+property because each stabilizer generator acts on at most ``\\Delta^2`` qubits
+(where ``\\Delta = |A| = |B|``) and each qubit is involved in at most
+``4\\rho(1-\\rho)\\Delta^2`` stabilizer generators. These bounds remain constant
+as ``|G| \\to \\infty``, ensuring the LDPC property [radebold2025explicit](@cite).
 
 # CSS Commutativity
 
-All stabilizer generators of opposite type commute pairwise. The CSS orthogonality constraint 
-C_X ⊂ C_Z^⊥ is fulfilled because when a C₀-generator (from V₀) and C₁-generator (from V₁)
-have intersecting supports, their anchor vertices must be neighbors in the bipartite graph. If
-connected by a B-edge, their local views share an A-set where C_A ⟂ C_A^⊥ ensures orthogonality. Note that
-he A-edge case is analogous with C_B ⟂ C_B^⊥
+All stabilizer generators of opposite type commute pairwise. The CSS
+orthogonality constraint ``C_X \\subset C_Z^{\\perp}`` is fulfilled because when a
+``C_0``-generator (from ``V_0``) and a ``C_1``-generator (from ``V_1``) have
+intersecting supports, their anchor vertices must be neighbors in the
+bipartite graph. If connected by a ``B``-edge, their local views share an
+``A``-set where ``C_A \\perp C_A^{\\perp}`` ensures orthogonality. Note that the
+``A``-edge case is analogous, with ``C_B \\perp C_B^{\\perp}``.
 
 # Quantum Tanner code parameters
 
-For component codes C_A[Δ, ρΔ, δΔ] and C_B[Δ, (1-ρ)Δ, δΔ], the number of physical qubits is n = Δ²|G|/2, number of X-stabs is
-dim(C₁) × |V₁| ≈ 2ρ(1-ρ)Δ²|G| and number of Z-stabs is dim(C₀) × |V₀| ≈ 2ρ(1-ρ)Δ²|G|. The resulting quantum code rate is
-≥ (2ρ - 1)². For other properties, see [radebold2025explicit](@cite).
+For component codes ``C_A[\\Delta, \\rho\\Delta, \\delta\\Delta]`` and
+``C_B[\\Delta, (1-\\rho)\\Delta, \\delta\\Delta]``, the number of physical qubits is
+``n = \\Delta^2 |G| / 2``, the number of ``X``-stabilizers is
+``\\dim(C_1) \\times |V_1| \\approx 2\\rho(1-\\rho)\\Delta^2 |G|``, and the number of
+``Z``-stabilizers is ``\\dim(C_0) \\times |V_0| \\approx 2\\rho(1-\\rho)\\Delta^2 |G|``.
+The resulting quantum code rate is at least ``(2\\rho - 1)^2``. For other
+properties, see [radebold2025explicit](@cite).
 
 # Dihedral Ramanujan Graphs
 
@@ -398,12 +422,12 @@ julia> c = QuantumTannerCode(G, A, B, classical_code_pair);
 
 julia> import JuMP; import HiGHS;
 
-julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
-(36, 8, 3)
+julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:Z)), distance(c, DistanceMIPAlgorithm(solver=HiGHS, logical_operator_type=:X))
+(36, 8, 3, 3)
 ```
 
 !!! note
-    This is a newer version of the less well designed function `[`gen_code`](@ref)(G, A, B, bipartite=true, use_same_local_code=false)`.
+    This is a newer version of the less well designed function `gen_code`(G, A, B, bipartite=true, use_same_local_code=false)`.
     It constructs the quantum Tanner code given a finite group G equipped with two *symmetric* generating sets A and B,
     alongside pairs of classical codes — comprising parity check and generator matrices — that are utilized in the
     construction of classical Tanner codes. To illustrate its application, the implementation can employ generating
@@ -456,7 +480,7 @@ struct QuantumTannerCode <: AbstractCSSCode
     A::Vector{<:GroupElem}
     """Symmetric generating set (closed under inverses) not containing the identity"""
     B::Vector{<:GroupElem}
-    """Tuple ((H_A, G_A), (H_B, G_B)) where (H_A, H_B) and (G_A, G_B) are parity-check and generator matrices, respectively."""
+    """Tuple ``((H_A, G_A), (H_B, G_B))`` where ``(H_A, H_B)`` and ``(G_A, G_B)`` are parity-check and generator matrices, respectively."""
     classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}}
     function QuantumTannerCode(group::Group,
                               A::Vector{<:GroupElem},
@@ -464,12 +488,12 @@ struct QuantumTannerCode <: AbstractCSSCode
                               classical_codes::Tuple{Tuple{Matrix{Int}, Matrix{Int}}, Tuple{Matrix{Int}, Matrix{Int}}})
         H_A, G_A = classical_codes[1]
         H_B, G_B = classical_codes[2]
-        @assert size(H_A, 2) == length(A) "H_A parity check columns must match |A|"
-        @assert size(G_A, 2) == length(A) "G_A generator columns must match |A|"
-        @assert size(H_B, 2) == length(B) "H_B parity check columns must match |B|"
-        @assert size(G_B, 2) == length(B) "G_B generator columns must match |B|"
-        all(iszero, mod.(H_A*G_A', 2)) || @warn "C_A may not be a valid classical code: H_A*G_A^T ≠ 0"
-        all(iszero, mod.(H_B*G_B', 2)) || @warn "C_B may not be a valid classical code: H_B*G_B^T ≠ 0"
+        @assert size(H_A, 2) == length(A) "``H_A`` parity check columns must match |A|"
+        @assert size(G_A, 2) == length(A) "``G_A`` generator columns must match |A|"
+        @assert size(H_B, 2) == length(B) "``H_B`` parity check columns must match |B|"
+        @assert size(G_B, 2) == length(B) "``G_B`` generator columns must match |B|"
+        all(iszero, mod.(H_A*G_A', 2)) || @warn "``C_A`` may not be a valid classical code: ``H_A*G_A^T \\neq 0``"
+        all(iszero, mod.(H_B*G_B', 2)) || @warn "``C_B`` may not be a valid classical code: ``H_B*G_B^T \\neq 0``"
         return new(group, A, B, classical_codes)
     end
 end
@@ -478,28 +502,35 @@ end
 Enumerate all square incidences in the Left-Right Cayley Complex
 following introduction by [dinur2022locally](@cite).
 
-The Left-Right Cayley Complex X is an [incidence structure](https://en.wikipedia.org/wiki/Incidence_structure)
+The left-right Cayley complex ``X`` is an [incidence structure](https://en.wikipedia.org/wiki/Incidence_structure)
 between:
-- Vertices V = V₀ ∪ V₁ where V₀ = G×{0}, V₁ = G×{1}
-- A-edges E_A = {(g,0), (ag,1)} for g ∈ G, a ∈ A ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of left Cayley graph Cay(G,A))
-- B-edges E_B = {(g,0), (gb,1)} for g ∈ G, b ∈ B ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of right Cayley graph Cay(G,B))
-- Squares Q = {(g,0), (ag,1), (gb,1), (agb,0)} for g ∈ G, a ∈ A, b ∈ B
 
-Each square q ∈ Q corresponds to one physical qubit in the quantum Tanner code. Each square appears in two
-natural local views [radebold2025explicit](@cite):
-- From V₀ vertices: defines the graph Γ₀^□ = (V₀, Q) used for Z-stabilizers
-- From V₁ vertices: defines the graph Γ₁^□ = (V₁, Q) used for X-stabilizers
+- Vertices ``V = V_0 \\cup V_1`` where ``V_0 = G \\times \\{0\\}``, ``V_1 = G \\times \\{1\\}``
+- ``A``-edges ``E_A = \\{(g,0), (ag,1)\\}`` for ``g \\in G``, ``a \\in A`` ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of the left Cayley graph ``\\mathrm{Cay}(G,A)``)
+- ``B``-edges ``E_B = \\{(g,0), (gb,1)\\}`` for ``g \\in G``, ``b \\in B`` ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of the right Cayley graph ``\\mathrm{Cay}(G,B)``)
+- Squares ``Q = \\{(g,0), (ag,1), (gb,1), (agb,0)\\}`` for ``g \\in G``, ``a \\in A``, ``b \\in B``
 
-We explicitly enumerates both incidences of each square to facilitate the Tanner code construction.
+Each square ``q \\in Q`` corresponds to one physical qubit in the quantum Tanner code.
+Each square appears in two natural local views [radebold2025explicit](@cite):
+
+- From ``V_0`` vertices: defines the graph ``\\Gamma_0^{\\square} = (V_0, Q)`` used for ``Z``-stabilizers
+- From ``V_1`` vertices: defines the graph ``\\Gamma_1^{\\square} = (V_1, Q)`` used for ``X``-stabilizers
+
+We explicitly enumerate both incidences of each square to facilitate the Tanner code construction.
 
 # Construction Framework
 
-For each vertex v ∈ V, the set of incident faces Q(v) is uniquely determined by pairs (a,b) ∈ A×B.
+For each vertex ``v \\in V``, the set of incident faces ``Q(v)`` is uniquely determined
+by pairs ``(a,b) \\in A \\times B``.
 
-The bijective mapping φ_v: A×B → Q(v) is defined as [radebold2025explicit](@cite): φ_v(a,b) = {v, av, vb, avb}
+The bijective mapping ``\\varphi_v \\colon A \\times B \\to Q(v)`` is defined as [radebold2025explicit](@cite):
 
-This establishes a natural labeling of qubits (*faces*) by generator pairs, allowing classical tensor codes
-to be applied locally at each vertex [radebold2025explicit](@cite).
+```math
+\\varphi_v(a,b) = \\{v,\\, av,\\, vb,\\, avb\\}
+```
+
+This establishes a natural labeling of qubits (*faces*) by generator pairs, allowing
+classical tensor codes to be applied locally at each vertex [radebold2025explicit](@cite).
 
 ### Arguments
 - `G`: A finite group
