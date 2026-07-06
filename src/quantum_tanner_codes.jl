@@ -333,7 +333,7 @@ For component codes ``C_A[\\Delta, \\rho\\Delta, \\delta\\Delta]`` and
 ``\\dim(C_1) \\times |V_1| \\approx 2\\rho(1-\\rho)\\Delta^2 |G|``, and the number of
 ``Z``-stabilizers is ``\\dim(C_0) \\times |V_0| \\approx 2\\rho(1-\\rho)\\Delta^2 |G|``.
 The resulting quantum code rate is at least ``(2\\rho - 1)^2``. For other
-properties, see~\cite{radebold2025explicit}.
+properties, see [radebold2025explicit](@cite).
 
 # Dihedral Ramanujan Graphs
 
