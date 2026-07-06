@@ -145,10 +145,10 @@ where Z-stabilizers: C₀ = T(Γ₀^□, (C_A ⊗ C_B)^⊥) andmX-stabilizers: C
 
 # Left-Right Cayley Complex
 
-A Cayley graph `\\Gamma(V,E)`` provides a graph-theoretic representation
+A Cayley graph ``\\Gamma(V,E)`` provides a graph-theoretic representation
 of a group G via a fixed generating set S that excludes the identity element.
 The vertex set V corresponds to elements of G, with an edge connecting vertices
-g and g' if and only if there exists ``s \\in S`` such that `g \\cdot s = g'``,
+g and g' if and only if there exists ``s \\in S`` such that ``g \\cdot s = g'``,
 where ``\\cdot`` denotes the group operation. Edges are undirected if S is symmetric,
 i.e., ``S = S^{-1}``.
 
@@ -162,8 +162,8 @@ left-right Cayley complex ``\\Gamma(G,A,B)`` is defined as:
 
 - Vertex set: ``V = V_0 \\cup V_1 = \\{g_i \\mid g \\in G, i \\in \\{0,1\\}\\}``
 - Edge sets:
-   - E_A = \\{(g_i, (ag)_j) \\mid a \\in A, g \\in G, i \\neq j\\}
-   - E_B = \\{(g_i, (gb)_j) \\mid b \\in B, g \\in G, i \\neq j\\}
+   - ``E_A = \\{(g_i, (ag)_j) \\mid a \\in A, g \\in G, i \\neq j\\}``
+   - ``E_B = \\{(g_i, (gb)_j) \\mid b \\in B, g \\in G, i \\neq j\\}``
 
 This construction yields a 2-dimensional complex whose faces are 4-cycles of the form:
 
@@ -403,7 +403,7 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS))
 ```
 
 !!! note
-    This is a newer version of the less well designed function `[`gen_code`](@ref)(G, A, B, bipartite=true, use_same_local_code=false)`.
+    This is a newer version of the less well designed function `gen_code`(G, A, B, bipartite=true, use_same_local_code=false)`.
     It constructs the quantum Tanner code given a finite group G equipped with two *symmetric* generating sets A and B,
     alongside pairs of classical codes — comprising parity check and generator matrices — that are utilized in the
     construction of classical Tanner codes. To illustrate its application, the implementation can employ generating
