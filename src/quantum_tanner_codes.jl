@@ -505,7 +505,7 @@ following introduction by [dinur2022locally](@cite).
 The left-right Cayley complex ``X`` is an [incidence structure](https://en.wikipedia.org/wiki/Incidence_structure)
 between:
 
-- Vertices ``V = V_0 \\cup V_1`` where ``V_0 = G \\times \\{0\}``, ``V_1 = G \\times \\{1\\}``
+- Vertices ``V = V_0 \\cup V_1`` where ``V_0 = G \\times \\{0\\}``, ``V_1 = G \\times \\{1\\}``
 - ``A``-edges ``E_A = \\{(g,0), (ag,1)\\}`` for ``g \\in G``, ``a \\in A`` ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of the left Cayley graph ``\\mathrm{Cay}(G,A)``)
 - ``B``-edges ``E_B = \\{(g,0), (gb,1)\\}`` for ``g \\in G``, ``b \\in B`` ([double cover](https://en.wikipedia.org/wiki/Bipartite_double_cover) of the right Cayley graph ``\\mathrm{Cay}(G,B)``)
 - Squares ``Q = \\{(g,0), (ag,1), (gb,1), (agb,0)\\}`` for ``g \\in G``, ``a \\in A``, ``b \\in B``
