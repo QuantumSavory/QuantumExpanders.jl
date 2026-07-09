@@ -427,8 +427,8 @@ julia> code_n(c), code_k(c), distance(c, DistanceMIPAlgorithm(solver=HiGHS, logi
 ```
 
 !!! note
-    This is a newer version of the less well designed function `gen_code`(G, A, B, bipartite=true, use_same_local_code=false)`.
-    It constructs the quantum Tanner code given a finite group G equipped with two *symmetric* generating sets A and B,
+    This is a newer version of the less well designed function `gen_code(G, A, B, bipartite=true, use_same_local_code=false)`.
+    It constructs the quantum Tanner code given a finite group ``G`` equipped with two *symmetric* generating sets ``A`` and ``B``,
     alongside pairs of classical codes — comprising parity check and generator matrices — that are utilized in the
     construction of classical Tanner codes. To illustrate its application, the implementation can employ generating
     sets computed from the Morgenstern's explicit construction of Ramanujan graphs for odd prime power `q` generating sets.
