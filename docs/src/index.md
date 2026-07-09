@@ -2,7 +2,7 @@
 
 A Julia library for constructing quantum Tanner codes and related expander-based quantum LDPC codes, built on top of [Oscar](https://www.oscar-system.org/), [QECCore](https://github.com/QuantumSavory/QECCore.jl), and [QuantumClifford](https://github.com/QuantumSavory/QuantumClifford.jl).
 
-The library provides the following methods to construct explicit instances of *Quantum Tanner codes*.
+The library provides the following methods to construct explicit instances of *quantum Tanner codes*.
 
 ```mermaid
 graph TD
