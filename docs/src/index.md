@@ -2,6 +2,23 @@
 
 A Julia library for constructing quantum Tanner codes and related expander-based quantum LDPC codes, built on top of [Oscar](https://www.oscar-system.org/), [QECCore](https://github.com/QuantumSavory/QECCore.jl), and [QuantumClifford](https://github.com/QuantumSavory/QuantumClifford.jl).
 
+The library provides the following methods to construct explicit instances of *quantum Tanner codes*.
+
+```mermaid
+graph TD
+    QuantumTannerCodes["Quantum Tanner Codes"] --> RandomMethods["Random Methods"]
+    QuantumTannerCodes --> DeterministicMethods["Deterministic Methods"]
+
+    subgraph "Random construction"
+        RandomMethods --> RandomQuantumTannerCode["`random_quantum_Tanner_code`"]
+    end
+
+    subgraph "Deterministic construction"
+        DeterministicMethods --> QuantumTannerCode["`QuantumTannerCode`"]
+        DeterministicMethods --> GeneralizedQuantumTannerCode["`GeneralizedQuantumTannerCode`"]
+    end
+```
+
 ## Quick Example
 
 Constructing a random quantum Tanner code from Morgenstern generators of ``SL_2(\mathbb{F}_4)``:

@@ -39,7 +39,7 @@ pkg> add https://github.com/QuantumSavory/QuantumExpanders.jl.git
 
 To update, just type `up` in the package mode.
 
-The library provides the following methods to construct explicit instances of *Quantum Tanner codes*.
+The library provides the following methods to construct explicit instances of *quantum Tanner codes*.
 ```mermaid
 graph TD
     QuantumTannerCodes["Quantum Tanner Codes"] --> RandomMethods["Random Methods"]

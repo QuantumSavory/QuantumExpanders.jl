@@ -243,11 +243,11 @@ specific set of ``q+1`` generators. These generators are ``2 \\times 2`` matrice
 where q = 2^l is an *even* prime power, and d is an even integer extension degree. The field ``\\mathbb{F}_{q^d}`` is
 constructed as ``\\mathbb{F}_q[x]/g(x)\\mathbb{F}_q[x]`` where g(x) is an irreducible polynomial of degree d. Within
 this field, ``\\mathbb{i}`` denotes a root of the irreducible polynomial ``x^2 + x + \\varepsilon = 0``. The pairs
-``(\\gamma_k, \\delta_k)`` are the q+1 solutions in `\\mathbb{F}_q^2`` to the ``\\gamma_k^2 + \\gamma_k\\delta_k + \\delta_k^2\\varepsilon = 1``.
+``(\\gamma_k, \\delta_k)`` are the q+1 solutions in ``\\mathbb{F}_q^2`` to the ``\\gamma_k^2 + \\gamma_k\\delta_k + \\delta_k^2\\varepsilon = 1``.
 And x is the polynomial variable that represents an element of ``\\mathbb{F}_{q^d}`` in the construction.
 
 The same theorem states that the resulting Cayley graph ``\\Gamma_g`` has the following properties: it is
-a (q+1)-regular Ramanujan graph of order ``|\\Gamma_g| = q^{3d} - q^d`` and is non-bipartite. The graph has
+a (``q+1``)-regular Ramanujan graph of order ``|\\Gamma_g| = q^{3d} - q^d`` and is non-bipartite. The graph has
 girth at least ``\\frac{2}{3}\\log_q|\\Gamma_g|`` and diameter at most ``2\\log_q|\\Gamma_g| + 2``. Furthermore,
 as per Theorem *5.11*, all eigenvalues ``\\mu`` of the adjacency matrix satisfy ``|\\mu| \\leq 2\\sqrt{q}`` for ``\\mu \\neq ``\\pm(q+1)``.
 
