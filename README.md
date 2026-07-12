@@ -60,7 +60,7 @@ The library also provides two **explicit constructions** of Ramanujan graphs:
 
 ```mermaid
 flowchart TB
-    A["Ramanujan Graph Constructions"]
+    A["Ramanujan Graphs"]
     A --> B["Lubotzky–Phillips–Sarnak (LPS) (1986)"]
     A --> C["Morgenstern (1994)<br/>(even prime power q)"]
 ```
