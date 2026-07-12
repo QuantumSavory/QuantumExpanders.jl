@@ -40,6 +40,7 @@ pkg> add https://github.com/QuantumSavory/QuantumExpanders.jl.git
 To update, just type `up` in the package mode.
 
 The library provides the following methods to construct explicit instances of *quantum Tanner codes*.
+
 ```mermaid
 graph TD
     QuantumTannerCodes["Quantum Tanner Codes"] --> RandomMethods["Random Methods"]
@@ -53,6 +54,15 @@ graph TD
         DeterministicMethods --> QuantumTannerCode["`QuantumTannerCode`"]
         DeterministicMethods --> GeneralizedQuantumTannerCode["`GeneralizedQuantumTannerCode`"]
     end
+```
+
+The library also provides two **explicit constructions** of Ramanujan graphs:
+
+```mermaid
+flowchart TB
+    A["Ramanujan Graph Constructions"]
+    A --> B["Lubotzky–Phillips–Sarnak (LPS) (1986)"]
+    A --> C["Morgenstern (1994)<br/>(even prime power q)"]
 ```
 
 Here is the novel `[[360, 61, (3, 10)]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
