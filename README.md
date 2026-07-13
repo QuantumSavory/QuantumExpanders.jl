@@ -65,6 +65,168 @@ flowchart TB
     A --> C["Morgenstern (1994)<br/>(even prime power q)"]
 ```
 
+## Morgenstern Ramanujan graphs
+
+Here we construct the Morgenstern Ramanujan graph `Γ = Cay(SL₂(𝔽_{qⁱ}), B)` for `l = 1, i = 2` (so `q = 2ˡ = 2`) and verify that it satisfies **all** the properties guaranteed by Theorem 5.13 of Morgenstern's [*Existence and Explicit Constructions of (q+1)-Regular Ramanujan Graphs for Every Prime Power q*](https://www.sciencedirect.com/science/article/pii/S0095895684710549), as well as the spectral expansion bounds of Claims 6.1 and 6.2 of
+[Dinur et al. (2022), *Locally testable codes with constant rate, distance, and locality*](https://arxiv.org/abs/2111.04808).
+
+```julia
+julia> using QuantumExpanders, Oscar, LinearAlgebra;
+
+julia> using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color;
+
+julia> using GraphsColoring: DSATUR, color, Greedy;
+
+julia> using NautyGraphs: NautyGraph, is_isomorphic;
+
+julia> using IGraphs: IGraph, IGVectorInt, LibIGraph;
+
+julia> l = 1; i = 2;
+
+julia> q = 2^l; r = q + 1; # q = 2, so Γ is 3-regular
+
+julia> G, B = morgenstern_generators(l, i);
+[ Info: |SL₂(𝔽(4))| = 60
+
+julia> Γ = cayley_right(G, B);
+```
+
+**Generator set `B`.** The set `B` contains `q + 1` generators, each of determinant `1`
+and order `2` (so `Γ` is an undirected simple graph):
+
+```julia
+julia> length(B) == q + 1
+true
+
+julia> all(det(b) == one(base_ring(b)) for b in B)
+true
+
+julia> all(matrix(b^2) == identity_matrix(base_ring(b), 2) for b in B)
+true
+```
+
+**Property I: `(q+1)`-regularity and order `|Γ| = q³ⁱ − qⁱ`.**
+
+```julia
+julia> all(degree(Γ, v) == q + 1 for v in vertices(Γ))
+true
+
+julia> nv(Γ) == q^(3i) - q^i == 60
+true
+
+julia> is_connected(Γ)
+true
+```
+
+**Property II: Non-bipartiteness.**
+
+```julia
+julia> is_bipartite(Γ)
+false
+```
+
+**Property III: Ramanujan bound.** The trivial eigenvalue is `q + 1`, and every other
+eigenvalue `μ` satisfies `|μ| ≤ 2√q`:
+
+```julia
+julia> λs = sort(real.(eigvals(Matrix(adjacency_matrix(Γ)))), rev=true);
+
+julia> λs[1] ≈ q + 1
+true
+
+julia> all(abs(μ) ≤ 2√q + 1e-10 for μ in λs[2:end])
+true
+```
+
+**Girth bound.** `g(Γ) ≥ (2/3)·log_q(|Γ|)`:
+
+```julia
+julia> girth_lower_bound = floor(Int, (2/3)*log(q, nv(Γ)));
+
+julia> g_igraph = IGraph(Γ); girth_val = Ref{LibIGraph.igraph_real_t}(0.0); cycle = IGVectorInt();
+
+julia> LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref);
+
+julia> Int(girth_val[]) >= girth_lower_bound
+true
+```
+
+**Property IV: Diameter bound.** `diam(Γ) ≤ 2·log_q(|Γ|) + 2`:
+
+```julia
+julia> diameter(Γ) ≤ ceil(Int, 2*log(q, nv(Γ)) + 2)
+true
+```
+
+**Property V: Chromatic number.** `χ(Γ) ≥ (q+1)/(2√q) + 1`:
+
+```julia
+julia> χ_lower_bound = (q + 1)/(2√q) + 1;
+
+julia> greedy_color(Γ; sort_degree=false, reps=1000).num_colors >= χ_lower_bound
+true
+
+julia> length(color(Γ; algorithm=DSATUR()).colors) >= χ_lower_bound
+true
+
+julia> length(color(Γ; algorithm=Greedy()).colors) >= χ_lower_bound
+true
+```
+
+**Property VI: Independence number.** `i(Γ) ≤ (2√q/(q+1))·|Γ|`:
+
+```julia
+julia> ind_set = independent_set(Γ, MaximalIndependentSet());
+
+julia> length(ind_set) ≤ ceil(Int, (2√q/(q + 1))*nv(Γ))
+true
+
+julia> all(u == v || !has_edge(Γ, u, v) for u in ind_set, v in ind_set)
+true
+```
+
+**Expander properties.** `Γ` is an `(n, r, 1 − λ²/r²)`-expander with
+`λ = max_{μ ≠ q+1} |μ|`, where `λ ≤ r − d²/8r` and `λ ≤ 2√(r−1)` (optimality):
+
+```julia
+julia> λ = maximum(abs.(λs[2:end]));
+
+julia> d = 1 - λ^2/r^2; d > 0;
+
+julia> λ ≤ r - d^2/(8r) + 1e-10
+true
+
+julia> λ ≤ 2√(r - 1) + 1e-10
+true
+```
+
+### Spectral expansion of the alternative generator sets
+
+The alternative generator sets `A = alternative_morgenstern_generators(B, ...)` used in
+the quantum Tanner code construction also satisfy the explicit second-eigenvalue bounds
+of [Dinur et al. (2022)](https://arxiv.org/abs/2111.04808):
+
+```julia
+julia> A₁ = alternative_morgenstern_generators(B, AllPairs()); # Claim 6.1 (ii): AllPairs generators, degree k₁ = q² + q
+
+julia> Γ₁ = cayley_right(G, A₁);
+
+julia> λ₂ = sort(real.(eigvals(Matrix(adjacency_matrix(Γ₁))/(q^2 + q))), rev=true)[2];
+
+julia> λ₂ < (3q - 1)/(q^2 + q)
+true
+
+julia> A₂ = alternative_morgenstern_generators(B, FirstOnly()); # Claim 6.2: FirstOnly generators, degree k₁ = 2q
+
+julia> Γ₂ = cayley_right(G, A₂);
+
+julia> λ₂ = sort(real.(eigvals(Matrix(adjacency_matrix(Γ₂))/(2q))), rev=true)[2];
+
+julia> λ₂ < 3√(2q - 1)/(2q)
+true
+```
+
+## Quantum Tanner codes
 Here is the novel `[[360, 61, (3, 10)]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
 for even prime power q.
 
