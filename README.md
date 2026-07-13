@@ -226,6 +226,102 @@ julia> λ₂ < 3√(2q - 1)/(2q)
 true
 ```
 
+## Lubotzky–Phillips–Sarnak (LPS) Ramanujan graphs
+
+The LPS construction gives explicit `(p+1)`-regular Ramanujan graphs `Xᵖ˒ᑫ` for primes `p, q ≡ 1 (mod 4)` with `p ≠ q`. The structure of the graph depends on the Legendre symbol `(p/q)`: when `(p/q) = 1` the graph is the *non-bipartite* Cayley graph of `PSL₂(𝔽_q)` with `|Xᵖ˒ᑫ| = q(q² − 1)/2`, and when `(p/q) = −1` it is the *bipartite* Cayley graph of `PGL₂(𝔽_q)` with `|Xᵖ˒ᑫ| = q(q² − 1)`.
+
+Here we construct the LPS Ramanujan graph for `p = 13, q = 17` and verify thepr operties established on page 263 of
+[Lubotzky, Phillips, and Sarnak (1988), *Ramanujan graphs*](https://link.springer.com/article/10.1007/BF02126799).
+
+```julia
+julia> using QuantumExpanders, Oscar, LinearAlgebra
+
+julia> using QuantumExpanders: legendre_symbol, is_ramanujan; # and same libraries as above
+
+julia> p = 13; q = 17;
+
+julia> legendre_symbol(p, q) # (p/q) = 1: non-bipartite PSL₂(𝔽_q) case
+1
+
+julia> X = LPS(p, q);
+
+julia> n = q*(q^2 - 1)÷2 # |PSL₂(𝔽₁₇)| = 2448
+2448
+```
+
+**`(p+1)`-regularity, order, and connectivity.**
+
+```julia
+julia> all(degree(X, v) == p + 1 for v in vertices(X))
+true
+
+julia> nv(X) == n
+true
+
+julia> is_connected(X)
+true
+```
+
+**Ramanujan bound.** The trivial eigenvalue is `p + 1`, and every other eigenvalue
+`μ` satisfies `|μ| ≤ 2√p`:
+
+```julia
+julia> λs = sort(real.(eigvals(Matrix(adjacency_matrix(X)))), rev=true);
+
+julia> λs[1] ≈ p + 1
+true
+
+julia> all(abs(μ) ≤ 2√p + 1e-10 for μ in λs[2:end])
+true
+```
+
+The same check is available as a convenience predicate:
+
+```julia
+julia> is_ramanujan(X, p)
+true
+```
+
+**Non-bipartiteness.** Since `(p/q) = 1`, the graph is non-bipartite (case ii):
+
+```julia
+julia> is_bipartite(X)
+false
+```
+
+**Girth bound (case ii (a)).** `g(Xᵖ˒ᑫ) ≥ 2·log_p(q)`:
+
+```julia
+julia> girth_lower_bound = floor(Int, 2*log(p, q));
+
+julia> g_igraph = IGraph(X); girth_val = Ref{LibIGraph.igraph_real_t}(0.0); cycle = IGVectorInt();
+
+julia> LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref);
+
+julia> Int(girth_val[]) >= girth_lower_bound
+true
+```
+
+**Diameter bound (case ii (b)).** `diam(Xᵖ˒ᑫ) ≤ 2·log_p(n) + 2·log_p(2) + 1`:
+
+```julia
+julia> diameter(X) ≤ ceil(Int, 2*log(p, n) + 2*log(p, 2) + 1)
+true
+```
+
+**Independence number (case ii (c)).** `i(Xᵖ˒ᑫ) ≤ (2√p/(p+1))·n`:
+
+```julia
+julia> ind_set = independent_set(X, MaximalIndependentSet());
+
+julia> length(ind_set) ≤ ceil(Int, (2√p/(p + 1))*n)
+true
+```
+
+When `(p/q) = −1`, the graph is instead the bipartite Cayley graph of
+`PGL₂(𝔽_q)` on `q(q² − 1)` vertices, satisfying the corresponding case i bounds:
+girth `g(Xᵖ˒ᑫ) ≥ 4·log_p(q) − log_p(4)` and the same diameter bound.
+
 ## Quantum Tanner codes
 Here is the novel `[[360, 61, (3, 10)]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
 for even prime power q.
