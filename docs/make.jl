@@ -2,7 +2,7 @@ using Revise
 push!(LOAD_PATH,"../src/")
 
 using Documenter
-using DocumenterCitations
+using DocumenterCitations, DocumenterMermaid
 using QuantumExpanders
 using Oscar
 using JuMP
@@ -36,5 +36,8 @@ linkcheck = true
 )
 
 deploydocs(
-    repo = "github.com/QuantumSavory/QuantumExpanders.jl.git"
+    repo = "github.com/QuantumSavory/QuantumExpanders.jl.git",
+    devbranch = "master",
+    deploy_config = Documenter.Buildkite(),
+    push_preview = true
 )
