@@ -30,6 +30,7 @@ authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory c
 pages = [
     "QuantumExpanders.jl" => "index.md",
     "Morgenstern Ramanujan Graphs" => "morgenstern.md",
+    "Lubotzky–Phillips–Sarnak Ramanujan Graphs" => "lps.md",
     "API" => "API.md",
 ],
 linkcheck = true

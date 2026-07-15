@@ -79,3 +79,12 @@ julia> distance(c, DistanceMIPAlgorithm(solver = HiGHS.Optimizer, logical_operat
        distance(c, DistanceMIPAlgorithm(solver = HiGHS.Optimizer, logical_operator_type = :X, time_limit = 900))
 (3, 10)
 ```
+
+The library also provides two **explicit constructions** of [Ramanujan graphs](https://en.wikipedia.org/wiki/Ramanujan_graph), which can be used independently of the quantum code constructions:
+
+```mermaid
+flowchart TB
+    A["Ramanujan Graphs"]
+    A --> B["Lubotzky–Phillips–Sarnak <br>(1988)<br/>(prime p ≡ 1 mod 4)"]
+    A --> C["Morgenstern (1994)<br/>(even prime power q)"]
+```
