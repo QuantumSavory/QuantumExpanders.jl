@@ -79,19 +79,14 @@ parameter trifecta.
  
 ## Further reading
  
-- Leverrier & Zémor, [*Quantum Tanner codes*](https://arxiv.org/abs/2202.13641)
-  and [*Decoding quantum Tanner codes*](https://arxiv.org/abs/2208.05537) — the
-  original construction and its decoder; the presentation above follows the
-  simplified version from the second paper.
+- Leverrier & Zémor, [*Quantum Tanner codes*](https://arxiv.org/abs/2202.13641) and [*Decoding quantum Tanner codes*](https://arxiv.org/abs/2208.05537)
 - [dinur2022locally](@cite) — the left-right Cayley complex and locally testable
   codes with constant rate, distance, and locality.
-- Panteleev & Kalachev,
-  [*Asymptotically good quantum and locally testable classical LDPC codes*](https://arxiv.org/abs/2111.03654)
-  — the first good qLDPC codes and the product-expansion theorem for random codes.
+- Panteleev & Kalachev, [*Asymptotically good quantum and locally testable classical LDPC codes*](https://arxiv.org/abs/2111.03654)
 - John Wright's UC Berkeley CS294 *Quantum Coding Theory* lecture notes
-  (Spring 2024), Lectures 19–20 — an excellent, accessible exposition of the
-  construction, the CSS property, and the parameter analysis, which this page's
-  organization gratefully follows at a high level.
+  (Spring 2024), Lectures 19–20 provides an excellent, accessible exposition of the
+  quantum Tanner construction which this page gratefully follows at a high level.
+
 ## References
  
 ```@bibliography
