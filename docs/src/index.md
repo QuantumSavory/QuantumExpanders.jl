@@ -1,54 +1,54 @@
 # QuantumExpanders.jl
-
+ 
 A Julia library for constructing quantum Tanner codes and related expander-based quantum LDPC codes, built on top of [Oscar](https://www.oscar-system.org/), [QECCore](https://github.com/QuantumSavory/QECCore.jl), and [QuantumClifford](https://github.com/QuantumSavory/QuantumClifford.jl).
-
-The library provides the following methods to construct explicit instances of *quantum Tanner codes*.
-
+ 
+The library provides the following methods to construct explicit instances of *quantum Tanner codes* — see the [Quantum Tanner Codes](@ref quantum-tanner-codes) page for background on the construction and its parameters.
+ 
 ```mermaid
 graph TD
     QuantumTannerCodes["Quantum Tanner Codes"] --> RandomMethods["Random Methods"]
     QuantumTannerCodes --> DeterministicMethods["Deterministic Methods"]
-
+ 
     subgraph "Random construction"
         RandomMethods --> RandomQuantumTannerCode["`random_quantum_Tanner_code`"]
     end
-
+ 
     subgraph "Deterministic construction"
         DeterministicMethods --> QuantumTannerCode["`QuantumTannerCode`"]
         DeterministicMethods --> GeneralizedQuantumTannerCode["`GeneralizedQuantumTannerCode`"]
     end
 ```
-
+ 
 ## Quick Example
-
-Constructing a random quantum Tanner code from Morgenstern generators of ``SL_2(\mathbb{F}_4)``:
-
+ 
+Constructing a random quantum Tanner code from [Morgenstern generators](@ref morgenstern-graphs) of ``SL_2(\mathbb{F}_4)``:
+ 
 ```julia
 julia> using QuantumExpanders, Oscar, QuantumClifford, QuantumClifford.ECC, QECCore
-
+ 
 julia> using Random: MersenneTwister
-
+ 
 julia> l = 1; i = 2;
-
+ 
 julia> q = 2^l
 2
-
+ 
 julia> Δ = q + 1
 3
-
+ 
 julia> SL₂, B = morgenstern_generators(l, i)
 [ Info: |SL₂(𝔽(4))| = 60
 (SL(2,4), Oscar.MatrixGroupElem{Nemo.FqFieldElem, Nemo.FqMatrix}[[o+1 o+1; 1 o+1], [o+1 1; o+1 o+1], [o+1 o; o o+1]])
-
+ 
 julia> A = alternative_morgenstern_generators(B, FirstOnly())
 4-element Vector{Oscar.MatrixGroupElem{Nemo.FqFieldElem, Nemo.FqMatrix}}:
  [0 1; 1 o+1]
  [o+1 1; 1 0]
  [o+1 o+1; o 0]
  [0 o+1; o o+1]
-
+ 
 julia> rng = MersenneTwister(892529278);
-
+ 
 julia> hx, hz = random_quantum_Tanner_code(0.75, SL₂, A, B, rng=rng);
 (length(group), length(A), length(B)) = (60, 4, 3)
 length(group) * length(A) * length(B) = 720
@@ -64,27 +64,29 @@ size(Cᶻ) = (2, 12)
 r1 = rank(𝒞ˣ) = 179
 r2 = rank(𝒞ᶻ) = 120
 ```
-
+ 
 The resulting parity check matrices define a CSS code whose parameters can be computed with `QECCore` and `QuantumClifford.ECC`:
-
+ 
 ```julia
 julia> c = CSS(hx, hz);
-
+ 
 julia> import JuMP; import HiGHS;
-
+ 
 julia> code_n(c), code_k(c)
 (360, 61)
-
+ 
 julia> distance(c, DistanceMIPAlgorithm(solver = HiGHS.Optimizer, logical_operator_type = :Z, time_limit = 900)),
        distance(c, DistanceMIPAlgorithm(solver = HiGHS.Optimizer, logical_operator_type = :X, time_limit = 900))
 (3, 10)
 ```
-
+ 
 The library also provides two **explicit constructions** of [Ramanujan graphs](https://en.wikipedia.org/wiki/Ramanujan_graph), which can be used independently of the quantum code constructions:
-
+ 
 ```mermaid
 flowchart TB
     A["Ramanujan Graphs"]
-    A --> B["Lubotzky–Phillips–Sarnak <br>(1986)<br/>(prime p ≡ 1 mod 4)"]
+    A --> B["Lubotzky–Phillips–Sarnak <br>(1988)<br/>(prime p ≡ 1 mod 4)"]
     A --> C["Morgenstern (1994)<br/>(even prime power q)"]
 ```
+ 
+See the [Lubotzky–Phillips–Sarnak](@ref lps-graphs) and [Morgenstern](@ref morgenstern-graphs) pages for the constructions, their spectral, girth, diameter, chromatic, and independence properties, and worked examples verifying each property.

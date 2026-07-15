@@ -29,8 +29,9 @@ format = Documenter.HTML(),
 authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
 pages = [
     "QuantumExpanders.jl" => "index.md",
-    "Morgenstern Ramanujan Graphs" => "morgenstern.md",
+    "Quantum Tanner Codes" => "quantum_tanner.md",
     "Lubotzky–Phillips–Sarnak Ramanujan Graphs" => "lps.md",
+    "Morgenstern Ramanujan Graphs" => "morgenstern.md",
     "API" => "API.md",
 ],
 linkcheck = true
