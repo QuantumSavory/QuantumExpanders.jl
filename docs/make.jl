@@ -37,7 +37,7 @@ linkcheck = true
 
 deploydocs(
     repo = "github.com/QuantumSavory/QuantumExpanders.jl.git",
-    devbranch = "master",
-    deploy_config = Documenter.Buildkite(),
+    devbranch = "main",
+    deploy_config = Documenter.GitHubActions(),
     push_preview = true
 )

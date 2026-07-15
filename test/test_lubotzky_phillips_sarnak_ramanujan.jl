@@ -17,8 +17,8 @@
         # Define a list of valid (p, q) pairs: both p and q are primes, p,q ≡ 1 (mod 4), and p ≠ q.
         test_pairs = [( 5, 29),
                       (13, 17),
-                      (17, 13),
-                      (29, 13)]
+                      (17, 13),]
+                      #(29, 13)] # avoid large graphs
         for (p, q) in test_pairs
             @info "Testing with p = $p, q = $q"
             @test is_prime(p) && p % 4 == 1
