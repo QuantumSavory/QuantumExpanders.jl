@@ -8,10 +8,7 @@ DocTestSetup = quote
 end
 ```
  
-The Lubotzky–Phillips–Sarnak (LPS) construction [lubotzky1988ramanujan](@cite)
-provides explicit ``(p+1)``-regular Ramanujan graphs ``X^{p,q}`` for primes
-``p, q \equiv 1 \pmod 4`` with ``p \neq q``. It was the first explicit construction
-of Ramanujan graphs, with the spectral bound ultimately resting on Deligne's proof (see [deligne2006formes](@cite)) of the [Ramanujan–Petersson conjecture](https://en.wikipedia.org/wiki/Ramanujan%E2%80%93Petersson_conjecture). Together with Morgenstern's construction for even prime powers (see [Morgenstern Ramanujan Graphs](@ref morgenstern-graphs)), it gives this package explicit optimal spectral expanders over a wide range of degrees which are objects of independent interest in graph theory, derandomization, and classical coding theory, usable entirely on their own without any of the quantum stuff in this package.
+The Lubotzky–Phillips–Sarnak (LPS) construction [lubotzky1988ramanujan](@cite) provides explicit ``(p+1)``-regular Ramanujan graphs ``X^{p,q}`` for primes ``p, q \equiv 1 \pmod 4`` with ``p \neq q``. It was the first explicit construction of Ramanujan graphs, with the spectral bound ultimately resting on Deligne's proof (see [deligne2006formes](@cite)) of the [Ramanujan–Petersson conjecture](https://en.wikipedia.org/wiki/Ramanujan%E2%80%93Petersson_conjecture). Together with Morgenstern's construction for even prime powers (see [Morgenstern Ramanujan Graphs](@ref morgenstern-graphs)), it gives this package explicit optimal spectral expanders over a wide range of degrees which are objects of independent interest in graph theory, derandomization, and classical coding theory, usable entirely on their own without any of the quantum stuff in this package.
  
  
 ## Construction
@@ -44,15 +41,16 @@ The graph is constructed with [`LPS`](@ref).
  
 ## Example: ``p = 13,\ q = 17``
  
-Here we construct the LPS Ramanujan graph ``X^{13,17}`` and verify the properties
-established on page 263 of [lubotzky1988ramanujan](@cite). Since
-``\left(\frac{13}{17}\right) = 1``, this is the non-bipartite case (case ii), a
-``14``-regular graph on ``|\mathrm{PSL}_2(\mathbb{F}_{17})| = 2448`` vertices.
+Here we construct the LPS Ramanujan graph ``X^{13,17}`` and verify the properties established on page 263 of [lubotzky1988ramanujan](@cite). Since ``\left(\frac{13}{17 \right) = 1``, this is the non-bipartite case (case ii), a ``14``-regular graph on ``|\mathrm{PSL}_2(\mathbb{F}_{17})| = 2448`` vertices.
  
 ```julia
-julia> using QuantumExpanders, Graphs, LinearAlgebra
- 
-julia> using QuantumExpanders: legendre_symbol, is_ramanujan
+julia> using QuantumExpanders, Oscar, LinearAlgebra;
+
+julia> using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color;
+
+julia> using GraphsColoring: DSATUR, color, Greedy;
+
+julia> using NautyGraphs: NautyGraph, is_isomorphic;
  
 julia> p = 13; q = 17;
  
@@ -80,8 +78,7 @@ true
  
 ### Ramanujan bound
  
-The trivial eigenvalue is ``p + 1``, and every other eigenvalue ``\mu`` satisfies
-``|\mu| \leq 2\sqrt{p}``:
+The trivial eigenvalue is ``p + 1``, and every other eigenvalue ``\mu`` satisfies ``|\mu| \leq 2\sqrt{p}``:
  
 ```julia
 julia> λs = sort(real.(eigvals(Matrix(adjacency_matrix(X)))), rev=true);
@@ -114,7 +111,7 @@ false
 The girth satisfies ``g(X^{p,q}) \geq 2\log_p q``:
  
 ```julia
-julia> using LibIGraph
+julia> using IGraphs: IGraph, IGVectorInt, LibIGraph;
  
 julia> girth_lower_bound = floor(Int, 2*log(p, q));
  
@@ -149,10 +146,7 @@ true
  
 ## The bipartite case
  
-When ``\left(\frac{p}{q}\right) = -1``, the graph ``X^{p,q}`` is instead the
-bipartite Cayley graph of ``\mathrm{PGL}_2(\mathbb{F}_q)`` on ``q(q^2-1)``
-vertices, satisfying the corresponding case i bounds of
-[lubotzky1988ramanujan](@cite): the girth improves to
+When ``\left(\frac{p}{q}\right) = -1``, the graph ``X^{p,q}`` is instead the bipartite Cayley graph of ``\mathrm{PGL}_2(\mathbb{F}_q)`` on ``q(q^2-1)`` vertices, satisfying the corresponding case i bounds of [lubotzky1988ramanujan](@cite): the girth improves to
  
 ```math
 g(X^{p,q}) \geq 4\log_p q - \log_p 4,
