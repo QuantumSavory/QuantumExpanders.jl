@@ -17,7 +17,7 @@ where each ``a \in A`` acts by *left* multiplication (``A``-edges) and each ``b 
  
 ![The left-right Cayley complex](assets/cayley_complex.svg)
  
-The four induced bipartite subgraphs are each double covers of ordinary Cayley graphs: the ``A``-edge subgraphs are copies of the double cover of ``\mathrm{Cay}_L(G, A)``, and the ``B``-edge subgraphs are copies of the double cover of ``\mathrm{Cay}_R(G, B)``.
+The four induced bipartite subgraphs are each [double covers](https://en.wikipedia.org/wiki/Bipartite_double_cover) of ordinary Cayley graphs: the ``A``-edge subgraphs are copies of the double cover of ``\mathrm{Cay}_L(G, A)``, and the ``B``-edge subgraphs are copies of the double cover of ``\mathrm{Cay}_R(G, B)``.
  
 The central objects are the **squares**
  
@@ -26,7 +26,7 @@ The central objects are the **squares**
 \qquad a \in A,\ b \in B,\ g \in G,
 ```
  
-and we write ``Q`` for the set of all of them. Each square has four vertices and each of the ``4|G|`` vertices lies on ``\Delta^2`` squares, giving ``|Q| = |G|\Delta^2``. The **``Q``-neighborhood** ``Q(v)`` of a vertex ``v`` is the set of squares containing ``v``. Since a square through ``v`` is determined by a choice of ``a \in A`` and ``b \in B``, we have ``Q(v) \cong A \times B``: the ``\Delta^2`` squares around a vertex arrange naturally into an ``|A| \times |B|`` grid. The key combinatorial fact is that neighboring vertices have grids that overlap in a controlled way:
+and we write ``Q`` for the set of all of them. Each square has four distinct vertices and each of the ``4|G|`` vertices lies on ``\Delta^2`` squares, giving ``|Q| = |G|\Delta^2``. The **``Q``-neighborhood** ``Q(v)`` of a vertex ``v`` is the set of squares containing ``v``. Since a square through ``v`` is determined by a choice of ``a \in A`` and ``b \in B``, we have ``Q(v) \cong A \times B``: the ``\Delta^2`` squares around a vertex arrange naturally into an ``|A| \times |B|`` grid. The important fact is that neighboring vertices have grids that overlap in a way that is useful. 
  
 ![Q-neighborhoods of A-edge neighbors share a row](assets/q_neighborhood.svg)
  
