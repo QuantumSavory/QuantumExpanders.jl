@@ -85,7 +85,7 @@ The library also provides two **explicit constructions** of [Ramanujan graphs](h
 ```mermaid
 flowchart TB
     A["Ramanujan Graphs"]
-    A --> B["Lubotzky–Phillips–Sarnak <br>(1988)<br/>(prime p ≡ 1 mod 4)"]
+    A --> B["Lubotzky–Phillips–Sarnak <br>(1986)<br/>"]
     A --> C["Morgenstern (1994)<br/>(even prime power q)"]
 ```
  
