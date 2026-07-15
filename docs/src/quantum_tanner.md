@@ -4,9 +4,10 @@ The first asymptotically **good** quantum LDPC codes which CSS codes with consta
  
 ## The left-right Cayley complex
  
-Start with a finite group ``G`` and two (not necessarily) symmetric generating sets
-``A = A^{-1}`` and ``B = B^{-1}`` with ``|A| = |B| = \Delta``. The left-right Cayley complex is a quadripartite graph on the vertex set
- 
+Let ``G`` be a finite group. Let ``A`` and ``B`` be symmetric generating sets of ``G``, satisfying ``A = A^{-1}`` and ``B = B^{-1}``, so that each set is closed under taking inverses. We assume that both ``A`` and ``B`` generate the entire group ``G`` and have the same cardinality, ``|A| = |B| = \Delta``. The two generating sets may also be chosen to be identical (i.e., ``A = B``).
+
+The **left-right Cayley complex** is defined as a quadripartite graph with vertex set
+
 ```math
 V = V_{00} \sqcup V_{10} \sqcup V_{01} \sqcup V_{11},
 \qquad V_{ij} = G \times \{ij\},
