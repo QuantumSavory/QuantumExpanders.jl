@@ -34,7 +34,11 @@ Vertices joined by an ``A``-edge labelled ``a`` share exactly the ``a``-th row o
  
 ## The two Tanner codes
  
-Fix two classical linear codes ``C_A`` and ``C_B`` of length ``\Delta`` (one bit per element of ``A`` and ``B`` respectively). Qubits live on the squares ``Q``. Following the classical Tanner code recipe, each vertex imposes a *local code* on the ``\Delta^2`` bits of its ``Q``-neighborhood — and since that neighborhood is an ``|A| \times |B|`` grid, the natural local codes are the tensor code ``C_A \otimes C_B`` (matrices whose columns lie in ``C_A`` and rows lie in ``C_B``) and its dual, the *dual tensor code*
+Fix two classical linear codes ``C_A`` and ``C_B`` of length ``\Delta`` (one bit per element of ``A`` and ``B`` respectively). Qubits live on the squares ``Q``. Following the classical Tanner code recipe, each vertex imposes a *local code* on the ``\Delta^2`` bits of its ``Q``-neighborhood — and since that neighborhood is an ``|A| \times |B|`` grid, the natural local codes are the tensor code ``C_A \otimes C_B`` (matrices whose columns lie in ``C_A`` and rows lie in ``C_B``):
+
+![The tensor code](assets/tensor_code.svg)
+
+and its dual, the *dual tensor code*
  
 ```math
 (C_A \otimes C_B)^{\perp}
