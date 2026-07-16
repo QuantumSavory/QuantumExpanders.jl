@@ -2,17 +2,15 @@
 
 A Julia library for constructing quantum Tanner codes and related expander-based quantum LDPC codes, built on top of [Oscar](https://www.oscar-system.org/), [QECCore](https://github.com/QuantumSavory/QECCore.jl), and [QuantumClifford](https://github.com/QuantumSavory/QuantumClifford.jl).
 
-The library provides the following methods to construct explicit instances of *quantum Tanner codes*.
+The library provides the following methods to construct explicit instances of *quantum Tanner codes* — see the [Quantum Tanner Codes](@ref quantum-tanner-codes) page for background on the construction and its parameters.
 
 ```mermaid
 graph TD
     QuantumTannerCodes["Quantum Tanner Codes"] --> RandomMethods["Random Methods"]
     QuantumTannerCodes --> DeterministicMethods["Deterministic Methods"]
-
     subgraph "Random construction"
         RandomMethods --> RandomQuantumTannerCode["`random_quantum_Tanner_code`"]
     end
-
     subgraph "Deterministic construction"
         DeterministicMethods --> QuantumTannerCode["`QuantumTannerCode`"]
         DeterministicMethods --> GeneralizedQuantumTannerCode["`GeneralizedQuantumTannerCode`"]
@@ -21,7 +19,7 @@ graph TD
 
 ## Quick Example
 
-Constructing a random quantum Tanner code from Morgenstern generators of ``SL_2(\mathbb{F}_4)``:
+Constructing a random quantum Tanner code from [Morgenstern generators](@ref morgenstern-graphs) of ``SL_2(\mathbb{F}_4)``:
 
 ```julia
 julia> using QuantumExpanders, Oscar, QuantumClifford, QuantumClifford.ECC, QECCore
@@ -85,6 +83,8 @@ The library also provides two **explicit constructions** of [Ramanujan graphs](h
 ```mermaid
 flowchart TB
     A["Ramanujan Graphs"]
-    A --> B["Lubotzky–Phillips–Sarnak <br>(1986)<br/>(prime p ≡ 1 mod 4)"]
+    A --> B["Lubotzky–Phillips–Sarnak <br>(1986)<br/>"]
     A --> C["Morgenstern (1994)<br/>(even prime power q)"]
 ```
+
+See the [Lubotzky–Phillips–Sarnak](@ref lps-graphs) and [Morgenstern](@ref morgenstern-graphs) pages for the constructions, their spectral, [girth](https://en.wikipedia.org/wiki/Girth_(graph_theory)), [diameter](https://en.wikipedia.org/wiki/Diameter_(graph_theory)), [chromatic](https://en.wikipedia.org/wiki/Graph_coloring), and [independence properties](https://en.wikipedia.org/wiki/Independent_set_(graph_theory)), and worked examples verifying each property.
