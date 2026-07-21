@@ -11,6 +11,7 @@
     using QuantumClifford.ECC
     using QuantumClifford.ECC: code_n, code_k
     using Nemo: zero_matrix, base_ring, transpose, rank
+    using StableRNGs: StableRNG
 
     function _is_ramanujanᵧ(g::SimpleGraph, k::Int)
         A = adjacency_matrix(g)
@@ -50,7 +51,7 @@
             @test is_ram
         end
     end
-    
+
     # Frobenius groups with r ≥ 4 of https://arxiv.org/pdf/1503.04075, see Theorem 3.3, page 6.
     @testset "Frobenius Groups r ≥ 4" begin
         large_primes = [11, 13, 17, 19]
@@ -70,15 +71,16 @@
     end
 
     @testset "Quantum Tanner codes from Frobenius Groups" begin
+        rng = StableRNG(1234)
         primes =  [3, 5]
         for p in primes
             for rate in [0.5, 0.6, 0.7]
                 G = dihedral_group(2*p)
                 S = normal_cayley_subset(G)
-                hx, hz = random_quantum_Tanner_code(rate, G, S, S, bipartite=false)
+                hx, hz = random_quantum_Tanner_code(rate, G, S, S; bipartite=false, rng)
                 c = Stabilizer(CSS(hx, hz))
                 @test stab_looks_good(c, remove_redundant_rows=true)
-                hx, hz = gen_good_code(rate, G, S, S, use_same_local_code=true, bipartite=false)
+                hx, hz = gen_good_code(rate, G, S, S; use_same_local_code=true, bipartite=false, rng)
                 c = Stabilizer(CSS(hx, hz))
                 @test stab_looks_good(c, remove_redundant_rows=true)
             end
