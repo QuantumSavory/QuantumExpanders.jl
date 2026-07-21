@@ -1,0 +1,12 @@
+[deps]
+JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
+Multigraphs = "7ebac608-6c66-46e6-9856-b5f43e107bac"
+Nemo = "2edaba10-b0f1-5616-af89-8c11ac63239a"
+Oscar = "f1435218-dba5-11e9-1e4d-f1a5fab5fc13"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+QuantumExpanders = "144928dd-1f60-4b66-8c4c-f5ae7409097b"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+TestItemRunner = "f8b46487-2199-4994-9208-9a1283c18c0a"
+
+[sources]
+QuantumExpanders = {path = "../../.."}
