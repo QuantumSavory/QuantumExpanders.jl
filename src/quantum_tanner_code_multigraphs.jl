@@ -17,7 +17,7 @@ Returns `(𝒞ˣ, 𝒞ᶻ)` where `𝒞ˣ` is the X-stabilizer matrix and `𝒞�
 - `rate::Real`: Rate parameter for local codes (C_A has rate ρ, C_B has rate 1-ρ)
 - `group`: The group G for the left-right Cayley complex
 - `A`: Symmetric generating set A for the left Cayley graph
-- `B`: Symmetric generating set B for the right Cayley graph  
+- `B`: Symmetric generating set B for the right Cayley graph
 - `bipartite::Bool`: Whether to use bipartite vertex partitioning (V₀, V₁)
 """
 struct GeneralizedQuantumTannerCode <: AbstractCSSCode
@@ -148,14 +148,18 @@ Generate a good Quantum Tanner code meeting minimum weight requirements.
 
 ### Arguments
 - `ρ`: Rate parameter for local codes
-- `group`, `A`, `B`: Expander graph components  
+- `group`, `A`, `B`: Expander graph components
 - `minweight_x`: Minimum weight for X-stabilizers
 - `minweight_z`: Minimum weight for Z-stabilizers
 - `max_iterations`: Maximum attempts to find a good code
+- `rng`: Random number generator used to construct candidate codes
 """
-function gen_good_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem}; minweight_x=1, minweight_z=1, bipartite=true, use_same_local_code=false, max_iterations=100)
+function gen_good_code(ρ::Real, group::Group, A::Vector{<:GroupElem}, B::Vector{<:GroupElem};
+                       minweight_x=1, minweight_z=1, bipartite=true,
+                       use_same_local_code=false, max_iterations=100,
+                       rng::AbstractRNG=GLOBAL_RNG)
     for i in 1:max_iterations
-        𝒞ˣ, 𝒞ᶻ = random_quantum_Tanner_code(ρ, group, A, B; bipartite, use_same_local_code)
+        𝒞ˣ, 𝒞ᶻ = random_quantum_Tanner_code(ρ, group, A, B; bipartite, use_same_local_code, rng)
         x_weight = minimum(unique(sum(𝒞ˣ, dims=1)))
         z_weight = minimum(unique(sum(𝒞ᶻ, dims=1)))
         if x_weight >= minweight_x && z_weight >= minweight_z

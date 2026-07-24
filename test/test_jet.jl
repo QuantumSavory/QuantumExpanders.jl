@@ -4,7 +4,8 @@ using QuantumExpanders
 
 using Oscar, Multigraphs
 
-rep = report_package("QuantumExpanders";
+rep = report_package(QuantumExpanders;
+    target_modules=(QuantumExpanders,),
     ignored_modules=(
         AnyFrameModule(Nemo),
         AnyFrameModule(Oscar),
