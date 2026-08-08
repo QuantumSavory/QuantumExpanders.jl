@@ -8,37 +8,45 @@ on:
     branches: [master, main]
     paths-ignore:
       - 'docs/**'
-env:
-  PYTHON: ~
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        version: ['1.12']
     steps:
       - uses: actions/checkout@v7
       - uses: julia-actions/setup-julia@v3
         with:
-          version: ${{ matrix.version }}
-      - name: Disable workspace directives for downgrade run
+          version: '1.12'
+      - uses: julia-actions/cache@v3
+        with:
+          delete-old-caches: false
+      - name: Prepare general test workspace
         run: |
           julia --color=yes -e '
             using TOML
+            write_toml(path, data) = open(io -> TOML.print(io, data), path, "w")
+
             project = TOML.parsefile("Project.toml")
-            if haskey(project, "workspace")
-              delete!(project, "workspace")
-              open("Project.toml", "w") do io
-                TOML.print(io, project)
-              end
-            end
+            project["workspace"]["projects"] = ["test"]
+            write_toml("Project.toml", project)
+
+            test_project = TOML.parsefile("test/Project.toml")
+            get!(test_project, "sources", Dict{String, Any}())["QuantumExpanders"] = Dict("path" => "..")
+            write_toml("test/Project.toml", test_project)
           '
-      - uses: julia-actions/julia-downgrade-compat@v2
+      - uses: julia-actions/julia-downgrade-compat@v2.7.0
         with:
-          skip: Pkg,TOML,InteractiveUtils,Random,LinearAlgebra,SparseArrays
+          skip: 'LinearAlgebra,Random,SparseArrays'
+          projects: '.,test'
           mode: 'forcedeps'
-          julia_version: ${{ matrix.version }}
-      - uses: julia-actions/cache@v3
+          julia_version: '1.12'
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
         with:
