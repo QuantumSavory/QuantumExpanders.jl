@@ -27,23 +27,19 @@ jobs:
       - uses: julia-actions/cache@v3
         with:
           delete-old-caches: false
-      - name: Prepare general test workspace
+      - name: Limit workspace to the test project
         run: |
           julia --color=yes -e '
             using TOML
-            write_toml(path, data) = open(io -> TOML.print(io, data), path, "w")
-
             project = TOML.parsefile("Project.toml")
             project["workspace"]["projects"] = ["test"]
-            write_toml("Project.toml", project)
-
-            test_project = TOML.parsefile("test/Project.toml")
-            get!(test_project, "sources", Dict{String, Any}())["QuantumExpanders"] = Dict("path" => "..")
-            write_toml("test/Project.toml", test_project)
+            open("Project.toml", "w") do io
+              TOML.print(io, project)
+            end
           '
       - uses: julia-actions/julia-downgrade-compat@v2.7.0
         with:
-          skip: 'LinearAlgebra,Random,SparseArrays'
+          skip: LinearAlgebra,Random,SparseArrays
           projects: '.,test'
           mode: 'forcedeps'
           julia_version: '1.12'
