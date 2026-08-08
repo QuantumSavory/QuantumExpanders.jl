@@ -39,8 +39,8 @@ jobs:
           '
       - uses: julia-actions/julia-downgrade-compat@v2.7.0
         with:
-          skip: LinearAlgebra,Random,SparseArrays
           projects: '.,test'
+          skip: LinearAlgebra,Random,SparseArrays
           mode: 'forcedeps'
           julia_version: '1.12'
       - uses: julia-actions/julia-buildpkg@v1
