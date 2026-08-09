@@ -32,5 +32,6 @@ QuantumExpanders = {path = ".."}
 [compat]
 # Pin native HiGHS before ERGO-Code/HiGHS#3141; remove after a fixed release.
 HiGHS = "=1.19.3"
+NautyGraphs = ">= 0.3.1"
 StableRNGs = "1"
 TestItemRunner = "1.1.5"
