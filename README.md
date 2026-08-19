@@ -1,5 +1,4 @@
-# QuantumExpanders.jl
-
+# QuantumExpanders.jl [![Paper](https://img.shields.io/badge/paper-arXiv%3A2608.12509-B31B1B.svg)](https://arxiv.org/pdf/2608.12509)
 <table>
     <tr>
         <td>Documentation</td>
