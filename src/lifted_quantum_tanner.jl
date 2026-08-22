@@ -176,11 +176,7 @@ useful for search heuristics.
 
 Given a finite group ``G``, two multisets ``A, B \\subseteq G`` (may contain repeats),
 and two pairs of dual classical codes on ``\\mathbb{F}_2^{n_A}`` and ``\\mathbb{F}_2^{n_B}``,
-the code has
-
-- ``n = n_A \\, n_B \\, |G|`` physical qubits
-- parity-check matrices ``H_X, H_Z`` given by [`parity_matrices`](@ref)
-- CSS orthogonality ``H_X H_Z^\\top = 0`` verified at construction
+the code has ``n = n_A \\, n_B \\, |G|`` physical qubits.
 
 ### Constructors
 
