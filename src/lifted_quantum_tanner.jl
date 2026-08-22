@@ -14,7 +14,7 @@ _to_int_matrix(H) = Matrix{Int}(mod.(lift.(H), 2))
 
 Given an element ``a \\in G`` and an indexing ``\\mathrm{idx} \\colon G \\to \\{1,\\dots,|G|\\}``
 of the group elements, ``L_a`` is the *permutation matrix* that sends the *basis vector* ``e_g``
-to ``e_{ag}``. Together with [`_rho`](@ref), these are the building blocks of the
+to ``e_{ag}``. Together with `_rho`, these are the building blocks of the
 lifted quantum Tanner construction of [leverrier2025small](@cite): commuting left/right
 translations on the group algebra ``\\mathbb{F}_2[G]``.
 
@@ -36,7 +36,7 @@ end
 *Right* multiplication permutation matrix ``R_b`` on ``\\mathbb{F}_2^{|G|}``.
 
 Given an element ``b \\in G``, ``R_b`` sends the *basis vector* ``e_g`` to ``e_{g b^{-1}}``.
-The inverse is used so that ``R_b`` and [`_lambda`](@ref) commute:
+The inverse is used so that ``R_b`` and `_lambda` commute:
 ``L_a R_b = R_b L_a`` for all ``a, b \\in G``. This commutation is what
 makes the lifted construction produce a valid CSS code.
 
@@ -55,7 +55,7 @@ end
 
 """
 Assemble the *block-diagonal* left/right translation operators
-``L_A`` and ``R_B`` used by [`parity_matrices`](@ref).
+``L_A`` and ``R_B`` used by `parity_matrices`.
 
 Concretely, for *generating multisets*
 ``A = (a_1, \\dots, a_{n_A})`` and ``B = (b_1, \\dots, b_{n_B})``:
@@ -107,20 +107,20 @@ H_Z = \\begin{pmatrix}
 \\end{pmatrix},
 ```
 
-where ``L_A, R_B`` are as in [`build_LA_RB`](@ref). Commutation of ``L_A`` and ``R_B``,
+where ``L_A, R_B`` are as in `build_LA_RB`. Commutation of ``L_A`` and ``R_B``,
 combined with ``H_i G_i^\\top = 0``, gives ``H_X H_Z^\\top = 0`` — a valid CSS code.
 
 The total block length is ``n = n_A \\, n_B \\, |G|``.
 
 ### Arguments
-- `LA`, `RB`: block-diagonal translation operators from [`build_LA_RB`](@ref)
+- `LA`, `RB`: block-diagonal translation operators from `build_LA_RB`
 - `n_G::Int`: group order ``|G|``
 - `H0, H1`: two parity-check matrices on the ``A``-side (``H_0, H_1 \\in \\mathbb{F}_2^{r \\times n_A}``)
 - `G0, G1`: matching generator matrices satisfying ``H_i G_i^\\top = 0``
 - `H0p, H1p, G0p, G1p`: analogous ``B``-side matrices with column count ``n_B``
 
 All inputs may be `Matrix{Int}` or Oscar ``\\mathbb{F}_2`` matrix types; they are
-converted internally via [`_to_int_matrix`](@ref).
+converted internally via `_to_int_matrix`.
 
 ### Returns
 Tuple `(HX, HZ)` of dense ``\\{0,1\\}`` matrices modulo 2.
@@ -259,8 +259,6 @@ julia> code_n(c), code_k(c)
 ### See also
 - [`QuantumTannerCode`](@ref) — the square-complex construction, useful for exhaustive
   search over ``(A, B)`` satisfying the total non-conjugacy condition.
-- [`parity_matrices`](@ref) and [`build_LA_RB`](@ref) — the underlying primitives.
-- [`dual_code`](@ref) — used to compute generator matrices from parity checks.
 
 ### Fields
     $TYPEDFIELDS
