@@ -1,13 +1,25 @@
 """
+Convert a matrix over `Int`, `zzModMatrix`, or other Oscar ``\\mathbb{F}_2``
+matrix type to a plain `Matrix{Int}` with entries reduced modulo 2.
+
+Used internally by the constructors of [`QuantumTannerViaLeftRightActions`](@ref)
+so that both hand-written parity matrices (`Matrix{Int}`) and outputs of
+[`dual_code`](@ref) (`zzModMatrix`) can be passed interchangeably.
+"""
+_to_int_matrix(H::AbstractMatrix{<:Integer}) = Matrix{Int}(mod.(H, 2))
+_to_int_matrix(H) = Matrix{Int}(mod.(lift.(H), 2))
+
+"""
 Left multiplication permutation matrix ``L_a`` on ``\\mathbb{F}_2^{|G|}``.
 
 Given an element ``a \\in G`` and an indexing ``\\mathrm{idx} \\colon G \\to \\{1,\\dots,|G|\\}``
-of the group elements, ``L_a`` is the permutation matrix that sends the basis vector ``e_g`` to ``e_{ag}``.
-Together with [`_rho`](@ref), these are the building blocks of the lifted quantum Tanner construction of
-[leverrier2025small](@cite): commuting left/right translations on the group algebra ``\\mathbb{F}_2[G]``.
+of the group elements, ``L_a`` is the permutation matrix that sends the basis vector ``e_g``
+to ``e_{ag}``. Together with [`_rho`](@ref), these are the building blocks of the
+lifted quantum Tanner construction of [leverrier2025small](@cite): commuting left/right
+translations on the group algebra ``\\mathbb{F}_2[G]``.
 
-Returned as a sparse matrix so that Kronecker products with the tensor-code parts stay sparse; only ``|G|``
-nonzero entries per generator.
+Returned as a sparse matrix so that Kronecker products with the tensor-code parts stay
+sparse; only ``|G|`` nonzero entries per generator.
 """
 function _lambda(a, idx)
     n = length(idx)
@@ -23,9 +35,10 @@ end
 """
 Right multiplication permutation matrix ``R_b`` on ``\\mathbb{F}_2^{|G|}``.
 
-Given an element ``b \\in G``, ``R_b`` sends the basis vector ``e_g`` to ``e_{g b^{-1}}``. The
-inverse is used so that ``R_b`` and [`_lambda`](@ref) commute: ``L_a R_b = R_b L_a`` for all ``a, b \\in G``.
-    This commutation is what makes the lifted construction produce a valid CSS code.
+Given an element ``b \\in G``, ``R_b`` sends the basis vector ``e_g`` to ``e_{g b^{-1}}``.
+The inverse is used so that ``R_b`` and [`_lambda`](@ref) commute:
+``L_a R_b = R_b L_a`` for all ``a, b \\in G``. This commutation is what
+makes the lifted construction produce a valid CSS code.
 
 See [leverrier2025small](@cite) equation (2) and the surrounding discussion.
 """
@@ -41,7 +54,8 @@ function _rho(b, idx)
 end
 
 """
-Assemble the block-diagonal left/right translation operators ``L_A`` and ``R_B`` used by [`parity_matrices`](@ref).
+Assemble the block-diagonal left/right translation operators
+``L_A`` and ``R_B`` used by [`parity_matrices`](@ref).
 
 Concretely, for generating multisets
 ``A = (a_1, \\dots, a_{n_A})`` and ``B = (b_1, \\dots, b_{n_B})``:
@@ -51,15 +65,16 @@ L_A = \\bigoplus_{i,j} L_{a_i}, \\qquad
 R_B = \\bigoplus_{i,j} R_{b_j},
 ```
 
-each block-diagonal with ``n_A \\cdot n_B`` blocks of size ``|G| \\times |G|``. The ordering interleaves
-``A`` and ``B`` so that a downstream Kronecker ``\\text{something} \\otimes I_{|G|}`` acts blockwise in the right way.
+each block-diagonal with ``n_A \\cdot n_B`` blocks of size ``|G| \\times |G|``.
+The ordering interleaves ``A`` and ``B`` so that a downstream Kronecker
+``\\text{something} \\otimes I_{|G|}`` acts blockwise in the right way.
 
-### Arguments
+# Arguments
 - `group`: finite group ``G`` (any Oscar group, iterated via `collect`)
 - `A::Vector`: multiset of ``n_A`` generators (may repeat elements)
 - `B::Vector`: multiset of ``n_B`` generators (may repeat elements)
 
-### Returns
+# Returns
 Tuple `(LA, RB)` of sparse ``|G| n_A n_B \\times |G| n_A n_B`` permutation matrices.
 """
 function build_LA_RB(group, A, B)
@@ -72,11 +87,12 @@ function build_LA_RB(group, A, B)
 end
 
 """
-Build the ``X`` and ``Z`` parity-check matrices of the lifted quantum Tanner code from
-equation (2) of [leverrier2025small](@cite).
+Build the ``X`` and ``Z`` parity-check matrices of the lifted quantum Tanner code
+from equation (2) of [leverrier2025small](@cite).
 
-Let ``\\mathcal{C}_i = \\ker H_i = \\mathrm{Im}(G_i^\\top)`` and ``\\mathcal{C}_i' = \\ker H_i' = \\mathrm{Im}(G_i'^\\top)``
-be the two pairs of dual classical codes on ``\\mathbb{F}_2^{n_A}`` and ``\\mathbb{F}_2^{n_B}`` respectively.
+Let ``\\mathcal{C}_i = \\ker H_i = \\mathrm{Im}(G_i^\\top)`` and
+``\\mathcal{C}_i' = \\ker H_i' = \\mathrm{Im}(G_i'^\\top)`` be the two pairs of dual
+classical codes on ``\\mathbb{F}_2^{n_A}`` and ``\\mathbb{F}_2^{n_B}`` respectively.
 The lifted quantum Tanner code has parity-check matrices
 
 ```math
@@ -96,14 +112,17 @@ combined with ``H_i G_i^\\top = 0``, gives ``H_X H_Z^\\top = 0`` — a valid CSS
 
 The total block length is ``n = n_A \\, n_B \\, |G|``.
 
-### Arguments
+# Arguments
 - `LA`, `RB`: block-diagonal translation operators from [`build_LA_RB`](@ref)
 - `n_G::Int`: group order ``|G|``
 - `H0, H1`: two parity-check matrices on the ``A``-side (``H_0, H_1 \\in \\mathbb{F}_2^{r \\times n_A}``)
 - `G0, G1`: matching generator matrices satisfying ``H_i G_i^\\top = 0``
 - `H0p, H1p, G0p, G1p`: analogous ``B``-side matrices with column count ``n_B``
 
-### Returns
+All inputs may be `Matrix{Int}` or Oscar ``\\mathbb{F}_2`` matrix types; they are
+converted internally via [`_to_int_matrix`](@ref).
+
+# Returns
 Tuple `(HX, HZ)` of dense ``\\{0,1\\}`` matrices modulo 2.
 
 # See also
@@ -111,6 +130,10 @@ Tuple `(HX, HZ)` of dense ``\\{0,1\\}`` matrices modulo 2.
 CSS orthogonality and assembles a full code from a group and generating sets.
 """
 function parity_matrices(LA, RB, n_G, H0, H1, G0, G1, H0p, H1p, G0p, G1p)
+    H0  = _to_int_matrix(H0);   H1  = _to_int_matrix(H1)
+    G0  = _to_int_matrix(G0);   G1  = _to_int_matrix(G1)
+    H0p = _to_int_matrix(H0p);  H1p = _to_int_matrix(H1p)
+    G0p = _to_int_matrix(G0p);  G1p = _to_int_matrix(G1p)
     I_G = sparse(1:n_G, 1:n_G, ones(Int, n_G))
     HX  = mod.(vcat(
         Matrix(kron(kron(sparse(H0),  sparse(G0p)), I_G)),
@@ -122,13 +145,15 @@ function parity_matrices(LA, RB, n_G, H0, H1, G0, G1, H0p, H1p, G0p, G1p)
 end
 
 """
-CSS orthogonality check helper: verifies ``H G^\\top = 0`` over ``\\mathbb{F}_2`` and that
-``G`` spans the full kernel of ``H`` (i.e. that ``H`` and ``G`` are exact duals).
+CSS orthogonality check helper: verifies ``H G^\\top = 0`` over ``\\mathbb{F}_2`` and
+that ``G`` spans the full kernel of ``H`` (i.e. that ``H`` and ``G`` are exact duals).
+Accepts either `Matrix{Int}` or Oscar ``\\mathbb{F}_2`` matrix types.
+Throws `ArgumentError` with `label` in the message on failure.
 """
 function _check_duality(H, G, label)
     F2 = GF(2)
-    Hm = matrix(F2, Matrix{Int}(H))
-    Gm = matrix(F2, Matrix{Int}(G))
+    Hm = matrix(F2, _to_int_matrix(H))
+    Gm = matrix(F2, _to_int_matrix(G))
     iszero(Hm * transpose(Gm)) ||
         throw(ArgumentError("$label: H·Gᵀ ≠ 0 over F_2"))
     rank(Gm) == size(H,2) - rank(Hm) ||
@@ -137,9 +162,10 @@ function _check_duality(H, G, label)
 end
 
 """
-Quantum Tanner code from the *lifted* left–right action construction of [leverrier2025small](@cite).
+Quantum Tanner code from the *lifted* left–right action construction of
+[leverrier2025small](@cite).
 
-This is an alternative to [`QuantumTannerCode`](@ref). Instead of the square-complex
+This is an alternative to [`QuantumTannerCode`](@ref) — instead of the square-complex
 description of Leverrier & Zémor [leverrier2022quantum](@cite), the code is presented
 as two classical Tanner codes lifted through commuting left and right actions of a
 finite group ``G`` on the group algebra ``\\mathbb{F}_2[G]``. The two presentations
@@ -182,7 +208,54 @@ QuantumTannerViaLeftRightActions(group, A, B,
 matrices directly. Useful when the two parity checks on a side are not related by a
 column permutation.
 
+All matrix arguments accept either `Matrix{Int}` or Oscar ``\\mathbb{F}_2`` matrix
+types (such as the output of [`dual_code`](@ref)); they are converted internally.
+
 # Examples
+
+A quantum Tanner code from ``\\mathcal{G} = \\text{SmallGroup}(12, 1)`` with a
+rectangular local-code pair — a ``[7, 3, 4]`` code on the ``A``-side and a
+``[9, 5, 3]`` code on the ``B``-side:
+
+```jldoctest lifted
+julia> using QuantumExpanders; using Oscar;
+
+julia> G734 = [1 0 1 1 1 0 0;
+               1 1 1 0 0 1 0;
+               0 1 1 1 0 0 1];
+
+julia> H734 = dual_code(G734);
+
+julia> G953 = [1 0 0 0 0 1 1 1 1;
+               0 1 0 0 0 1 1 1 0;
+               0 0 1 0 0 1 1 0 1;
+               0 0 0 1 0 1 0 1 1;
+               0 0 0 0 1 0 1 1 1];
+
+julia> H953 = dual_code(G953);
+
+julia> G = codomain(isomorphism(PermGroup, small_group(12, 1)));
+
+julia> A = [one(G), one(G),
+            cperm(G,[5,6,7]), cperm(G,[5,6,7]),
+            cperm(G,[1,4,3,2],[6,7]), cperm(G,[1,4,3,2],[6,7]),
+            cperm(G,[1,4,3,2],[5,7])];
+
+julia> B = [one(G), one(G),
+            cperm(G,[5,6,7]), cperm(G,[5,6,7]),
+            cperm(G,[1,4,3,2],[6,7]),
+            cperm(G,[1,4,3,2],[5,7]),
+            cperm(G,[1,4,3,2],[5,6]),
+            cperm(G,[1,2,3,4],[6,7]),
+            cperm(G,[1,2,3,4],[5,7])];
+
+julia> c = QuantumTannerViaLeftRightActions(G, A, B, H734, G734, H953, G953;
+                                            p1 = [1,2,3,4,5,6,7],
+                                            p2 = [1,2,3,4,5,7,8,9,6]);
+
+julia> code_n(c)
+756
+```
 
 # See also
 - [`QuantumTannerCode`](@ref) — the square-complex construction, useful for exhaustive
@@ -240,14 +313,15 @@ struct QuantumTannerViaLeftRightActions{GT, ET} <: AbstractCSSCode
         iszero(mod.(hx * hz', 2)) ||
             throw(ArgumentError("internal error: HX·HZᵀ ≠ 0 (CSS orthogonality violated)"))
         new{typeof(group), eltype(A)}(group, A, B,
-            Matrix{Int}(H0_A), Matrix{Int}(H1_A),
-            Matrix{Int}(G0_A), Matrix{Int}(G1_A),
-            Matrix{Int}(H0_B), Matrix{Int}(H1_B),
-            Matrix{Int}(G0_B), Matrix{Int}(G1_B), hx, hz)
+            _to_int_matrix(H0_A), _to_int_matrix(H1_A),
+            _to_int_matrix(G0_A), _to_int_matrix(G1_A),
+            _to_int_matrix(H0_B), _to_int_matrix(H1_B),
+            _to_int_matrix(G0_B), _to_int_matrix(G1_B), hx, hz)
     end
 end
 
-# Convenience constructor: user supplies (H, G) per side; second pair is a column permutation of the first.
+# Convenience constructor: user supplies (H, G) per side; second pair is a column
+# permutation of the first.
 function QuantumTannerViaLeftRightActions(group, A::Vector, B::Vector,
         H_A, G_A, H_B, G_B;
         p1 = collect(1:size(H_A,2)),
@@ -257,17 +331,21 @@ function QuantumTannerViaLeftRightActions(group, A::Vector, B::Vector,
         H_B, H_B[:,p2], G_B, G_B[:,p2])
 end
 
-# Simplest convenience constructor: only parity checks per side; generator matrices derived via dual_code.
+# Simplest convenience constructor: only parity checks per side; generator matrices
+# derived via dual_code.
 function QuantumTannerViaLeftRightActions(group, A::Vector, B::Vector,
-        H_A::Matrix, H_B::Matrix;
+        H_A::AbstractMatrix, H_B::AbstractMatrix;
         p1 = collect(1:size(H_A,2)),
         p2 = collect(1:size(H_B,2)))
     QuantumTannerViaLeftRightActions(group, A, B,
         H_A, dual_code(H_A), H_B, dual_code(H_B); p1 = p1, p2 = p2)
 end
 
-
 parity_matrix_x(c::QuantumTannerViaLeftRightActions) = c.hx
 parity_matrix_z(c::QuantumTannerViaLeftRightActions) = c.hz
 parity_matrix_xz(c::QuantumTannerViaLeftRightActions) = (c.hx, c.hz)
 code_n(c::QuantumTannerViaLeftRightActions) = size(c.hx, 2)
+function code_k(c::QuantumTannerViaLeftRightActions)
+    n = code_n(c)
+    return n - rank(matrix(GF(2), c.hx)) - rank(matrix(GF(2), c.hz))
+end

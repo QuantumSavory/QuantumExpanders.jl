@@ -55,6 +55,8 @@ export
     uniformly_random_code_checkmatrix, dual_code, good_css,
     normal_cayley_subset, GeneralizedQuantumTannerCode, find_random_generating_sets,
     # puncturing
-    puncture
+    puncture,
+    # implementation of lifted quantum Tanner codes https://arxiv.org/pdf/2608.12509
+    QuantumTannerViaLeftRightActions
 
 end #module
