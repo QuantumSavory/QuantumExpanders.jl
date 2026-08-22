@@ -51,7 +51,7 @@ Leverrier & Zémor (which is also available as `QuantumTannerCode`), but present
 classical Tanner codes on a square complex. This is much more convenient for
 search: multisets that maximise the classical Tanner distance on each
 `A`-slice and `B`-slice can be selected cheaply, before the more expensive
-quantum distance estimation runs. We have also discoverd codes using `QuantumTannerCode` as well.
+quantum distance estimation runs. We have also discovered codes using `QuantumTannerCode` as well.
 
 **Example**. Consider a quantum Tanner code from `SmallGroup(12, 1)` with a local-code pair (`[7,3,4]` on the `A`-side, `[9,5,3]` on the `B`-side):
 
