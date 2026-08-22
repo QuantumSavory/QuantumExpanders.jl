@@ -109,8 +109,11 @@ graph TD
     end
 
     subgraph "Deterministic construction"
-        DeterministicMethods --> QuantumTannerCode["`QuantumTannerCode`"]
-        DeterministicMethods --> GeneralizedQuantumTannerCode["`GeneralizedQuantumTannerCode`"]
+        DeterministicMethods --> SquareComplex["Square-complex construction"]
+        DeterministicMethods --> Lifted["Lifted construction"]
+        SquareComplex --> QuantumTannerCode["`QuantumTannerCode`"]
+        SquareComplex --> GeneralizedQuantumTannerCode["`GeneralizedQuantumTannerCode`"]
+        Lifted --> QuantumTannerViaLeftRightActions["`QuantumTannerViaLeftRightActions`"]
     end
 ```
 
