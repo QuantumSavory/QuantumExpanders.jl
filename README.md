@@ -42,12 +42,9 @@ To update, just type `up` in the package mode.
 ### Lifted quantum Tanner code construction
 
 In our recent paper [*Quantum Tanner Codes at Moderate
-Blocklength*](https://arxiv.org/pdf/2608.12509), we search for and report new
-instances of quantum Tanner codes at practical blocklengths using the lifted
-construction of [*Small quantum Tanner codes from left–right Cayley
-complexes*](https://arxiv.org/pdf/2512.20532). Every code in the main text of
-our paper is built via this construction, and it is now available in
-QuantumExpanders.jl as `QuantumTannerViaLeftRightActions`.
+Blocklength*](https://arxiv.org/pdf/2608.12509), we find explicit instances
+of quantum Tanner codes at moderate blocklengths using the lifted construction
+of [*Small quantum Tanner codes from left–right Cayley complexes*](https://arxiv.org/pdf/2512.20532). Every code in the main text of our paper is built via this construction, and it is now available in `QuantumExpanders.jl` as `QuantumTannerViaLeftRightActions`.
 
 The lifted construction is equivalent to the square-complex construction of
 Leverrier & Zémor (which is also available as `QuantumTannerCode`), but presents the code via commuting left and right actions on the group algebra rather than as

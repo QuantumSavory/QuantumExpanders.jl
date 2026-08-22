@@ -10,10 +10,10 @@ _to_int_matrix(H::AbstractMatrix{<:Integer}) = Matrix{Int}(mod.(H, 2))
 _to_int_matrix(H) = Matrix{Int}(mod.(lift.(H), 2))
 
 """
-Left multiplication permutation matrix ``L_a`` on ``\\mathbb{F}_2^{|G|}``.
+*Left* multiplication permutation matrix ``L_a`` on ``\\mathbb{F}_2^{|G|}``.
 
 Given an element ``a \\in G`` and an indexing ``\\mathrm{idx} \\colon G \\to \\{1,\\dots,|G|\\}``
-of the group elements, ``L_a`` is the permutation matrix that sends the basis vector ``e_g``
+of the group elements, ``L_a`` is the *permutation matrix* that sends the *basis vector* ``e_g``
 to ``e_{ag}``. Together with [`_rho`](@ref), these are the building blocks of the
 lifted quantum Tanner construction of [leverrier2025small](@cite): commuting left/right
 translations on the group algebra ``\\mathbb{F}_2[G]``.
@@ -33,9 +33,9 @@ function _lambda(a, idx)
 end
 
 """
-Right multiplication permutation matrix ``R_b`` on ``\\mathbb{F}_2^{|G|}``.
+*Right* multiplication permutation matrix ``R_b`` on ``\\mathbb{F}_2^{|G|}``.
 
-Given an element ``b \\in G``, ``R_b`` sends the basis vector ``e_g`` to ``e_{g b^{-1}}``.
+Given an element ``b \\in G``, ``R_b`` sends the *basis vector* ``e_g`` to ``e_{g b^{-1}}``.
 The inverse is used so that ``R_b`` and [`_lambda`](@ref) commute:
 ``L_a R_b = R_b L_a`` for all ``a, b \\in G``. This commutation is what
 makes the lifted construction produce a valid CSS code.
@@ -54,10 +54,10 @@ function _rho(b, idx)
 end
 
 """
-Assemble the block-diagonal left/right translation operators
+Assemble the *block-diagonal* left/right translation operators
 ``L_A`` and ``R_B`` used by [`parity_matrices`](@ref).
 
-Concretely, for generating multisets
+Concretely, for *generating multisets*
 ``A = (a_1, \\dots, a_{n_A})`` and ``B = (b_1, \\dots, b_{n_B})``:
 
 ```math
@@ -66,15 +66,15 @@ R_B = \\bigoplus_{i,j} R_{b_j},
 ```
 
 each block-diagonal with ``n_A \\cdot n_B`` blocks of size ``|G| \\times |G|``.
-The ordering interleaves ``A`` and ``B`` so that a downstream Kronecker
-``\\text{something} \\otimes I_{|G|}`` acts blockwise in the right way.
+The ordering interleaves ``A`` and ``B`` so that a Kronecker ``\\text{something} \\otimes I_{|G|}``
+acts blockwise in the right way.
 
-# Arguments
+### Arguments
 - `group`: finite group ``G`` (any Oscar group, iterated via `collect`)
 - `A::Vector`: multiset of ``n_A`` generators (may repeat elements)
 - `B::Vector`: multiset of ``n_B`` generators (may repeat elements)
 
-# Returns
+### Returns
 Tuple `(LA, RB)` of sparse ``|G| n_A n_B \\times |G| n_A n_B`` permutation matrices.
 """
 function build_LA_RB(group, A, B)
@@ -112,7 +112,7 @@ combined with ``H_i G_i^\\top = 0``, gives ``H_X H_Z^\\top = 0`` — a valid CSS
 
 The total block length is ``n = n_A \\, n_B \\, |G|``.
 
-# Arguments
+### Arguments
 - `LA`, `RB`: block-diagonal translation operators from [`build_LA_RB`](@ref)
 - `n_G::Int`: group order ``|G|``
 - `H0, H1`: two parity-check matrices on the ``A``-side (``H_0, H_1 \\in \\mathbb{F}_2^{r \\times n_A}``)
@@ -122,10 +122,10 @@ The total block length is ``n = n_A \\, n_B \\, |G|``.
 All inputs may be `Matrix{Int}` or Oscar ``\\mathbb{F}_2`` matrix types; they are
 converted internally via [`_to_int_matrix`](@ref).
 
-# Returns
+### Returns
 Tuple `(HX, HZ)` of dense ``\\{0,1\\}`` matrices modulo 2.
 
-# See also
+### See also
 [`QuantumTannerViaLeftRightActions`](@ref) is the high-level wrapper that verifies
 CSS orthogonality and assembles a full code from a group and generating sets.
 """
@@ -182,7 +182,7 @@ the code has
 - parity-check matrices ``H_X, H_Z`` given by [`parity_matrices`](@ref)
 - CSS orthogonality ``H_X H_Z^\\top = 0`` verified at construction
 
-# Constructors
+### Constructors
 
 Three constructors are exported, in increasing generality:
 
@@ -211,10 +211,9 @@ column permutation.
 All matrix arguments accept either `Matrix{Int}` or Oscar ``\\mathbb{F}_2`` matrix
 types (such as the output of [`dual_code`](@ref)); they are converted internally.
 
-# Examples
+### Examples
 
-Here is a quantum Tanner code from ``\\mathcal{G} = \\text{SmallGroup}(12, 1)`` with a
-rectangular local-code pair — a ``[7, 3, 4]`` code on the ``A``-side and a
+Here is a quantum Tanner code from ``\\mathcal{G} = \\text{SmallGroup}(12, 1)`` with a local-code pair — a ``[7, 3, 4]`` code on the ``A``-side and a
 ``[9, 5, 3]`` code on the ``B``-side:
 
 ```jldoctest lifted
@@ -257,13 +256,13 @@ julia> code_n(c), code_k(c)
 (756, 10)
 ```
 
-# See also
+### See also
 - [`QuantumTannerCode`](@ref) — the square-complex construction, useful for exhaustive
   search over ``(A, B)`` satisfying the total non-conjugacy condition.
 - [`parity_matrices`](@ref) and [`build_LA_RB`](@ref) — the underlying primitives.
 - [`dual_code`](@ref) — used to compute generator matrices from parity checks.
 
-# Fields
+### Fields
     $TYPEDFIELDS
 """
 struct QuantumTannerViaLeftRightActions{GT, ET} <: AbstractCSSCode
