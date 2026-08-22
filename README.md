@@ -39,7 +39,68 @@ pkg> add https://github.com/QuantumSavory/QuantumExpanders.jl.git
 
 To update, just type `up` in the package mode.
 
-The library provides the following methods to construct explicit instances of *quantum Tanner codes*.
+### Lifted quantum Tanner code construction
+
+In our recent paper [*Quantum Tanner Codes at Moderate
+Blocklength*](https://arxiv.org/pdf/2608.12509), we search for and report new
+instances of quantum Tanner codes at practical blocklengths using the lifted
+construction of [*Small quantum Tanner codes from left–right Cayley
+complexes*](https://arxiv.org/pdf/2512.20532). Every code in the main text of
+our paper is built via this construction, and it is now available in
+QuantumExpanders.jl as `QuantumTannerViaLeftRightActions`.
+
+The lifted construction is equivalent to the square-complex construction of
+Leverrier & Zémor (which is also available as `QuantumTannerCode`), but presents the code via commuting left and right actions on the group algebra rather than as
+classical Tanner codes on a square complex. This is much more convenient for
+search: multisets that maximise the classical Tanner distance on each
+`A`-slice and `B`-slice can be selected cheaply, before the more expensive
+quantum distance estimation runs. We have also discoverd codes using `QuantumTannerCode` as well.
+
+**Example**. Consider a quantum Tanner code from `SmallGroup(12, 1)` with a local-code pair (`[7,3,4]` on the `A`-side, `[9,5,3]` on the `B`-side):
+
+```julia
+julia> using QuantumExpanders, Oscar
+
+julia> G734 = [1 0 1 1 1 0 0;
+               1 1 1 0 0 1 0;
+               0 1 1 1 0 0 1];
+
+julia> H734 = dual_code(G734);
+
+julia> G953 = [1 0 0 0 0 1 1 1 1;
+               0 1 0 0 0 1 1 1 0;
+               0 0 1 0 0 1 1 0 1;
+               0 0 0 1 0 1 0 1 1;
+               0 0 0 0 1 0 1 1 1];
+
+julia> H953 = dual_code(G953);
+
+julia> G = codomain(isomorphism(PermGroup, small_group(12, 1)));
+
+julia> A = [one(G), one(G),
+            cperm(G,[5,6,7]), cperm(G,[5,6,7]),
+            cperm(G,[1,4,3,2],[6,7]), cperm(G,[1,4,3,2],[6,7]),
+            cperm(G,[1,4,3,2],[5,7])];
+
+julia> B = [one(G), one(G),
+            cperm(G,[5,6,7]), cperm(G,[5,6,7]),
+            cperm(G,[1,4,3,2],[6,7]),
+            cperm(G,[1,4,3,2],[5,7]),
+            cperm(G,[1,4,3,2],[5,6]),
+            cperm(G,[1,2,3,4],[6,7]),
+            cperm(G,[1,2,3,4],[5,7])];
+
+julia> c = QuantumTannerViaLeftRightActions(G, A, B, H734, G734, H953, G953;
+                                            p1 = [1,2,3,4,5,6,7],
+                                            p2 = [1,2,3,4,5,7,8,9,6]);
+
+julia> code_n(c), code_k(c)
+(756, 10)
+```
+
+Distance estimation on codes of this size uses external tools such as
+[sqetch](https://github.com/a7b/yarn) (GPU random-ISD estimator) or
+[QDistRnd](https://github.com/QEC-pages/QDistRnd) (GAP-based).
 
 ```mermaid
 graph TD

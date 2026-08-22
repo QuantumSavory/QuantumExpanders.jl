@@ -213,7 +213,7 @@ types (such as the output of [`dual_code`](@ref)); they are converted internally
 
 # Examples
 
-A quantum Tanner code from ``\\mathcal{G} = \\text{SmallGroup}(12, 1)`` with a
+Here is a quantum Tanner code from ``\\mathcal{G} = \\text{SmallGroup}(12, 1)`` with a
 rectangular local-code pair — a ``[7, 3, 4]`` code on the ``A``-side and a
 ``[9, 5, 3]`` code on the ``B``-side:
 
@@ -253,8 +253,8 @@ julia> c = QuantumTannerViaLeftRightActions(G, A, B, H734, G734, H953, G953;
                                             p1 = [1,2,3,4,5,6,7],
                                             p2 = [1,2,3,4,5,7,8,9,6]);
 
-julia> code_n(c)
-756
+julia> code_n(c), code_k(c)
+(756, 10)
 ```
 
 # See also
