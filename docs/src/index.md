@@ -115,7 +115,7 @@ julia> (dx, dz)
 ## Lifted quantum Tanner code example
 
 The lifted construction works directly with commuting left and right actions of a
-finite group. For example, the following reconstructs a ``[[288, 8, ]]`` quantum
+finite group. For example, the following reconstructs a ``[[288, 8, (≤ 15, ≤ 15)]]`` quantum
 Tanner code over ``S_3``:
 
 ```julia
