@@ -1,66 +1,130 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>QuantumExpanders.jl · QuantumExpanders.jl</title><meta name="title" content="QuantumExpanders.jl · QuantumExpanders.jl"/><meta property="og:title" content="QuantumExpanders.jl · QuantumExpanders.jl"/><meta property="twitter:title" content="QuantumExpanders.jl · QuantumExpanders.jl"/><meta name="description" content="Documentation for QuantumExpanders.jl."/><meta property="og:description" content="Documentation for QuantumExpanders.jl."/><meta property="twitter:description" content="Documentation for QuantumExpanders.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="assets/documentercitations/citations-hover.css" rel="stylesheet" type="text/css"/><link href="assets/documentercitations/citations.css" rel="stylesheet" type="text/css"/><script src="assets/documentercitations/citations-data.js"></script><script src="assets/documentercitations/citations-hover.js"></script><script src="assets/documentercitations/citations-backlinks.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href>QuantumExpanders.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li class="is-active"><a class="tocitem" href>QuantumExpanders.jl</a><ul class="internal"><li><a class="tocitem" href="#Quick-Example"><span>Quick Example</span></a></li></ul></li><li><a class="tocitem" href="quantum_tanner/">Quantum Tanner Codes</a></li><li><a class="tocitem" href="lps/">Lubotzky–Phillips–Sarnak Ramanujan Graphs</a></li><li><a class="tocitem" href="morgenstern/">Morgenstern Ramanujan Graphs</a></li><li><a class="tocitem" href="API/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>QuantumExpanders.jl</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>QuantumExpanders.jl</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/QuantumSavory/QuantumExpanders.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/QuantumSavory/QuantumExpanders.jl/blob/main/docs/src/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="QuantumExpanders.jl"><a class="docs-heading-anchor" href="#QuantumExpanders.jl">QuantumExpanders.jl</a><a id="QuantumExpanders.jl-1"></a><a class="docs-heading-anchor-permalink" href="#QuantumExpanders.jl" title="Permalink"></a></h1><p>A Julia library for constructing quantum Tanner codes and related expander-based quantum LDPC codes, built on top of <a href="https://www.oscar-system.org/">Oscar</a>, <a href="https://github.com/QuantumSavory/QECCore.jl">QECCore</a>, and <a href="https://github.com/QuantumSavory/QuantumClifford.jl">QuantumClifford</a>.</p><p>The library provides the following methods to construct explicit instances of <em>quantum Tanner codes</em> — see the <a href="quantum_tanner/#quantum-tanner-codes">Quantum Tanner Codes</a> page for background on the construction and its parameters.</p><div class="mermaid">graph TD
-    QuantumTannerCodes[&quot;Quantum Tanner Codes&quot;] --&gt; RandomMethods[&quot;Random Methods&quot;]
-    QuantumTannerCodes --&gt; DeterministicMethods[&quot;Deterministic Methods&quot;]
-    subgraph &quot;Random construction&quot;
-        RandomMethods --&gt; RandomQuantumTannerCode[&quot;`random_quantum_Tanner_code`&quot;]
-    end
-    subgraph &quot;Deterministic construction&quot;
-        DeterministicMethods --&gt; QuantumTannerCode[&quot;`QuantumTannerCode`&quot;]
-        DeterministicMethods --&gt; GeneralizedQuantumTannerCode[&quot;`GeneralizedQuantumTannerCode`&quot;]
-    end</div><h2 id="Quick-Example"><a class="docs-heading-anchor" href="#Quick-Example">Quick Example</a><a id="Quick-Example-1"></a><a class="docs-heading-anchor-permalink" href="#Quick-Example" title="Permalink"></a></h2><p>Constructing a random quantum Tanner code from <a href="morgenstern/#morgenstern-graphs">Morgenstern generators</a> of <span>$SL_2(\mathbb{F}_4)$</span>:</p><pre><code class="language-julia hljs">julia&gt; using QuantumExpanders, Oscar, QuantumClifford, QuantumClifford.ECC, QECCore
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>QuantumExpanders.jl · QuantumExpanders.jl</title><meta name="title" content="QuantumExpanders.jl · QuantumExpanders.jl"/><meta property="og:title" content="QuantumExpanders.jl · QuantumExpanders.jl"/><meta property="twitter:title" content="QuantumExpanders.jl · QuantumExpanders.jl"/><meta name="description" content="Documentation for QuantumExpanders.jl."/><meta property="og:description" content="Documentation for QuantumExpanders.jl."/><meta property="twitter:description" content="Documentation for QuantumExpanders.jl."/><script data-outdated-warner src="assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="search_index.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script><link href="assets/documentercitations/citations-hover.css" rel="stylesheet" type="text/css"/><link href="assets/documentercitations/citations.css" rel="stylesheet" type="text/css"/><script src="assets/documentercitations/citations-data.js"></script><script src="assets/documentercitations/citations-hover.js"></script><script src="assets/documentercitations/citations-backlinks.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href>QuantumExpanders.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li class="is-active"><a class="tocitem" href>QuantumExpanders.jl</a><ul class="internal"><li><a class="tocitem" href="#Quantum-Tanner-code-constructions"><span>Quantum Tanner code constructions</span></a></li><li><a class="tocitem" href="#LRCC-quick-example"><span>LRCC quick example</span></a></li><li><a class="tocitem" href="#Lifted-quantum-Tanner-code-example"><span>Lifted quantum Tanner code example</span></a></li><li><a class="tocitem" href="#Explicit-Ramanujan-graph-constructions"><span>Explicit Ramanujan graph constructions</span></a></li><li><a class="tocitem" href="#Package-overview"><span>Package overview</span></a></li></ul></li><li><a class="tocitem" href="quantum_tanner/">Quantum Tanner Codes</a></li><li><a class="tocitem" href="quantum_tanner_left_right_actions/">Quantum Tanner Codes via Left-Right Actions</a></li><li><a class="tocitem" href="lps/">Lubotzky–Phillips–Sarnak Ramanujan Graphs</a></li><li><a class="tocitem" href="morgenstern/">Morgenstern Ramanujan Graphs</a></li><li><a class="tocitem" href="API/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>QuantumExpanders.jl</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>QuantumExpanders.jl</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/QuantumSavory/QuantumExpanders.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/QuantumSavory/QuantumExpanders.jl/blob/main/docs/src/index.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="QuantumExpanders.jl"><a class="docs-heading-anchor" href="#QuantumExpanders.jl">QuantumExpanders.jl</a><a id="QuantumExpanders.jl-1"></a><a class="docs-heading-anchor-permalink" href="#QuantumExpanders.jl" title="Permalink"></a></h1><p><code>QuantumExpanders.jl</code> is a Julia library for constructing <strong>quantum Tanner codes</strong> and related expander-based quantum LDPC codes. It is built on top of <a href="https://www.oscar-system.org/">Oscar</a>, <a href="https://github.com/QuantumSavory/QECCore.jl">QECCore</a>, and <a href="https://github.com/QuantumSavory/QuantumClifford.jl">QuantumClifford</a>.</p><p>The package supports both the original <strong>left-right Cayley complex (LRCC)</strong> description of quantum Tanner codes and the newer <strong>lifted left-right action</strong> description. It also provides explicit constructions of Ramanujan graphs that can be used independently of the quantum-code routines.</p><p>For background on quantum Tanner codes, see <a href="quantum_tanner/#quantum-tanner-codes">Quantum Tanner Codes</a>.</p><h2 id="Quantum-Tanner-code-constructions"><a class="docs-heading-anchor" href="#Quantum-Tanner-code-constructions">Quantum Tanner code constructions</a><a id="Quantum-Tanner-code-constructions-1"></a><a class="docs-heading-anchor-permalink" href="#Quantum-Tanner-code-constructions" title="Permalink"></a></h2><div class="mermaid">flowchart TD
+    QT[&quot;Quantum Tanner Codes&quot;]
+
+    QT --&gt; LRCC[&quot;LRCC construction&quot;]
+    QT --&gt; Lifted[&quot;Lifted left-right actions&quot;]
+    QT --&gt; Search[&quot;Randomized search helpers&quot;]
+
+    LRCC --&gt; QTC[&quot;QuantumTannerCode&quot;]
+    LRCC --&gt; GQTC[&quot;GeneralizedQuantumTannerCode&quot;]
+
+    Lifted --&gt; LRA[&quot;QuantumTannerViaLeftRightActions&quot;]
+
+    Search --&gt; RQTC[&quot;random_quantum_Tanner_code&quot;]</div><h3 id="[QuantumTannerCode](@ref)"><a class="docs-heading-anchor" href="#[QuantumTannerCode](@ref)"><a href="API/#QuantumExpanders.QuantumTannerCode"><code>QuantumTannerCode</code></a></a><a id="[QuantumTannerCode](@ref)-1"></a><a class="docs-heading-anchor-permalink" href="#[QuantumTannerCode](@ref)" title="Permalink"></a></h3><p>Constructs a quantum Tanner code directly from the <strong>bipartite LRCC</strong>. This is the geometric square-complex description and requires symmetric generating sets satisfying the total non-conjugacy condition.</p><h3 id="[QuantumTannerViaLeftRightActions](@ref)"><a class="docs-heading-anchor" href="#[QuantumTannerViaLeftRightActions](@ref)"><a href="API/#QuantumExpanders.QuantumTannerViaLeftRightActions"><code>QuantumTannerViaLeftRightActions</code></a></a><a id="[QuantumTannerViaLeftRightActions](@ref)-1"></a><a class="docs-heading-anchor-permalink" href="#[QuantumTannerViaLeftRightActions](@ref)" title="Permalink"></a></h3><p>Constructs the same QT-code framework from the <strong>lifted algebraic description</strong>, using commuting left and right regular actions of a finite group. This form is especially useful for explicit code searches, repeated group elements, and independent local-code lengths.</p><h3 id="random_quantum_Tanner_code"><a class="docs-heading-anchor" href="#random_quantum_Tanner_code"><code>random_quantum_Tanner_code</code></a><a id="random_quantum_Tanner_code-1"></a><a class="docs-heading-anchor-permalink" href="#random_quantum_Tanner_code" title="Permalink"></a></h3><p>Provides a convenient randomized interface for generating local codes and constructing LRCC-based quantum Tanner codes from a chosen group and generating sets.</p><h2 id="LRCC-quick-example"><a class="docs-heading-anchor" href="#LRCC-quick-example">LRCC quick example</a><a id="LRCC-quick-example-1"></a><a class="docs-heading-anchor-permalink" href="#LRCC-quick-example" title="Permalink"></a></h2><p>The following example constructs a quantum Tanner code using explicit <a href="morgenstern/#morgenstern-graphs">Morgenstern generators</a> of <span>$\mathrm{SL}_2(\mathbb{F}_4)$</span>.</p><pre><code class="language-julia hljs">julia&gt; using QuantumExpanders, Oscar, QECCore, QuantumClifford, QuantumClifford.ECC
 
 julia&gt; using Random: MersenneTwister
 
 julia&gt; l = 1; i = 2;
 
-julia&gt; q = 2^l
-2
+julia&gt; SL₂, B = morgenstern_generators(l, i);
 
-julia&gt; Δ = q + 1
-3
-
-julia&gt; SL₂, B = morgenstern_generators(l, i)
-[ Info: |SL₂(𝔽(4))| = 60
-(SL(2,4), Oscar.MatrixGroupElem{Nemo.FqFieldElem, Nemo.FqMatrix}[[o+1 o+1; 1 o+1], [o+1 1; o+1 o+1], [o+1 o; o o+1]])
-
-julia&gt; A = alternative_morgenstern_generators(B, FirstOnly())
-4-element Vector{Oscar.MatrixGroupElem{Nemo.FqFieldElem, Nemo.FqMatrix}}:
- [0 1; 1 o+1]
- [o+1 1; 1 0]
- [o+1 o+1; o 0]
- [0 o+1; o o+1]
+julia&gt; A = alternative_morgenstern_generators(B, FirstOnly());
 
 julia&gt; rng = MersenneTwister(892529278);
 
-julia&gt; hx, hz = random_quantum_Tanner_code(0.75, SL₂, A, B, rng=rng);
-(length(group), length(A), length(B)) = (60, 4, 3)
-length(group) * length(A) * length(B) = 720
-[ Info: |V₀| = |V₁| = |G| = 60
-[ Info: |E_A| = Δ|G| = 240, |E_B| = Δ|G| = 180
-[ Info: |Q| = Δ²|G|/2 = 360
-Hᴬ = [1 1 1 0]
-Hᴮ = [0 1 1; 1 1 0]
-Cᴬ = [1 1 0 0; 1 0 1 0; 0 0 0 1]
-Cᴮ = [1 1 1]
-size(Cˣ) = (3, 12)
-size(Cᶻ) = (2, 12)
-r1 = rank(𝒞ˣ) = 179
-r2 = rank(𝒞ᶻ) = 120</code></pre><p>The resulting parity check matrices define a CSS code whose parameters can be computed with <code>QECCore</code> and <code>QuantumClifford.ECC</code>:</p><pre><code class="language-julia hljs">julia&gt; c = CSS(hx, hz);
+julia&gt; hx, hz = random_quantum_Tanner_code(
+           0.75,
+           SL₂,
+           A,
+           B;
+           rng = rng,
+       );
 
-julia&gt; import JuMP; import HiGHS;
+julia&gt; c = CSS(hx, hz);
 
 julia&gt; code_n(c), code_k(c)
-(360, 61)
+(360, 61)</code></pre><p>The parity-check matrices can be passed directly to the rest of the <code>QECCore</code> / <code>QuantumClifford.ECC</code> ecosystem. For example, one may estimate or compute distances using any supported distance algorithm:</p><pre><code class="language-julia hljs">julia&gt; import JuMP; import HiGHS
 
-julia&gt; distance(c, DistanceMIPAlgorithm(solver = HiGHS.Optimizer, logical_operator_type = :Z, time_limit = 900)),
-       distance(c, DistanceMIPAlgorithm(solver = HiGHS.Optimizer, logical_operator_type = :X, time_limit = 900))
-(3, 10)</code></pre><p>The library also provides two <strong>explicit constructions</strong> of <a href="https://en.wikipedia.org/wiki/Ramanujan_graph">Ramanujan graphs</a>, which can be used independently of the quantum code constructions:</p><div class="mermaid">flowchart TB
-    A[&quot;Ramanujan Graphs&quot;]
-    A --&gt; B[&quot;Lubotzky–Phillips–Sarnak &lt;br&gt;(1986)&lt;br/&gt;&quot;]
-    A --&gt; C[&quot;Morgenstern (1994)&lt;br/&gt;(even prime power q)&quot;]</div><p>See the <a href="lps/#lps-graphs">Lubotzky–Phillips–Sarnak</a> and <a href="morgenstern/#morgenstern-graphs">Morgenstern</a> pages for the constructions, their spectral, <a href="https://en.wikipedia.org/wiki/Girth_(graph_theory)">girth</a>, <a href="https://en.wikipedia.org/wiki/Diameter_(graph_theory)">diameter</a>, <a href="https://en.wikipedia.org/wiki/Graph_coloring">chromatic</a>, and <a href="https://en.wikipedia.org/wiki/Independent_set_(graph_theory)">independence properties</a>, and worked examples verifying each property.</p><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+julia&gt; dz = distance(
+           c,
+           DistanceMIPAlgorithm(
+               solver = HiGHS.Optimizer,
+               logical_operator_type = :Z,
+               time_limit = 900,
+           ),
+       );
+
+julia&gt; dx = distance(
+           c,
+           DistanceMIPAlgorithm(
+               solver = HiGHS.Optimizer,
+               logical_operator_type = :X,
+               time_limit = 900,
+           ),
+       );
+
+julia&gt; (dx, dz)
+(10, 3)</code></pre><h2 id="Lifted-quantum-Tanner-code-example"><a class="docs-heading-anchor" href="#Lifted-quantum-Tanner-code-example">Lifted quantum Tanner code example</a><a id="Lifted-quantum-Tanner-code-example-1"></a><a class="docs-heading-anchor-permalink" href="#Lifted-quantum-Tanner-code-example" title="Permalink"></a></h2><p>The lifted construction works directly with commuting left and right actions of a finite group. For example, the following reconstructs a <span>$[[288, 8, (≤ 15, ≤ 15)]]$</span> quantum Tanner code over <span>$S_3$</span>:</p><pre><code class="language-julia hljs">julia&gt; using QuantumExpanders, Oscar, QECCore
+
+julia&gt; G = codomain(isomorphism(PermGroup, small_group(6, 1)));
+
+julia&gt; A = [
+           one(G),
+           one(G),
+           cperm(G, [2,3]),
+           cperm(G, [2,3]),
+           cperm(G, [1,2,3]),
+           cperm(G, [1,2]),
+           cperm(G, [1,2]),
+           cperm(G, [1,3,2]),
+       ];
+
+julia&gt; B = [
+           one(G),
+           one(G),
+           cperm(G, [2,3]),
+           cperm(G, [1,2,3]),
+           cperm(G, [1,2]),
+           cperm(G, [1,3,2]),
+       ];
+
+julia&gt; H844 = [
+           1 0 0 0 0 1 1 1;
+           0 1 0 0 1 0 1 1;
+           0 0 1 0 1 1 0 1;
+           0 0 0 1 1 1 1 0
+       ];
+
+julia&gt; G844 = [
+           0 1 1 1 1 0 0 0;
+           1 0 1 1 0 1 0 0;
+           1 1 0 1 0 0 1 0;
+           1 1 1 0 0 0 0 1
+       ];
+
+julia&gt; H633 = [
+           1 0 0 0 1 1;
+           0 1 0 1 0 1;
+           0 0 1 1 1 0
+       ];
+
+julia&gt; G633 = [
+           0 1 1 1 0 0;
+           1 0 1 0 1 0;
+           1 1 0 0 0 1
+       ];
+
+julia&gt; c = QuantumTannerViaLeftRightActions(
+           G,
+           A,
+           B,
+           H844,
+           G844,
+           H633,
+           G633;
+           p1 = 1:8,
+           p2 = [1,2,4,3,6,5],
+       );
+
+julia&gt; code_n(c), code_k(c)
+(288, 8)</code></pre><p>The corresponding CSS parity-check matrices are available through</p><pre><code class="language-julia hljs">julia&gt; hx, hz = parity_matrix_xz(c);</code></pre><p>For the construction itself, see <a href="quantum_tanner_left_right_actions/#quantum-tanner-left-right-actions">Quantum Tanner Codes via Left-Right Actions</a>, which explains the multisets <span>$A,B$</span>, the column permutations <span>$p1,p2$</span>, and the commuting left/right regular actions.</p><h2 id="Explicit-Ramanujan-graph-constructions"><a class="docs-heading-anchor" href="#Explicit-Ramanujan-graph-constructions">Explicit Ramanujan graph constructions</a><a id="Explicit-Ramanujan-graph-constructions-1"></a><a class="docs-heading-anchor-permalink" href="#Explicit-Ramanujan-graph-constructions" title="Permalink"></a></h2><p><code>QuantumExpanders.jl</code> also implements two explicit families of Ramanujan graphs:</p><div class="mermaid">flowchart TB
+    R[&quot;Ramanujan Graphs&quot;]
+
+    R --&gt; LPS[&quot;Lubotzky–Phillips–Sarnak&lt;br/&gt;odd prime-power setting&quot;]
+    R --&gt; Morgenstern[&quot;Morgenstern&lt;br/&gt;even prime-power setting&quot;]</div><p>These graph constructions can be used independently of the quantum Tanner code routines.</p><ul><li><a href="lps/#lps-graphs">Lubotzky–Phillips–Sarnak</a></li><li><a href="morgenstern/#morgenstern-graphs">Morgenstern</a></li></ul><p>The corresponding documentation pages include worked examples and utilities for studying spectral expansion, girth, diameter, chromatic number, and independence properties.</p><h2 id="Package-overview"><a class="docs-heading-anchor" href="#Package-overview">Package overview</a><a id="Package-overview-1"></a><a class="docs-heading-anchor-permalink" href="#Package-overview" title="Permalink"></a></h2><p>The main workflows are:</p><ul><li>construct QT codes directly from LRCC data with <a href="API/#QuantumExpanders.QuantumTannerCode"><code>QuantumTannerCode</code></a>;</li><li>construct lifted QT codes with <a href="API/#QuantumExpanders.QuantumTannerViaLeftRightActions"><code>QuantumTannerViaLeftRightActions</code></a>;</li><li>generate candidate QT codes with <code>random_quantum_Tanner_code</code>;</li><li>construct explicit LPS and Morgenstern Ramanujan graphs;</li><li>pass the resulting CSS parity-check matrices to <code>QECCore</code> and <code>QuantumClifford.ECC</code> for code analysis and decoding workflows.</li></ul><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="quantum_tanner/">Quantum Tanner Codes »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 25 August 2026 13:28">Tuesday 25 August 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="quantum_tanner/">Quantum Tanner Codes »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 25 August 2026 23:12">Tuesday 25 August 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

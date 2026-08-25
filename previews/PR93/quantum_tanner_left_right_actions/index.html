@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Quantum Tanner Codes via Left-Right Actions · QuantumExpanders.jl</title><meta name="title" content="Quantum Tanner Codes via Left-Right Actions · QuantumExpanders.jl"/><meta property="og:title" content="Quantum Tanner Codes via Left-Right Actions · QuantumExpanders.jl"/><meta property="twitter:title" content="Quantum Tanner Codes via Left-Right Actions · QuantumExpanders.jl"/><meta name="description" content="Documentation for QuantumExpanders.jl."/><meta property="og:description" content="Documentation for QuantumExpanders.jl."/><meta property="twitter:description" content="Documentation for QuantumExpanders.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/documentercitations/citations-hover.css" rel="stylesheet" type="text/css"/><link href="../assets/documentercitations/citations.css" rel="stylesheet" type="text/css"/><script src="../assets/documentercitations/citations-data.js"></script><script src="../assets/documentercitations/citations-hover.js"></script><script src="../assets/documentercitations/citations-backlinks.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">QuantumExpanders.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">QuantumExpanders.jl</a></li><li><a class="tocitem" href="../quantum_tanner/">Quantum Tanner Codes</a></li><li class="is-active"><a class="tocitem" href>Quantum Tanner Codes via Left-Right Actions</a><ul class="internal"><li><a class="tocitem" href="#Construction"><span>Construction</span></a></li><li><a class="tocitem" href="#Left-and-right-regular-actions"><span>Left and right regular actions</span></a></li><li><a class="tocitem" href="#Lifted-parity-check-matrices"><span>Lifted parity-check matrices</span></a></li><li><a class="tocitem" href="#Constructors"><span>Constructors</span></a></li><li><a class="tocitem" href="#Example"><span>Example</span></a></li><li><a class="tocitem" href="#Multisets-and-repeated-elements"><span>Multisets and repeated elements</span></a></li><li><a class="tocitem" href="#Accessing-the-code"><span>Accessing the code</span></a></li><li><a class="tocitem" href="#Choosing-between-the-two-QT-constructions"><span>Choosing between the two QT constructions</span></a></li><li><a class="tocitem" href="#API"><span>API</span></a></li><li><a class="tocitem" href="#References"><span>References</span></a></li></ul></li><li><a class="tocitem" href="../lps/">Lubotzky–Phillips–Sarnak Ramanujan Graphs</a></li><li><a class="tocitem" href="../morgenstern/">Morgenstern Ramanujan Graphs</a></li><li><a class="tocitem" href="../API/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Quantum Tanner Codes via Left-Right Actions</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Quantum Tanner Codes via Left-Right Actions</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/QuantumSavory/QuantumExpanders.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/QuantumSavory/QuantumExpanders.jl/blob/main/docs/src/quantum_tanner_left_right_actions.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="quantum-tanner-left-right-actions"><a class="docs-heading-anchor" href="#quantum-tanner-left-right-actions">Quantum Tanner Codes via Left-Right Actions</a><a id="quantum-tanner-left-right-actions-1"></a><a class="docs-heading-anchor-permalink" href="#quantum-tanner-left-right-actions" title="Permalink"></a></h1><p><a href="../API/#QuantumExpanders.QuantumTannerViaLeftRightActions"><code>QuantumTannerViaLeftRightActions</code></a> constructs quantum Tanner (QT) codes using the <strong>lifted left-right action description</strong>. Instead of building the code through the square-complex geometry of the original LRCC construction, this description lifts a small CSS template through the commuting left and right regular actions of a finite group, following the lifting formulation of (<a href="../API/#leverrier2025small" id="leverrier2025small-cite-1">Leverrier <em>et al.</em>, 2025</a>).</p><p>This construction is particularly convenient for explicit code searches because:</p><ul><li>the two local-code lengths may be different;</li><li><span>$A$</span> and <span>$B$</span> are <strong>multisets</strong>, so repeated group elements are allowed;</li><li>the total non-conjugacy condition required by the bipartite LRCC construction is not needed; and</li><li>different column permutations of the local codes can be searched efficiently.</li></ul><p>For the geometric LRCC description, see <a href="../quantum_tanner/#quantum-tanner-codes">Quantum Tanner Codes</a>.</p><h2 id="Construction"><a class="docs-heading-anchor" href="#Construction">Construction</a><a id="Construction-1"></a><a class="docs-heading-anchor-permalink" href="#Construction" title="Permalink"></a></h2><p>Let <span>$G$</span> be a finite group and let</p><p class="math-container">\[A=(a_1,\\ldots,a_{n_A}),
+\\qquad
+B=(b_1,\\ldots,b_{n_B})\]</p><p>be two multisets of elements of <span>$G$</span>.</p><p>On the <span>$A$</span> side, choose two binary linear codes</p><p class="math-container">\[C_i=\\ker H_i=\\operatorname{Im}(G_i^\\mathsf{T}),
+\\qquad i\\in\\{0,1\\},\]</p><p>of length <span>$n_A$</span>. On the <span>$B$</span> side, choose</p><p class="math-container">\[C_i&#39;=\\ker H_i&#39;=\\operatorname{Im}(G_i&#39;^\\mathsf{T}),
+\\qquad i\\in\\{0,1\\},\]</p><p>of length <span>$n_B$</span>.</p><p>The construction starts from a base CSS code on an <span>$n_A\\times n_B$</span> grid. Its parity-check matrices are</p><p class="math-container">\[H_X^{\\mathrm{base}}
+=
+\\begin{pmatrix}
+H_0\\otimes G_0&#39;\\
+H_1\\otimes G_1&#39;
+\\end{pmatrix},
+\\qquad
+H_Z^{\\mathrm{base}}
+=
+\\begin{pmatrix}
+G_0\\otimes H_1&#39;\\
+G_1\\otimes H_0&#39;
+\\end{pmatrix}.\]</p><p>The lift replaces every base qubit by a fiber of <span>$|G|$</span> qubits.</p><h2 id="Left-and-right-regular-actions"><a class="docs-heading-anchor" href="#Left-and-right-regular-actions">Left and right regular actions</a><a id="Left-and-right-regular-actions-1"></a><a class="docs-heading-anchor-permalink" href="#Left-and-right-regular-actions" title="Permalink"></a></h2><p>For <span>$a,b\\in G$</span>, define permutation matrices <span>$L_a$</span> and <span>$R_b$</span> on the group algebra <span>$\\mathbb{F}_2[G]$</span> by</p><p class="math-container">\[L_a e_g=e_{ag},
+\\qquad
+R_b e_g=e_{g b^{-1}}.\]</p><p>The inverse in the right action is chosen so that</p><p class="math-container">\[L_aR_b=R_bL_a\]</p><p>for all <span>$a,b\\in G$</span>.</p><p>For the multisets <span>$A$</span> and <span>$B$</span>, the implementation assembles block-diagonal operators</p><p class="math-container">\[L_A
+=
+\\bigoplus_{i=1}^{n_A}
+\\bigoplus_{j=1}^{n_B}
+L_{a_i},
+\\qquad
+R_B
+=
+\\bigoplus_{i=1}^{n_A}
+\\bigoplus_{j=1}^{n_B}
+R_{b_j}.\]</p><p>Repeated elements in <span>$A$</span> or <span>$B$</span> simply produce repeated permutation blocks, so multiplicities are allowed.</p><h2 id="Lifted-parity-check-matrices"><a class="docs-heading-anchor" href="#Lifted-parity-check-matrices">Lifted parity-check matrices</a><a id="Lifted-parity-check-matrices-1"></a><a class="docs-heading-anchor-permalink" href="#Lifted-parity-check-matrices" title="Permalink"></a></h2><p>Let <span>$I_{|G|}$</span> denote the identity matrix on the group-algebra fiber. The lifted QT code has parity-check matrices</p><p class="math-container">\[H_X
+=
+\\begin{pmatrix}
+H_0\\otimes G_0&#39;\\otimes I_{|G|}\\
+\\left(H_1\\otimes G_1&#39;\\otimes I_{|G|}\\right)L_AR_B
+\\end{pmatrix},\]</p><p>and</p><p class="math-container">\[H_Z
+=
+\\begin{pmatrix}
+\\left(G_0\\otimes H_1&#39;\\otimes I_{|G|}\\right)R_B\\
+\\left(G_1\\otimes H_0&#39;\\otimes I_{|G|}\\right)L_A
+\\end{pmatrix}.\]</p><p>Because the left and right actions commute and each local pair satisfies</p><p class="math-container">\[H_iG_i^\\mathsf{T}=0,\]</p><p>the resulting matrices obey the CSS condition</p><p class="math-container">\[H_XH_Z^\\mathsf{T}=0.\]</p><p>The number of physical qubits is</p><p class="math-container">\[n=|G|\\,n_A n_B.\]</p><h2 id="Constructors"><a class="docs-heading-anchor" href="#Constructors">Constructors</a><a id="Constructors-1"></a><a class="docs-heading-anchor-permalink" href="#Constructors" title="Permalink"></a></h2><p>Three forms of <a href="../API/#QuantumExpanders.QuantumTannerViaLeftRightActions"><code>QuantumTannerViaLeftRightActions</code></a> are available.</p><h3 id="1.-Parity-check-matrices-only"><a class="docs-heading-anchor" href="#1.-Parity-check-matrices-only">1. Parity-check matrices only</a><a id="1.-Parity-check-matrices-only-1"></a><a class="docs-heading-anchor-permalink" href="#1.-Parity-check-matrices-only" title="Permalink"></a></h3><pre><code class="language-julia hljs">QuantumTannerViaLeftRightActions(
+    group,
+    A,
+    B,
+    H_A,
+    H_B;
+    p1 = ...,
+    p2 = ...,
+)</code></pre><p>This is the shortest constructor. Generator matrices are obtained internally using <a href="../API/#QuantumExpanders.dual_code-Tuple{Any}"><code>dual_code</code></a>.</p><p>By default,</p><pre><code class="language-julia hljs">p1 = 1:size(H_A, 2)
+p2 = 1:size(H_B, 2)</code></pre><p>so the second local-code pair is identical to the first.</p><h3 id="2.-Parity-check-and-generator-matrices"><a class="docs-heading-anchor" href="#2.-Parity-check-and-generator-matrices">2. Parity-check and generator matrices</a><a id="2.-Parity-check-and-generator-matrices-1"></a><a class="docs-heading-anchor-permalink" href="#2.-Parity-check-and-generator-matrices" title="Permalink"></a></h3><pre><code class="language-julia hljs">QuantumTannerViaLeftRightActions(
+    group,
+    A,
+    B,
+    H_A,
+    G_A,
+    H_B,
+    G_B;
+    p1 = ...,
+    p2 = ...,
+)</code></pre><p>Use this form when the generator matrices are already available.</p><p>Internally, the second pair on each side is obtained by applying the column permutations:</p><p class="math-container">\[H_1 = H_A[:,p_1],
+\\qquad
+G_1 = G_A[:,p_1],\]</p><p>and</p><p class="math-container">\[H_1&#39; = H_B[:,p_2],
+\\qquad
+G_1&#39; = G_B[:,p_2].\]</p><p>Thus <code>p1</code> acts on the <span>$A$</span>-side local code and <code>p2</code> acts on the <span>$B$</span>-side local code.</p><h3 id="3.-Fully-explicit-local-code-pairs"><a class="docs-heading-anchor" href="#3.-Fully-explicit-local-code-pairs">3. Fully explicit local-code pairs</a><a id="3.-Fully-explicit-local-code-pairs-1"></a><a class="docs-heading-anchor-permalink" href="#3.-Fully-explicit-local-code-pairs" title="Permalink"></a></h3><pre><code class="language-julia hljs">QuantumTannerViaLeftRightActions(
+    group,
+    A,
+    B,
+    H0_A,
+    H1_A,
+    G0_A,
+    G1_A,
+    H0_B,
+    H1_B,
+    G0_B,
+    G1_B,
+)</code></pre><p>This is the most general form. Use it when <span>$H_1$</span> and <span>$H_1&#39;$</span> are not obtained from <span>$H_0$</span> and <span>$H_0&#39;$</span> by simple column permutations.</p><p>The constructor verifies that every <span>$(H,G)$</span> pair is dual and checks the final CSS orthogonality condition.</p><h2 id="Example"><a class="docs-heading-anchor" href="#Example">Example</a><a id="Example-1"></a><a class="docs-heading-anchor-permalink" href="#Example" title="Permalink"></a></h2><p>The following example constructs a <span>$[[288, 8, (≤15, ≤15)]]$</span> lifted QT code over <span>$S_3$</span>.</p><pre><code class="language-julia hljs">julia&gt; using QuantumExpanders, Oscar, QECCore
+
+julia&gt; G = codomain(isomorphism(PermGroup, small_group(6, 1)));
+
+julia&gt; A = [
+           one(G),
+           one(G),
+           cperm(G, [2,3]),
+           cperm(G, [2,3]),
+           cperm(G, [1,2,3]),
+           cperm(G, [1,2]),
+           cperm(G, [1,2]),
+           cperm(G, [1,3,2]),
+       ];
+
+julia&gt; B = [
+           one(G),
+           one(G),
+           cperm(G, [2,3]),
+           cperm(G, [1,2,3]),
+           cperm(G, [1,2]),
+           cperm(G, [1,3,2]),
+       ];
+
+julia&gt; H844 = [
+           1 0 0 0 0 1 1 1;
+           0 1 0 0 1 0 1 1;
+           0 0 1 0 1 1 0 1;
+           0 0 0 1 1 1 1 0
+       ];
+
+julia&gt; G844 = [
+           0 1 1 1 1 0 0 0;
+           1 0 1 1 0 1 0 0;
+           1 1 0 1 0 0 1 0;
+           1 1 1 0 0 0 0 1
+       ];
+
+julia&gt; H633 = [
+           1 0 0 0 1 1;
+           0 1 0 1 0 1;
+           0 0 1 1 1 0
+       ];
+
+julia&gt; G633 = [
+           0 1 1 1 0 0;
+           1 0 1 0 1 0;
+           1 1 0 0 0 1
+       ];
+
+julia&gt; c = QuantumTannerViaLeftRightActions(
+           G,
+           A,
+           B,
+           H844,
+           G844,
+           H633,
+           G633;
+           p1 = 1:8,
+           p2 = [1,2,4,3,6,5],
+       );
+
+julia&gt; code_n(c), code_k(c)
+(288, 8)
+
+julia&gt; hx, hz = parity_matrix_xz(c);
+
+julia&gt; maximum(vec(sum(hx, dims=2))), maximum(vec(sum(hz, dims=2)))
+(12, 12)</code></pre><p>Here</p><p class="math-container">\[|G|=6,\\qquad n_A=8,\\qquad n_B=6,\]</p><p>so the blocklength follows immediately from</p><p class="math-container">\[n=6\\cdot8\\cdot6=288.\]</p><p>The nontrivial <code>p2</code> changes the second <span>$B$</span>-side local-code pair and therefore changes the resulting quantum code while keeping the same group and multisets.</p><h2 id="Multisets-and-repeated-elements"><a class="docs-heading-anchor" href="#Multisets-and-repeated-elements">Multisets and repeated elements</a><a id="Multisets-and-repeated-elements-1"></a><a class="docs-heading-anchor-permalink" href="#Multisets-and-repeated-elements" title="Permalink"></a></h2><p>Unlike the generating sets used by <a href="../API/#QuantumExpanders.QuantumTannerCode"><code>QuantumTannerCode</code></a>, the vectors <code>A</code> and <code>B</code> in the lifted constructor are genuinely <strong>multisets</strong>.</p><p>For example,</p><pre><code class="language-julia hljs">A = [
+    one(G),
+    one(G),
+    a,
+    a,
+    b,
+    c,
+]</code></pre><p>is valid. The two copies of <code>one(G)</code> and the two copies of <code>a</code> correspond to separate positions in the base code and therefore to separate blocks in <span>$L_A$</span>.</p><p>No symmetry condition such as</p><p class="math-container">\[A=A^{-1}\]</p><p>is required, and no total non-conjugacy condition between <span>$A$</span> and <span>$B$</span> is needed. CSS commutation instead follows from the commuting left and right regular actions.</p><h2 id="Accessing-the-code"><a class="docs-heading-anchor" href="#Accessing-the-code">Accessing the code</a><a id="Accessing-the-code-1"></a><a class="docs-heading-anchor-permalink" href="#Accessing-the-code" title="Permalink"></a></h2><p>The resulting object implements the usual <code>QECCore</code> CSS-code interface:</p><pre><code class="language-julia hljs">julia&gt; hx = parity_matrix_x(c);
+
+julia&gt; hz = parity_matrix_z(c);
+
+julia&gt; hx, hz = parity_matrix_xz(c);
+
+julia&gt; code_n(c)
+288
+
+julia&gt; code_k(c)
+8</code></pre><p>The parity-check matrices may then be passed to the rest of the <code>QECCore</code> / <code>QuantumClifford.ECC</code> ecosystem for distance estimation, decoding, or other code analysis.</p><h2 id="Choosing-between-the-two-QT-constructions"><a class="docs-heading-anchor" href="#Choosing-between-the-two-QT-constructions">Choosing between the two QT constructions</a><a id="Choosing-between-the-two-QT-constructions-1"></a><a class="docs-heading-anchor-permalink" href="#Choosing-between-the-two-QT-constructions" title="Permalink"></a></h2><p>Use <a href="../API/#QuantumExpanders.QuantumTannerViaLeftRightActions"><code>QuantumTannerViaLeftRightActions</code></a> when:</p><ul><li>you want to work directly with the lifted algebraic description;</li><li><span>$A$</span> or <span>$B$</span> contain repeated elements;</li><li>the <span>$A$</span>- and <span>$B$</span>-side local codes have different lengths;</li><li>you want to search over column permutations <code>p1</code> and <code>p2</code>; or</li><li>you do not want to impose the LRCC total non-conjugacy condition.</li></ul><p>Use <a href="../API/#QuantumExpanders.QuantumTannerCode"><code>QuantumTannerCode</code></a> when:</p><ul><li>you want the original square-complex geometry explicitly; or</li><li>you already have symmetric LRCC generating sets satisfying TNC.</li></ul><h2 id="API"><a class="docs-heading-anchor" href="#API">API</a><a id="API-1"></a><a class="docs-heading-anchor-permalink" href="#API" title="Permalink"></a></h2><p>See <a href="../API/#QuantumExpanders.QuantumTannerViaLeftRightActions"><code>QuantumTannerViaLeftRightActions</code></a> for the API reference.</p><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><div class="citation noncanonical"><ul><li><div>Leverrier, A.; Rozendaal, W. and Zémor, G. (2025). <em>Small quantum Tanner codes from left–right Cayley complexes</em>, arXiv preprint arXiv:2512.20532.</div></li></ul></div><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+mermaid.initialize({
+    startOnLoad: true,
+    theme: "neutral"
+});
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../quantum_tanner/">« Quantum Tanner Codes</a><a class="docs-footer-nextpage" href="../lps/">Lubotzky–Phillips–Sarnak Ramanujan Graphs »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 25 August 2026 23:12">Tuesday 25 August 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
