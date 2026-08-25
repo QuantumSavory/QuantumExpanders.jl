@@ -8,11 +8,10 @@ and related expander-based quantum LDPC codes. It is built on top of
 
 The package supports both the original **left-right Cayley complex (LRCC)**
 description of quantum Tanner codes and the newer **lifted left-right action**
-description. It also provides explicit constructions of Ramanujan graphs that can
-be used independently of the quantum-code routines.
+description. It also provides explicit constructions of Ramanujan graphs that
+can be used independently of the quantum-code routines.
 
-For background on quantum Tanner codes, see
-[Quantum Tanner Codes](@ref quantum-tanner-codes).
+For background on quantum Tanner codes, see [Quantum Tanner Codes](@ref quantum-tanner-codes).
 
 ## Quantum Tanner code constructions
 
@@ -116,7 +115,7 @@ julia> (dx, dz)
 ## Lifted quantum Tanner code example
 
 The lifted construction works directly with commuting left and right actions of a
-finite group. For example, the following reconstructs a ``[[288,8]]`` quantum
+finite group. For example, the following reconstructs a ``[[288, 8, ]]`` quantum
 Tanner code over ``S_3``:
 
 ```julia
