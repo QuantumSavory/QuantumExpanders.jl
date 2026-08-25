@@ -22,9 +22,9 @@ For the geometric LRCC description, see
 Let ``G`` be a finite group and let
 
 ```math
-A=(a_1,\ldots,a_{n_A}),
-\qquad
-B=(b_1,\ldots,b_{n_B})
+A=(a_1,\\ldots,a_{n_A}),
+\\qquad
+B=(b_1,\\ldots,b_{n_B})
 ```
 
 be two multisets of elements of ``G``.
@@ -32,48 +32,48 @@ be two multisets of elements of ``G``.
 On the ``A`` side, choose two binary linear codes
 
 ```math
-C_i=\ker H_i=\operatorname{Im}(G_i^\mathsf{T}),
-\qquad i\in\{0,1\},
+C_i=\\ker H_i=\\operatorname{Im}(G_i^\\mathsf{T}),
+\\qquad i\\in\\{0,1\\},
 ```
 
 of length ``n_A``. On the ``B`` side, choose
 
 ```math
-C_i'=\ker H_i'=\operatorname{Im}(G_i'^\mathsf{T}),
-\qquad i\in\{0,1\},
+C_i'=\\ker H_i'=\\operatorname{Im}(G_i'^\\mathsf{T}),
+\\qquad i\\in\\{0,1\\},
 ```
 
 of length ``n_B``.
 
 The construction starts from a base CSS code on an
-``n_A\times n_B`` grid. Its parity-check matrices are
+``n_A\\times n_B`` grid. Its parity-check matrices are
 
 ```math
-H_X^{\mathrm{base}}
+H_X^{\\mathrm{base}}
 =
-\begin{pmatrix}
-H_0\otimes G_0'\\
-H_1\otimes G_1'
-\end{pmatrix},
-\qquad
-H_Z^{\mathrm{base}}
+\\begin{pmatrix}
+H_0\\otimes G_0'\\
+H_1\\otimes G_1'
+\\end{pmatrix},
+\\qquad
+H_Z^{\\mathrm{base}}
 =
-\begin{pmatrix}
-G_0\otimes H_1'\\
-G_1\otimes H_0'
-\end{pmatrix}.
+\\begin{pmatrix}
+G_0\\otimes H_1'\\
+G_1\\otimes H_0'
+\\end{pmatrix}.
 ```
 
 The lift replaces every base qubit by a fiber of ``|G|`` qubits.
 
 ## Left and right regular actions
 
-For ``a,b\in G``, define permutation matrices ``L_a`` and ``R_b`` on the group
-algebra ``\mathbb{F}_2[G]`` by
+For ``a,b\\in G``, define permutation matrices ``L_a`` and ``R_b`` on the group
+algebra ``\\mathbb{F}_2[G]`` by
 
 ```math
 L_a e_g=e_{ag},
-\qquad
+\\qquad
 R_b e_g=e_{g b^{-1}}.
 ```
 
@@ -83,7 +83,7 @@ The inverse in the right action is chosen so that
 L_aR_b=R_bL_a
 ```
 
-for all ``a,b\in G``.
+for all ``a,b\\in G``.
 
 For the multisets ``A`` and ``B``, the implementation assembles block-diagonal
 operators
@@ -91,14 +91,14 @@ operators
 ```math
 L_A
 =
-\bigoplus_{i=1}^{n_A}
-\bigoplus_{j=1}^{n_B}
+\\bigoplus_{i=1}^{n_A}
+\\bigoplus_{j=1}^{n_B}
 L_{a_i},
-\qquad
+\\qquad
 R_B
 =
-\bigoplus_{i=1}^{n_A}
-\bigoplus_{j=1}^{n_B}
+\\bigoplus_{i=1}^{n_A}
+\\bigoplus_{j=1}^{n_B}
 R_{b_j}.
 ```
 
@@ -113,10 +113,10 @@ lifted QT code has parity-check matrices
 ```math
 H_X
 =
-\begin{pmatrix}
-H_0\otimes G_0'\otimes I_{|G|}\\
-\left(H_1\otimes G_1'\otimes I_{|G|}\right)L_AR_B
-\end{pmatrix},
+\\begin{pmatrix}
+H_0\\otimes G_0'\\otimes I_{|G|}\\
+\\left(H_1\\otimes G_1'\\otimes I_{|G|}\\right)L_AR_B
+\\end{pmatrix},
 ```
 
 and
@@ -124,28 +124,28 @@ and
 ```math
 H_Z
 =
-\begin{pmatrix}
-\left(G_0\otimes H_1'\otimes I_{|G|}\right)R_B\\
-\left(G_1\otimes H_0'\otimes I_{|G|}\right)L_A
-\end{pmatrix}.
+\\begin{pmatrix}
+\\left(G_0\\otimes H_1'\\otimes I_{|G|}\\right)R_B\\
+\\left(G_1\\otimes H_0'\\otimes I_{|G|}\\right)L_A
+\\end{pmatrix}.
 ```
 
 Because the left and right actions commute and each local pair satisfies
 
 ```math
-H_iG_i^\mathsf{T}=0,
+H_iG_i^\\mathsf{T}=0,
 ```
 
 the resulting matrices obey the CSS condition
 
 ```math
-H_XH_Z^\mathsf{T}=0.
+H_XH_Z^\\mathsf{T}=0.
 ```
 
 The number of physical qubits is
 
 ```math
-n=|G|\,n_A n_B.
+n=|G|\\,n_A n_B.
 ```
 
 ## Constructors
@@ -201,7 +201,7 @@ permutations:
 
 ```math
 H_1 = H_A[:,p_1],
-\qquad
+\\qquad
 G_1 = G_A[:,p_1],
 ```
 
@@ -209,7 +209,7 @@ and
 
 ```math
 H_1' = H_B[:,p_2],
-\qquad
+\\qquad
 G_1' = G_B[:,p_2].
 ```
 
@@ -242,7 +242,7 @@ CSS orthogonality condition.
 
 ## Example
 
-The following example constructs a ``[[288,8]]`` lifted QT code over ``S_3``.
+The following example constructs a ``[[288, 8, (≤15, ≤15)]]`` lifted QT code over ``S_3``.
 
 ```julia
 julia> using QuantumExpanders, Oscar, QECCore
@@ -319,13 +319,13 @@ julia> maximum(vec(sum(hx, dims=2))), maximum(vec(sum(hz, dims=2)))
 Here
 
 ```math
-|G|=6,\qquad n_A=8,\qquad n_B=6,
+|G|=6,\\qquad n_A=8,\\qquad n_B=6,
 ```
 
 so the blocklength follows immediately from
 
 ```math
-n=6\cdot8\cdot6=288.
+n=6\\cdot8\\cdot6=288.
 ```
 
 The nontrivial `p2` changes the second ``B``-side local-code pair and therefore
