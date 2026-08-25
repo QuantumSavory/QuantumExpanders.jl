@@ -1,10 +1,40 @@
-@testitem "Lifted Quantum Tanner Codes — paper Table 2" tags=[:ecc, :ecc_bespoke_checks, :oscar_required] begin
+@testitem "Lifted Quantum Tanner Codes — paper Table 2" begin
     using Test
     using Oscar
+    using GAP
     using QECCore
     using QuantumExpanders
     import Nemo
     using Nemo: matrix, GF
+
+    loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
+
+    function julia_to_gap_gf2(M::AbstractMatrix)
+        F2 = GAP.Globals.GF(GAP.Obj(2))
+        oneF = GAP.Globals.One(F2)
+        zeroF = GAP.Globals.Zero(F2)
+        gap_rows = GAP.GapObj([
+            GAP.GapObj([
+                isodd(Int(M[i, j])) ? oneF : zeroF
+                for j in axes(M, 2)
+            ])
+            for i in axes(M, 1)
+        ])
+        return GAP.Globals.Matrix(gap_rows)
+    end
+
+    function compute_distance(hx, hz; num=50_000)
+        @assert iszero(mod.(hx * hz', 2))
+        GX = julia_to_gap_gf2(hx)
+        GZ = julia_to_gap_gf2(hz)
+        dz = GAP.Globals.DistRandCSS(
+            GX, GZ, GAP.Obj(num), GAP.Obj(0), GAP.Obj(0)
+        )
+        dx = GAP.Globals.DistRandCSS(
+            GZ, GX, GAP.Obj(num), GAP.Obj(0), GAP.Obj(0)
+        )
+        return Int(dx), Int(dz)
+    end
 
     function dual_code(H)
         H_nemo = matrix(GF(2), H)
@@ -61,7 +91,7 @@
 
     cases = [
         (
-            name = "[[480,8]]",
+            name = "[[480, 8, (≤ 21, ≤ 21)]]",
             group = (10, 1), # D10
             ca = :c844,
             cb = :c633,
@@ -86,9 +116,11 @@
             k = 8,
             wx = 12,
             wz = 12,
+            dx = 21,
+            dz = 21,
         ),
         (
-            name = "[[504,4]]",
+            name = "[[504, 4, (≤ 36, ≤ 27)]]",
             group = (9, 2), # C3 x C3
             ca = :c844,
             cb = :c734,
@@ -112,9 +144,11 @@
             k = 4,
             wx = 16,
             wz = 16,
+            dx = 36,
+            dz = 27,
         ),
         (
-            name = "[[672,4]]",
+            name = "[[672, 4, (≤ 48, ≤ 28)]]",
             group = (12, 1), # C3 : C4
             ca = :c844,
             cb = :c734,
@@ -139,10 +173,12 @@
             k = 4,
             wx = 16,
             wz = 16,
+            dx = 48,
+            dz = 28,
         ),
         (
-            name = "[[720,6]]",
-            group = (20, 3), # C5 : C4, 5-point permutation image
+            name = "[[720, 6, (≤ 30, ≤ 30)]]",
+            group = (20, 3), # C5 : C4
             ca = :c633,
             cb = :c633,
             A = [
@@ -167,9 +203,11 @@
             k = 6,
             wx = 9,
             wz = 9,
+            dx = 30,
+            dz = 30,
         ),
         (
-            name = "[[864,8]] (39,31)",
+            name = "[[864, 8, (≤ 39, ≤ 31)]]",
             group = (18, 3), # C3 x S3
             ca = :c844,
             cb = :c633,
@@ -195,9 +233,11 @@
             k = 8,
             wx = 12,
             wz = 12,
+            dx = 39,
+            dz = 31,
         ),
         (
-            name = "[[864,16]]",
+            name = "[[864, 16, (≤ 36, ≤ 32)]]",
             group = (18, 3), # C3 x S3
             ca = :c844,
             cb = :c633,
@@ -223,9 +263,11 @@
             k = 16,
             wx = 12,
             wz = 12,
+            dx = 36,
+            dz = 32,
         ),
         (
-            name = "[[864,8]] (42,40)",
+            name = "[[864, 8, (≤ 42, ≤ 40)]]",
             group = (18, 3), # C3 x S3
             ca = :c844,
             cb = :c633,
@@ -245,20 +287,18 @@
                 ((1,2,3),(4,5)),
                 ((1,3,2),(4,6)),
             ],
-            # The manuscript source prints p1 as
-            #   [1,2,3,4,5,6;7,8]
-            # and p2 without its opening bracket.  These are transcribed as
-            # the intended permutation vectors below.
             p1 = 1:8,
             p2 = [1,2,6,5,4,3],
             n = 864,
             k = 8,
             wx = 12,
             wz = 12,
+            dx = 42,
+            dz = 40,
         ),
         (
-            name = "[[1120,4]]",
-            group = (20, 1), # C5 : C4, 9-point permutation image
+            name = "[[1120, 4, (≤ 80, ≤ 35)]]",
+            group = (20, 1), # C5 : C4
             ca = :c844,
             cb = :c734,
             A = [
@@ -282,15 +322,11 @@
             k = 4,
             wx = 16,
             wz = 16,
+            dx = 80,
+            dz = 35,
         ),
     ]
-
-    # ------------------------------------------------------------------
-    # Reconstruct Table 2
-    # ------------------------------------------------------------------
-
     group_cache = Dict{Tuple{Int,Int}, Any}()
-
     for case in cases
         @testset "$(case.name)" begin
             group_order, group_id = case.group
@@ -300,13 +336,10 @@
                     small_group(group_order, group_id),
                 ))
             end
-
             A = [paper_perm(G, p) for p in case.A]
             B = [paper_perm(G, p) for p in case.B]
-
             H_A, G_A = local_codes[case.ca]
             H_B, G_B = local_codes[case.cb]
-
             c = QuantumTannerViaLeftRightActions(
                 G,
                 A,
@@ -318,13 +351,16 @@
                 p1 = collect(case.p1),
                 p2 = collect(case.p2),
             )
-
             hx, hz = parity_matrix_xz(c)
-
             @test code_n(c) == case.n
             @test code_k(c) == case.k
             @test maximum(vec(sum(hx, dims=2))) == case.wx
             @test maximum(vec(sum(hz, dims=2))) == case.wz
+            dx_qdist, dz_qdist = compute_distance(hx, hz; num=5000)
+            println()
+            println(case.name)
+            println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+            println("  sQetch paper : (dx, dz) = (≤$(case.dx), ≤$(case.dz))")
         end
     end
 end
