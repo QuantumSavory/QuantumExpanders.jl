@@ -1,10 +1,40 @@
 @testitem "Lifted Quantum Tanner Codes. Paper Table 1" begin
     using Test
     using Oscar
+    using GAP
     using QECCore
     using QuantumExpanders
     import Nemo
     using Nemo: matrix, GF
+
+    loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
+
+    function julia_to_gap_gf2(M::AbstractMatrix)
+        F2 = GAP.Globals.GF(GAP.Obj(2))
+        oneF = GAP.Globals.One(F2)
+        zeroF = GAP.Globals.Zero(F2)
+        gap_rows = GAP.GapObj([
+            GAP.GapObj([
+                isodd(Int(M[i, j])) ? oneF : zeroF
+                for j in axes(M, 2)
+            ])
+            for i in axes(M, 1)
+        ])
+        return GAP.Globals.Matrix(gap_rows)
+    end
+
+    function compute_distance(hx, hz; num=50_000)
+        @assert iszero(mod.(hx * hz', 2))
+        GX = julia_to_gap_gf2(hx)
+        GZ = julia_to_gap_gf2(hz)
+        dz = GAP.Globals.DistRandCSS(
+            GX, GZ, GAP.Obj(num), GAP.Obj(0), GAP.Obj(0)
+        )
+        dx = GAP.Globals.DistRandCSS(
+            GZ, GX, GAP.Obj(num), GAP.Obj(0), GAP.Obj(0)
+        )
+        return Int(dx), Int(dz)
+    end
 
     function dual_code(H)
         H_nemo = matrix(GF(2), H)
@@ -224,33 +254,33 @@
         end
     end
     cases = [
-        (name="[[288, 8, (≤ 15, ≤ 15)]]",    lift=:s3_8x6,       ca=:c844, cb=:c633, p1=1:8, p2=[1,2,4,3,6,5],       n=288,  k=8,  wx=12, wz=12),
-        (name="[[336, 4, (≤ 24, ≤ 15)]]",    lift=:s3_8x7,       ca=:c844, cb=:c734, p1=1:8, p2=[1,2,3,5,6,7,4],     n=336,  k=4,  wx=16, wz=16),
-        (name="[[336, 12, (≤ 14, ≤ 14)]]",   lift=:s3_8x7,       ca=:c844, cb=:c734, p1=1:8, p2=[1,2,3,5,4,7,6],     n=336,  k=12, wx=16, wz=16),
-        (name="[[360, 6, (≤ 18, ≤ 18)]]",    lift=:d10_6x6,      ca=:c633, cb=:c633, p1=1:6, p2=[1,2,4,5,3,6],       n=360,  k=6,  wx=9,  wz=9),
-        (name="[[384, 24, (≤ 14, ≤ 14)]]",   lift=:s3_8x8,       ca=:c844, cb=:c844, p1=1:8, p2=[1,2,3,4,5,6,8,7],   n=384,  k=24, wx=16, wz=16),
-        (name="[[384, 8, (≤ 16, ≤ 16)]]",    lift=:s3_8x8,       ca=:c844, cb=:c844, p1=1:8, p2=[1,2,3,4,6,7,8,5],   n=384,  k=8,  wx=16, wz=16),
-        (name="[[432, 16, (≤ 15, ≤ 15)]]",   lift=:c3xc3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,4,3,5,6],       n=432,  k=16, wx=12, wz=12),
-        (name="[[432, 8, (≤ 18, ≤ 18)]]",    lift=:c3xc3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,4,6,5,3],       n=432,  k=8,  wx=12, wz=12),
-        (name="[[480, 8, (≤ 21, ≤ 18)]]",    lift=:d10_8x6,      ca=:c844, cb=:c633, p1=1:8, p2=[1,2,3,6,4,5],       n=480,  k=8,  wx=12, wz=12),
-        (name="[[504, 4, (≤ 34, ≤ 12)]]",    lift=:c3sc4_7x6,    ca=:c734, cb=:c633, p1=1:7, p2=[1,2,6,3,4,5],       n=504,  k=4,  wx=12, wz=12),
-        (name="[[588, 6, (≤ 28, ≤ 23)]]",    lift=:d14_7x6,      ca=:c743, cb=:c633, p1=1:7, p2=[1,2,4,5,6,3],       n=588,  k=6,  wx=12, wz=12),
-        (name="[[588, 14, (≤ 20, ≤ 18)]]",   lift=:d14_7x6,      ca=:c743, cb=:c633, p1=1:7, p2=[1,2,3,6,4,5],       n=588,  k=14, wx=12, wz=12),
-        (name="[[640, 24, (≤ 14, ≤ 14)]]",   lift=:d10_8x8,      ca=:c844, cb=:c844, p1=1:8, p2=[1,2,3,4,5,6,8,7],   n=640,  k=24, wx=16, wz=16),
-        (name="[[648, 26, (≤ 12, ≤ 15)]]",   lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,3,4,6,5],       n=648,  k=26, wx=9,  wz=9),
-        (name="[[648, 14, (≤ 16, ≤ 15)]]",   lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,4,3,5,6],       n=648,  k=14, wx=9,  wz=9),
-        (name="[[648, 2, (≤ 18, ≤ 32)]]",    lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,4,6,3,5],       n=648,  k=2,  wx=9,  wz=9),
-        (name="[[648, 4, (≤ 26, ≤ 21)]]",    lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,6,3,4,5],       n=648,  k=4,  wx=9,  wz=9),
-        (name="[[648, 10, (≤ 18, ≤ 20)]]",   lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,5,6,4,3],       n=648,  k=10, wx=9,  wz=9),
-        (name="[[756, 17, (≤ 9, ≤ 21]]",   lift=:c3sc4_7x9_a1, ca=:c734, cb=:c953, p1=1:7, p2=[1,2,3,4,5,6,8,9,7], n=756, k=17, wx=20, wz=20),
-        (name="[[756, 10, (≤ 9, ≤ 42]]",   lift=:c3sc4_7x9_a1, ca=:c734, cb=:c953, p1=1:7, p2=[1,2,3,4,5,7,8,9,6], n=756, k=10, wx=20, wz=20),
-        (name="[[768, 32, (≤ 16, ≤ 16)]]",   lift=:a4_8x8,       ca=:c844, cb=:c844, p1=1:8, p2=1:8,                   n=768,  k=32, wx=16, wz=16),
-        (name="[[864, 24, (≤ 21, ≤ 18)]]",   lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=1:6,                   n=864,  k=24, wx=12, wz=12),
-        (name="[[864, 16, (≤ 27, ≤ 18)]]",   lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,3,5,4,6],       n=864,  k=16, wx=12, wz=12),
-        (name="[[864, 8, (≤ 27, ≤ 32)]] A",  lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,3,5,6,4],       n=864,  k=8,  wx=12, wz=12),
-        (name="[[864, 8, (≤ 27, ≤ 47)]] B",  lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,3,6,4,5],       n=864,  k=8,  wx=12, wz=12),
-        (name="[[896, 40, (≤ 16, ≤ 12)]]",   lift=:c4sc4_8x7,    ca=:c844, cb=:c734, p1=1:8, p2=1:7,                   n=896,  k=40, wx=16, wz=16),
-        (name="[[1280, 24, (≤ 16, ≤ 16)]]",  lift=:c5sc4_8x8,    ca=:c844, cb=:c844, p1=1:8, p2=[1,2,3,4,5,6,8,7],   n=1280, k=24, wx=16, wz=16),
+        (name="[[288, 8, (≤ 15, ≤ 15)]]",    lift=:s3_8x6,       ca=:c844, cb=:c633, p1=1:8, p2=[1,2,4,3,6,5],       n=288,  k=8,  wx=12, wz=12, dx=15, dz=15),
+        (name="[[336, 4, (≤ 24, ≤ 15)]]",    lift=:s3_8x7,       ca=:c844, cb=:c734, p1=1:8, p2=[1,2,3,5,6,7,4],     n=336,  k=4,  wx=16, wz=16, dx=24, dz=15),
+        (name="[[336, 12, (≤ 14, ≤ 14)]]",   lift=:s3_8x7,       ca=:c844, cb=:c734, p1=1:8, p2=[1,2,3,5,4,7,6],     n=336,  k=12, wx=16, wz=16, dx=14, dz=14),
+        (name="[[360, 6, (≤ 18, ≤ 18)]]",    lift=:d10_6x6,      ca=:c633, cb=:c633, p1=1:6, p2=[1,2,4,5,3,6],       n=360,  k=6,  wx=9,  wz=9, dx=18, dz=18),
+        (name="[[384, 24, (≤ 14, ≤ 14)]]",   lift=:s3_8x8,       ca=:c844, cb=:c844, p1=1:8, p2=[1,2,3,4,5,6,8,7],   n=384,  k=24, wx=16, wz=16, dx=14, dz=14),
+        (name="[[384, 8, (≤ 16, ≤ 16)]]",    lift=:s3_8x8,       ca=:c844, cb=:c844, p1=1:8, p2=[1,2,3,4,6,7,8,5],   n=384,  k=8,  wx=16, wz=16, dx=16, dz=16),
+        (name="[[432, 16, (≤ 15, ≤ 15)]]",   lift=:c3xc3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,4,3,5,6],       n=432,  k=16, wx=12, wz=12, dx=15, dz=15),
+        (name="[[432, 8, (≤ 18, ≤ 18)]]",    lift=:c3xc3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,4,6,5,3],       n=432,  k=8,  wx=12, wz=12, dx=18, dz=18),
+        (name="[[480, 8, (≤ 21, ≤ 18)]]",    lift=:d10_8x6,      ca=:c844, cb=:c633, p1=1:8, p2=[1,2,3,6,4,5],       n=480,  k=8,  wx=12, wz=12, dx=21, dz=18),
+        (name="[[504, 4, (≤ 34, ≤ 12)]]",    lift=:c3sc4_7x6,    ca=:c734, cb=:c633, p1=1:7, p2=[1,2,6,3,4,5],       n=504,  k=4,  wx=12, wz=12, dx=34, dz=12),
+        (name="[[588, 6, (≤ 28, ≤ 23)]]",    lift=:d14_7x6,      ca=:c743, cb=:c633, p1=1:7, p2=[1,2,4,5,6,3],       n=588,  k=6,  wx=12, wz=12, dx=28, dz=23),
+        (name="[[588, 14, (≤ 20, ≤ 18)]]",   lift=:d14_7x6,      ca=:c743, cb=:c633, p1=1:7, p2=[1,2,3,6,4,5],       n=588,  k=14, wx=12, wz=12, dx=20, dz=18),
+        (name="[[640, 24, (≤ 14, ≤ 14)]]",   lift=:d10_8x8,      ca=:c844, cb=:c844, p1=1:8, p2=[1,2,3,4,5,6,8,7],   n=640,  k=24, wx=16, wz=16, dx=14, dz=14),
+        (name="[[648, 26, (≤ 12, ≤ 15)]]",   lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,3,4,6,5],       n=648,  k=26, wx=9,  wz=9, dx=12, dz=15),
+        (name="[[648, 14, (≤ 16, ≤ 15)]]",   lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,4,3,5,6],       n=648,  k=14, wx=9,  wz=9, dx=16, dz=15),
+        (name="[[648, 2, (≤ 18, ≤ 32)]]",    lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,4,6,3,5],       n=648,  k=2,  wx=9,  wz=9, dx=18, dz=32),
+        (name="[[648, 4, (≤ 26, ≤ 21)]]",    lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,6,3,4,5],       n=648,  k=4,  wx=9,  wz=9, dx=26, dz=21),
+        (name="[[648, 10, (≤ 18, ≤ 20)]]",   lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,5,6,4,3],       n=648,  k=10, wx=9,  wz=9, dx=18, dz=20),
+        (name="[[756, 17, (≤ 9, ≤ 21]]",   lift=:c3sc4_7x9_a1, ca=:c734, cb=:c953, p1=1:7, p2=[1,2,3,4,5,6,8,9,7], n=756, k=17, wx=20, wz=20, dx=9, dz=21),
+        (name="[[756, 10, (≤ 9, ≤ 42]]",   lift=:c3sc4_7x9_a1, ca=:c734, cb=:c953, p1=1:7, p2=[1,2,3,4,5,7,8,9,6], n=756, k=10, wx=20, wz=20, dx=9, dz=42),
+        (name="[[768, 32, (≤ 16, ≤ 16)]]",   lift=:a4_8x8,       ca=:c844, cb=:c844, p1=1:8, p2=1:8,                   n=768,  k=32, wx=16, wz=16, dx=16, dz=16),
+        (name="[[864, 24, (≤ 21, ≤ 18)]]",   lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=1:6,                   n=864,  k=24, wx=12, wz=12, dx=21, dz=18),
+        (name="[[864, 16, (≤ 27, ≤ 18)]]",   lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,3,5,4,6],       n=864,  k=16, wx=12, wz=12, dx=27, dz=18),
+        (name="[[864, 8, (≤ 27, ≤ 32)]] A",  lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,3,5,6,4],       n=864,  k=8,  wx=12, wz=12, dx=27, dz=32),
+        (name="[[864, 8, (≤ 27, ≤ 47)]] B",  lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,3,6,4,5],       n=864,  k=8,  wx=12, wz=12, dx=27, dz=47),
+        (name="[[896, 40, (≤ 16, ≤ 12)]]",   lift=:c4sc4_8x7,    ca=:c844, cb=:c734, p1=1:8, p2=1:7,                   n=896,  k=40, wx=16, wz=16, dx=16, dz=12),
+        (name="[[1280, 24, (≤ 16, ≤ 16)]]",  lift=:c5sc4_8x8,    ca=:c844, cb=:c844, p1=1:8, p2=[1,2,3,4,5,6,8,7],   n=1280, k=24, wx=16, wz=16, dx=16, dz=16),
     ]
 
     for case in cases
@@ -264,6 +294,11 @@
             @test code_k(c) == case.k
             @test maximum(vec(sum(hx, dims=2))) == case.wx
             @test maximum(vec(sum(hz, dims=2))) == case.wz
+            dx_qdist, dz_qdist = compute_distance(hx, hz; num=20_000)
+            println()
+            println(case.name)
+            println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+            println("  sQetch paper : (dx, dz) = (≤$(case.dx), ≤$(case.dz))")
         end
     end
 end
