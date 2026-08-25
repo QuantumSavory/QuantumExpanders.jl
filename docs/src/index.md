@@ -191,9 +191,10 @@ The corresponding CSS parity-check matrices are available through
 julia> hx, hz = parity_matrix_xz(c);
 ```
 
-For the construction itself, the meaning of the multisets ``A,B``, the column
-permutations ``p1,p2``, and the left/right regular actions are described on the
-dedicated [`QuantumTannerViaLeftRightActions`](@ref) documentation page.
+For the construction itself, see
+[Quantum Tanner Codes via Left-Right Actions](@ref quantum-tanner-left-right-actions),
+which explains the multisets ``A,B``, the column permutations ``p1,p2``, and the
+commuting left/right regular actions.
 
 ## Explicit Ramanujan graph constructions
 
@@ -228,9 +229,3 @@ The main workflows are:
 - pass the resulting CSS parity-check matrices to `QECCore` and
   `QuantumClifford.ECC` for code analysis and decoding workflows.
 
-## References
-
-```@bibliography
-Pages = ["index.md"]
-Canonical = false
-```

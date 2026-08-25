@@ -4,7 +4,8 @@
 using the **lifted left-right action description**. Instead of building the code
 through the square-complex geometry of the original LRCC construction, this
 description lifts a small CSS template through the commuting left and right
-regular actions of a finite group.
+regular actions of a finite group, following the lifting formulation of
+[leverrier2025small](@cite).
 
 This construction is particularly convenient for explicit code searches because:
 
@@ -402,9 +403,7 @@ Use [`QuantumTannerCode`](@ref) when:
 
 ## API
 
-```@docs
-QuantumTannerViaLeftRightActions
-```
+See [`QuantumTannerViaLeftRightActions`](@ref) for the API reference.
 
 ## References
 

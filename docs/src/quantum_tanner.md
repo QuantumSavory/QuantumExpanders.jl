@@ -15,8 +15,8 @@ QT codes admit two complementary descriptions:
 
 `QuantumExpanders.jl` supports both descriptions. This page focuses on the LRCC
 construction implemented by [`QuantumTannerCode`](@ref). The lifted construction
-implemented by [`QuantumTannerViaLeftRightActions`](@ref) will be documented on a
-dedicated page.
+is documented separately on
+[Quantum Tanner Codes via Left-Right Actions](@ref quantum-tanner-left-right-actions).
 
 ## Two QT constructors in `QuantumExpanders.jl`
 
