@@ -43,6 +43,10 @@
         B = [r*s, r*s^2, s*t, s^2*t^2, r*s*t^2, r*s^2*t^2]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H633, G633)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 324
         @test code_k(c) == 8
         wx = maximum(vec(sum(hx, dims=2)))
@@ -57,6 +61,10 @@
         B = [r*t^2, s^2, s, s*t, s^2*t^2, s^2*t, s*t^2, r]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 22
         wx = maximum(vec(sum(hx, dims=2)))
@@ -71,6 +79,10 @@
         B = [r*s^2*t*u, r*s*t, r*s^2*u, r*s*t*u, r*s^2, r*s]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H633, G633)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 432
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -85,6 +97,10 @@
         B = [r*s^2*u, r*s^2*t*u, r*t, r*u, r*s^2, r*s*t, r*s*t*u, r]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 32
         wx = maximum(vec(sum(hx, dims=2)))
@@ -99,6 +115,10 @@
         B = [s, s^2, s*t, s^2*t*u, s*t*u, s^2*u, r*u, r*t*u]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 42
         wx = maximum(vec(sum(hx, dims=2)))
@@ -113,6 +133,10 @@
         B = [t, r*s*t*u, r*s^2*u, r*s, r*s^2, r*s*t, r*s^2*t*u, t*u]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 20
         wx = maximum(vec(sum(hx, dims=2)))
@@ -127,6 +151,10 @@
         B = [s*t^2*u, s*t*u, r*s*u, r*s, t^2, t, r*u, r]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 40
         wx = maximum(vec(sum(hx, dims=2)))
@@ -141,6 +169,10 @@
         B = [r*s*t*u^2, r*s*u^2, r*s*u, r*s*t*u, r*s*t, r*s, s*t*u^2, s*t*u]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 38
         wx = maximum(vec(sum(hx, dims=2)))
@@ -155,6 +187,10 @@
         B = [u^2, u, r*s*u^2, r*s*t*u^2, t, s, r*s*t, r*s]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 34
         wx = maximum(vec(sum(hx, dims=2)))
@@ -169,6 +205,10 @@
         B = [r*t, t*u^2, t*u, s*u^2, s*t*u, r*u^2, t, r*t*u^2]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 48
         wx = maximum(vec(sum(hx, dims=2)))
@@ -183,6 +223,10 @@
         B = [r*t, r, t*u^2, t*u, s*u^2, s*t*u, r*u^2, r*t*u^2]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 28
         wx = maximum(vec(sum(hx, dims=2)))
@@ -197,6 +241,10 @@
         B = [r*s*u, r^2*s*t, r*s*t*u, r^2*t, r*u, r^2*u, r*t*u, r^2*s]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 32
         wx = maximum(vec(sum(hx, dims=2)))
@@ -211,6 +259,10 @@
         B = [r*s, r*t, s*u^2, s*t*u, r*s*u^2, r*t*u^2, u, u^2]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 32
         wx = maximum(vec(sum(hx, dims=2)))
@@ -225,6 +277,10 @@
         B = [r*s, r*t, t*u^2, t*u, s, s*t, r*t*u, r*s*u]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 768
         @test code_k(c) == 24
         wx = maximum(vec(sum(hx, dims=2)))
@@ -239,6 +295,10 @@
         B = [r^3, r^2, r^4*s, r*s^4, s, s^4, r^2*s, r^3*s^4]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 800
         @test code_k(c) == 24
         wx = maximum(vec(sum(hx, dims=2)))
@@ -253,6 +313,10 @@
         B = [r^2*s^2, r*s*t^2, r^2*s*t, r*s^2*t, s^2*t, s*t^2, r^2*s, r*s^2*t^2]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 864
         @test code_k(c) == 32
         wx = maximum(vec(sum(hx, dims=2)))
@@ -267,6 +331,10 @@
         B = [r^2*s*t, r*s^2*t, r*s*t^2, r^2*s^2*t^2, r^2*s^2*t, r*s, s*t^2, s^2*t]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 864
         @test code_k(c) == 20
         wx = maximum(vec(sum(hx, dims=2)))
@@ -281,6 +349,10 @@
         B = [r*s, r^2*s^2*t, r^2*s^2*t^2, r*s*t^2, r*t^2, r^2*t, r^2*s^2, r*s*t]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 864
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -295,6 +367,10 @@
         B = [s^2, s, s*t^2, s^2*t, s^2*t^2, s*t, r^2*s, r*s^2*t]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 864
         @test code_k(c) == 28
         wx = maximum(vec(sum(hx, dims=2)))
@@ -309,6 +385,10 @@
         B = [s*t, s^2*t^2, t^2, t, r*s, r^2*s^2, r^2*t, r*t^2]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 864
         @test code_k(c) == 24
         wx = maximum(vec(sum(hx, dims=2)))
@@ -323,6 +403,10 @@
         B = [s*t, s*t^6, t, t^6, s*t^2, s*t^5, t^2, t^5]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 896
         @test code_k(c) == 40
         wx = maximum(vec(sum(hx, dims=2)))
@@ -337,6 +421,10 @@
         B = [r, r*s, t^5, t^2, r*s*t^2, r*s*t^5, r*t^2, r*t^5]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 896
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -351,6 +439,10 @@
         B = [t^3, t^2, s*t, s^2*t^4, t^4, t, s, s^2]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 960
         @test code_k(c) == 24
         wx = maximum(vec(sum(hx, dims=2)))
@@ -365,6 +457,10 @@
         B = [t^2, t^3, r*s*t^4, r*s^2*t^4, t^4, t, r*s^2*t^3, r*s*t^3]
         c = QuantumTannerCode(G, A, B, ((H844, G844), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 960
         @test code_k(c) == 32
         wx = maximum(vec(sum(hx, dims=2)))
@@ -383,6 +479,10 @@
         B = [s, r*t*u, r*t, r*s*t, r*s*t*u, t, t*u, s*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 24
         wx = maximum(vec(sum(hx, dims=2)))
@@ -397,6 +497,10 @@
         B = [r*s, r*s*u, r, r*u, r*s*t*u, t*u, t, r*s*t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 8
         wx = maximum(vec(sum(hx, dims=2)))
@@ -411,6 +515,10 @@
         B = [r*u, t, r*t*u, r, t*u, s*t*u, r*t, u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 44
         wx = maximum(vec(sum(hx, dims=2)))
@@ -425,6 +533,10 @@
         B = [r*t, t*u, t, s*t*u, r*s*t*u, r*s*t, s*t, r*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 38
         wx = maximum(vec(sum(hx, dims=2)))
@@ -439,6 +551,10 @@
         B = [r*s*t*u, r*s*u, r*t, r*u, r*s, r*s*t, r, r*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 32
         wx = maximum(vec(sum(hx, dims=2)))
@@ -453,6 +569,10 @@
         B = [r*s, r*s*u, s*t, r*u, r, s*t*u, t, t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -467,6 +587,10 @@
         B = [r*s*u, r*s*t*u, r*s*t, r*s, r, r*t*u, r*u, r*t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 32
         wx = maximum(vec(sum(hx, dims=2)))
@@ -481,6 +605,10 @@
         B = [r*t, r*u, t, t*u, s*t, s*t*u, r, r*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 8
         wx = maximum(vec(sum(hx, dims=2)))
@@ -495,6 +623,10 @@
         B = [r*s*t*u, r*s, r*t, r*u, s*t*u, s*t, r*s*u, r*s*t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 18
         wx = maximum(vec(sum(hx, dims=2)))
@@ -509,6 +641,10 @@
         B = [s*u, s*t*u, s*t, s, r, r*u, r*t, r*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -523,6 +659,10 @@
         B = [r*s*t*u, r*s*t, r*t*u, r*t, r*s*u, r*s, r*u, r]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 384
         @test code_k(c) == 48
         wx = maximum(vec(sum(hx, dims=2)))
@@ -537,6 +677,10 @@
         B = [s, s*u, t, r*s, r*s*t*u, r*s*u, r*s*t]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 392
         @test code_k(c) == 12
         wx = maximum(vec(sum(hx, dims=2)))
@@ -551,6 +695,10 @@
         B = [s*u, s*t*u, r*s*t*u, r*s*t, t*u, r*s, r*s*u]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 392
         @test code_k(c) == 15
         wx = maximum(vec(sum(hx, dims=2)))
@@ -565,6 +713,10 @@
         B = [r*s*t*u, r*s*t, t, s*t, r*t*u, s*t*u, r*t]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 392
         @test code_k(c) == 36
         wx = maximum(vec(sum(hx, dims=2)))
@@ -579,6 +731,10 @@
         B = [r*s*u, r*s, r, r*u, t*u, r*t, r*t*u]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 392
         @test code_k(c) == 8
         wx = maximum(vec(sum(hx, dims=2)))
@@ -593,6 +749,10 @@
         B = [r*s*t*u, r*s*t, r*s, r*s*u, u, r, r*u]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 392
         @test code_k(c) == 15
         wx = maximum(vec(sum(hx, dims=2)))
@@ -607,6 +767,10 @@
         B = [t, t*u, s, r*s*t, r, r*s*t*u, r*u]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 392
         @test code_k(c) == 33
         wx = maximum(vec(sum(hx, dims=2)))
@@ -621,6 +785,10 @@
         B = [r*s*t*u, r*s*t, r, r*u, r*t, r*t*u, s*u]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 392
         @test code_k(c) == 36
         wx = maximum(vec(sum(hx, dims=2)))
@@ -635,6 +803,10 @@
         B = [r*s, r*s^2, r, r*t, r*s*t^2, r*s*t, r*t^2, r*s^2*t^2]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 432
         @test code_k(c) == 4
         wx = maximum(vec(sum(hx, dims=2)))
@@ -649,6 +821,10 @@
         B = [r*s^2, r*s, r*s^2*t^2, r*s*t, r*t^2, r*t, s^2*t^2, s*t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 432
         @test code_k(c) == 12
         wx = maximum(vec(sum(hx, dims=2)))
@@ -667,6 +843,10 @@
         B = [r*s*t, r, r*t*u^2, r*s*u^2, u, u^2, r*s*t*u^2, r*u^2]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -681,6 +861,10 @@
         B = [r^2*s*t, r*s*u, r^2*s, r*t*u, t, t*u, r^2*t, r*s*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 12
         wx = maximum(vec(sum(hx, dims=2)))
@@ -695,6 +879,10 @@
         B = [r*u, r*t*u, r*t*u^2, r*u^2, t*u, t*u^2, r*t, r]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 8
         wx = maximum(vec(sum(hx, dims=2)))
@@ -709,6 +897,10 @@
         B = [r*s*u^2, r*s*t*u^2, s*u, s*t*u^2, r*s*t*u, r*s*u, r*s*t, r*s]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 28
         wx = maximum(vec(sum(hx, dims=2)))
@@ -723,6 +915,10 @@
         B = [u^2, u, s*u^2, s*t*u, s, s*t, s*u, s*t*u^2]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 26
         wx = maximum(vec(sum(hx, dims=2)))
@@ -737,6 +933,10 @@
         B = [r*t, r, u^2, u, r*s*u^2, r*s*t*u^2, r*s*u, r*s*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -751,6 +951,10 @@
         B = [r*s*t*u^2, r*s*u^2, s*u, s*u^2, r*t*u^2, r*u^2, r*u, r*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 40
         wx = maximum(vec(sum(hx, dims=2)))
@@ -765,6 +969,10 @@
         B = [r*t, r*u^2, r*t*u, r*u, r*s*u, r*s*t*u, r*s*t*u^2, r*s*u^2]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 8
         wx = maximum(vec(sum(hx, dims=2)))
@@ -779,6 +987,10 @@
         B = [t*u, t*u^2, r*s*t*u^2, r*s*u^2, r*s*u, r*s*t*u, r*s*t, r*s]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 28
         wx = maximum(vec(sum(hx, dims=2)))
@@ -793,6 +1005,10 @@
         B = [s*t*u, s*t^2*u, t^2, t, r, r*u, r*s*u, r*s]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 8
         wx = maximum(vec(sum(hx, dims=2)))
@@ -807,6 +1023,10 @@
         B = [r*t*u, r*t^2, s*t*u, s*t^2*u, r*s*t^2, r*s*t*u, r*u, r]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 30
         wx = maximum(vec(sum(hx, dims=2)))
@@ -821,6 +1041,10 @@
         B = [r*s*t, r*s*t^2*u, t, t^2, s*t, s*t^2, r*s*t^2, r*s*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -835,6 +1059,10 @@
         B = [r*t^2*u, r*t*u, r*s*t^2, r*s*t*u, s*t^2, s*t, s*t^2*u, s*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 32
         wx = maximum(vec(sum(hx, dims=2)))
@@ -849,6 +1077,10 @@
         B = [s, s^2, s*u, s^2*t, u, t*u, s*t, s^2*t*u]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 23
         wx = maximum(vec(sum(hx, dims=2)))
@@ -863,6 +1095,10 @@
         B = [r*s*u, r*s^2*t, r*s^2*u, r*s*t*u, r, r*s^2*t*u, r*s*t, t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 6
         wx = maximum(vec(sum(hx, dims=2)))
@@ -877,6 +1113,10 @@
         B = [s*u, s^2*t, s^2, s, s*t*u, s^2*u, s^2*t*u, s*t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 28
         wx = maximum(vec(sum(hx, dims=2)))
@@ -891,6 +1131,10 @@
         B = [r*s*t*u^2, r*s*t, s*u, s*u^2, r*s*u^2, r*t, r*s*t*u, r*s]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 20
         wx = maximum(vec(sum(hx, dims=2)))
@@ -905,6 +1149,10 @@
         B = [r, r*s*t*u, r*s*t, r*s, t*u, t*u^2, s*t, r*s*u^2]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -919,6 +1167,10 @@
         B = [s*t, s*t*u^2, s*t*u, r*s*t*u, r*s*t*u^2, s*u, s*u^2, r*s*t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 576
         @test code_k(c) == 26
         wx = maximum(vec(sum(hx, dims=2)))
@@ -933,6 +1185,10 @@
         B = [r*s*t^2, r^2*s^2*t^2, s^2*t, s*t^2, s, s^2, s^2*t^2, s*t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 648
         @test code_k(c) == 8
         wx = maximum(vec(sum(hx, dims=2)))
@@ -951,6 +1207,10 @@
         B = [r*t^5, r*s*t^5, r*s*t, r*t, s*t, s*t^6, r*t^6, r*s*t^6]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 672
         @test code_k(c) == 18
         wx = maximum(vec(sum(hx, dims=2)))
@@ -965,6 +1225,10 @@
         B = [t^2, t^5, s*t^2, s*t^5, t^6, t, s*t, s*t^6]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 672
         @test code_k(c) == 12
         wx = maximum(vec(sum(hx, dims=2)))
@@ -979,6 +1243,10 @@
         B = [s*t^2, s*t^5, r*s*t^6, r*s*t, t^2, t^5, t^6, t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 672
         @test code_k(c) == 20
         wx = maximum(vec(sum(hx, dims=2)))
@@ -993,6 +1261,10 @@
         B = [s*t^2, s^4*t, r*s^4, r*s, t, t^2, r*s*t, r*s^4*t]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 720
         @test code_k(c) == 32
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1007,6 +1279,10 @@
         B = [s^2, s, s^2*t^4, s*t, s^2*t^2, s*t^3, t^2, t^3]
         c = QuantumTannerCode(G, A, B, ((H633, G633), (H844, G844)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 720
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1021,6 +1297,10 @@
         B = [s^2*u, s*t*u, s, s^2, s*t, s^2*t*u, t]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 588
         @test code_k(c) == 33
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1035,6 +1315,10 @@
         B = [t*u, t*u^2, u^2, u, s, r*s*u, r*t*u]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 588
         @test code_k(c) == 29
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1049,6 +1333,10 @@
         B = [t*u, t*u^2, u^2, u, r*s*u^2, r, s]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 588
         @test code_k(c) == 39
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1063,6 +1351,10 @@
         B = [s*t*u^2, s*t*u, r*s*t*u, r*s*t*u^2, s*u, s*u^2, r*s*t]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 588
         @test code_k(c) == 40
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1077,6 +1369,10 @@
         B = [t*u^2, t*u, r*s*t, u, u^2, s*t*u^2, s*t*u]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 588
         @test code_k(c) == 38
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1091,6 +1387,10 @@
         B = [u^2, u, r*s*t*u, r*s*t*u^2, s*t*u^2, s*t*u, s*t]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 588
         @test code_k(c) == 21
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1105,6 +1405,10 @@
         B = [r*t, r*v, r*s*v, r*s*t*u, r*t*u, r*u*v, u*v]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 784
         @test code_k(c) == 16
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1119,6 +1423,10 @@
         B = [s*t*v, v, r*s*t*u*v, r*s, r*t, r*t*u*v, s*v]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 784
         @test code_k(c) == 37
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1133,6 +1441,10 @@
         B = [r*t, r*t*u*v, r*u*v, r*v, u*v, t, s*t*v]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 784
         @test code_k(c) == 40
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1147,6 +1459,10 @@
         B = [r*t, r*t*u, r*u*v, r, u*v, u, t]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 784
         @test code_k(c) == 24
         wx = maximum(vec(sum(hx, dims=2)))
@@ -1161,6 +1477,10 @@
         B = [s*u*v, t*v, r*s, r*s*t*u*v, s*t*u, t, v]
         c = QuantumTannerCode(G, A, B, ((H743, G743), (H734, G734)))
         hx, hz = parity_matrix_xz(c)
+        stab = QuantumClifford.ECC.parity_checks(c)
+        mat = matrix(GF(2), stab_to_gf2(stab))
+        computed_rank = rank(mat)
+        @test computed_rank == code_n(c) - code_k(c)
         @test code_n(c) == 784
         @test code_k(c) == 58
         wx = maximum(vec(sum(hx, dims=2)))
