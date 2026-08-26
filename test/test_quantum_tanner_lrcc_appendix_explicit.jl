@@ -4,13 +4,14 @@
     using QECCore
     using QuantumExpanders
     using QuantumClifford
+    using QuantumClifford.ECC
 
     H633 = [
         1 0 0 0 1 1;
         0 1 0 1 0 1;
         0 0 1 1 1 0
     ]
-    G633 = dual_code(H633)
+    G633 = Matrix{Int}(lift.(dual_code(H633)))
 
     H844 = [
         1 0 0 0 0 1 1 1;
@@ -18,14 +19,14 @@
         0 0 1 0 1 1 0 1;
         0 0 0 1 1 1 1 0
     ]
-    G844 = dual_code(H844)
+    G844 = Matrix{Int}(lift.(dual_code(H844)))
 
     G734 = [
         1 0 1 1 1 0 0;
         1 1 1 0 0 1 0;
         0 1 1 1 0 0 1
     ]
-    H734 = dual_code(G734)
+    H734 = Matrix{Int}(lift.(dual_code(H734)))
 
     G743 = [
         1 0 0 0 1 1 0;
@@ -33,7 +34,7 @@
         0 0 1 0 0 1 1;
         0 0 0 1 1 1 1
     ]
-    H743 = dual_code(G743)
+    H743 = Matrix{Int}(lift.(dual_code(H734)))
 
 
     @testset "C3 x S3 [[324,8]]" begin

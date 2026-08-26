@@ -6,6 +6,8 @@
     using QuantumExpanders
     import Nemo
     using Nemo: matrix, GF
+    using QuantumClifford
+    using QuantumClifford.ECC
 
     loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
 
