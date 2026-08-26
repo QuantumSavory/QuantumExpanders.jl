@@ -276,6 +276,9 @@
         (name="[[648, 10, (≤ 18, ≤ 20)]]",   lift=:c3xs3_6x6,    ca=:c633, cb=:c633, p1=1:6, p2=[1,2,5,6,4,3],       n=648,  k=10, wx=9,  wz=9, dx=18, dz=20),
         (name="[[756, 17, (≤ 9, ≤ 21]]",   lift=:c3sc4_7x9_a1, ca=:c734, cb=:c953, p1=1:7, p2=[1,2,3,4,5,6,8,9,7], n=756, k=17, wx=20, wz=20, dx=9, dz=21),
         (name="[[756, 10, (≤ 9, ≤ 42]]",   lift=:c3sc4_7x9_a1, ca=:c734, cb=:c953, p1=1:7, p2=[1,2,3,4,5,7,8,9,6], n=756, k=10, wx=20, wz=20, dx=9, dz=42),
+        (name="[[756, 43, (≤ 12, ≤ 12)]]",   lift=:c3sc4_7x9_a2, ca=:c743, cb=:c953, p1=1:7, p2=1:9,                   n=756,  k=43, wx=20, wz=20, dx=12, dz=12),
+        (name="[[756, 30, (≤ 21, ≤ 12)]]",   lift=:c3sc4_7x9_a2, ca=:c743, cb=:c953, p1=1:7, p2=[1,2,3,4,5,7,6,9,8], n=756, k=30, wx=20, wz=20, dx=21, dz=12),
+        (name="[[768, 24, (≤ 16, ≤ 16)]]",   lift=:c3sc4_8x8,    ca=:c844, cb=:c844, p1=1:8, p2=[1,2,3,4,5,6,8,7],   n=768,  k=24, wx=16, wz=16, dx=18, dz=18),
         (name="[[768, 32, (≤ 16, ≤ 16)]]",   lift=:a4_8x8,       ca=:c844, cb=:c844, p1=1:8, p2=1:8,                   n=768,  k=32, wx=16, wz=16, dx=16, dz=16),
         (name="[[864, 24, (≤ 21, ≤ 18)]]",   lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=1:6,                   n=864,  k=24, wx=12, wz=12, dx=21, dz=18),
         (name="[[864, 16, (≤ 27, ≤ 18)]]",   lift=:c3xs3_8x6,    ca=:c844, cb=:c633, p1=1:8, p2=[1,2,3,5,4,6],       n=864,  k=16, wx=12, wz=12, dx=27, dz=18),
@@ -300,11 +303,6 @@
             @test code_k(c) == case.k
             @test maximum(vec(sum(hx, dims=2))) == case.wx
             @test maximum(vec(sum(hz, dims=2))) == case.wz
-            dx_qdist, dz_qdist = compute_distance(hx, hz; num=20_000)
-            println()
-            println(case.name)
-            println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
-            println("  sQetch paper : (dx, dz) = (≤$(case.dx), ≤$(case.dz))")
         end
     end
 end
