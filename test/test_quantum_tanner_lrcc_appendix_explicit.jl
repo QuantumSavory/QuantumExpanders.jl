@@ -27,7 +27,7 @@
         0  1  1  1  0  0  1
     ];
 
-    H734 = dual_code(G734);
+    H734 = Matrix{Int}(lift.(dual_code(G734)));
 
     G743 = [
         1  0  0  0  1  1  0;
@@ -36,8 +36,7 @@
         0  0  0  1  1  1  1
         ];
 
-    H743 = dual_code(G743);
-
+    H743 = Matrix{Int}(lift.(dual_code(G743)))
 
     @testset "C3 x S3 [[324,8]]" begin
         G = small_group(18, 3) # C3 x S3
