@@ -290,6 +290,10 @@
             H_B, G_B = local_codes[case.cb]
             c = QuantumTannerViaLeftRightActions(G, A, B, H_A, G_A, H_B, G_B; p1 = collect(case.p1), p2 = collect(case.p2),)
             hx, hz = parity_matrix_xz(c)
+            stab = QuantumClifford.ECC.parity_checks(c)
+            mat = matrix(GF(2), stab_to_gf2(stab))
+            computed_rank = rank(mat)
+            @test computed_rank == code_n(c) - code_k(c)
             @test code_n(c) == case.n
             @test code_k(c) == case.k
             @test maximum(vec(sum(hx, dims=2))) == case.wx
