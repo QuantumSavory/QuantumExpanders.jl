@@ -5,6 +5,7 @@
     using QuantumExpanders
     using QuantumClifford
     using QuantumClifford.ECC
+    using GAP
 
     H633 = [
         1 0 0 0 1 1;
@@ -38,7 +39,47 @@
 
     H743 = Matrix{Int}(lift.(dual_code(G743)))
 
-    @testset "C3 x S3 [[324,8]]" begin
+
+    loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
+
+    const QDIST_TRIALS = 20_000
+
+    function julia_to_gap_gf2(M::AbstractMatrix)
+        F2 = GAP.Globals.GF(GAP.Obj(2))
+        oneF = GAP.Globals.One(F2)
+        zeroF = GAP.Globals.Zero(F2)
+        gap_rows = GAP.GapObj([
+            GAP.GapObj([
+                isodd(Int(M[i, j])) ? oneF : zeroF
+                for j in axes(M, 2)
+            ])
+            for i in axes(M, 1)
+        ])
+        return GAP.Globals.Matrix(gap_rows)
+    end
+
+    function compute_qdistrnd_distance(hx, hz; num=QDIST_TRIALS)
+        @assert iszero(mod.(hx * hz', 2))
+        GX = julia_to_gap_gf2(hx)
+        GZ = julia_to_gap_gf2(hz)
+        dz = GAP.Globals.DistRandCSS(
+            GX,
+            GZ,
+            GAP.Obj(num),
+            GAP.Obj(0),
+            GAP.Obj(0),
+        )
+        dx = GAP.Globals.DistRandCSS(
+            GZ,
+            GX,
+            GAP.Obj(num),
+            GAP.Obj(0),
+            GAP.Obj(0),
+        )
+        return Int(dx), Int(dz)
+    end
+
+    @testset "C3 x S3 [[324, 8, (≤ 17, ≤ 14)]]" begin
         G = small_group(18, 3) # C3 x S3
         r, s, t = Oscar.gens(G)
         A = [s, s^2, t, t^2, r*t^2, r]
@@ -54,9 +95,18 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 9
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 x S3 [[324, 8, (≤ 17, ≤ 14)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤17, ≤14)")
+
     end
 
-    @testset "C3 x S3 [[576,22]]" begin
+    @testset "C3 x S3 [[576, 22, (≤ 16, ≤ 16)]]" begin
         G = small_group(18, 3) # C3 x S3
         r, s, t = Oscar.gens(G)
         A = [r*s*t^2, r*s^2*t^2, r*s^2*t, r*s*t, t^2, t, r*s, r*s^2]
@@ -72,9 +122,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 x S3 [[576, 22, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C2 x A4 [[432,16]]" begin
+    @testset "C2 x A4 [[432, 16, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 13) # C2 x A4
         r, s, t, u = Oscar.gens(G)
         A = [s^2*t*u, s*t, t, s^2*u, s*t*u, r*t]
@@ -90,9 +148,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 9
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x A4 [[432, 16, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "S4 [[768,32]]" begin
+    @testset "S4 [[768, 32, (≤ 16, ≤ 16)]]" begin
         G = small_group(24, 12) # S4
         r, s, t, u = Oscar.gens(G)
         A = [s^2*t, s*u, s^2, s, s*t*u, s^2*u, s*t, s^2*t*u]
@@ -108,9 +174,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("S4 [[768, 32, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C2 x A4 [[768,42]]" begin
+    @testset "C2 x A4 [[768, 42, (≤ 16, ≤ 16)]]" begin
         G = small_group(24, 13) # C2 x A4
         r, s, t, u = Oscar.gens(G)
         A = [r, r*s^2*t*u, r*s*t, r*s^2*t, r*s*u, r*s^2*u, r*s*t*u, t]
@@ -126,9 +200,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x A4 [[768, 42, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C2 x A4 [[768,20]]" begin
+    @testset "C2 x A4 [[768, 20, (≤ 16, ≤ 16)]]" begin
         G = small_group(24, 13) # C2 x A4
         r, s, t, u = Oscar.gens(G)
         A = [s, s^2, s^2*t*u, s*t, r*t, s*t*u, s^2*u, r]
@@ -144,9 +226,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x A4 [[768, 20, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C12 x C2 [[768,40]]" begin
+    @testset "C12 x C2 [[768, 40, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 9) # C12 x C2
         r, s, t, u = Oscar.gens(G)
         A = [s*u, r*t^2, r*t*u, r*s*t^2, r*s*t*u, t^2*u, t*u, u]
@@ -162,9 +252,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C12 x C2 [[768, 40, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "(C6 x C2) : C2 [[768,38]]" begin
+    @testset "(C6 x C2) : C2 [[768, 38, (≤ 16, ≤ 16)]]" begin
         G = small_group(24, 8) # (C6 x C2) : C2
         r, s, t, u = Oscar.gens(G)
         A = [r*u, u^2, u, s*t, r*u^2, t*u, t*u^2, r*t]
@@ -180,9 +278,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C6 x C2) : C2 [[768, 38, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C2 x (C3 : C4) [[768,34]]" begin
+    @testset "C2 x (C3 : C4) [[768, 34, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 7) # C2 x (C3 : C4)
         r, s, t, u = Oscar.gens(G)
         A = [r*u^2, r*t*u^2, t*u, t*u^2, s*t*u^2, s*t*u, s*u, s*u^2]
@@ -198,9 +304,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x (C3 : C4) [[768, 34, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C4 x S3 [[768,48]]" begin
+    @testset "C4 x S3 [[768, 48, (≤ 16, ≤ 16)]]" begin
         G = small_group(24, 5) # C4 x S3
         r, s, t, u = Oscar.gens(G)
         A = [r*s*t*u^2, r*s*u^2, r*s*t, r*s, s, s*t, r*s*t*u, r*s*u]
@@ -216,9 +330,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C4 x S3 [[768, 48, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C3 : Q8 [[768,28]]" begin
+    @testset "C3 : Q8 [[768, 28, (≤ 16, ≤ 16)]]" begin
         G = small_group(24, 4) # C3 : Q8
         r, s, t, u = Oscar.gens(G)
         A = [r*s*t*u^2, r*s*u^2, r*s*t, r*s, s, s*t, r*s*t*u, r*s*u]
@@ -234,9 +356,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 : Q8 [[768, 28, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "SL(2,3) [[768,32]]" begin
+    @testset "SL(2,3) [[768, 32, (≤ 16, ≤ 16)]]" begin
         G = small_group(24, 3) # SL(2,3)
         r, s, t, u = Oscar.gens(G)
         A = [r^2*s*t*u, r*s, r^2, r, r^2*s*u, r*t, s, s*u]
@@ -252,9 +382,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("SL(2,3) [[768, 32, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C3 : C8 [[768,32]]" begin
+    @testset "C3 : C8 [[768, 32, (≤ 16, ≤ 16)]]" begin
         G = small_group(24, 1) # C3 : C8
         r, s, t, u = Oscar.gens(G)
         A = [r*u, r*s*t*u, r*u^2, r*s*t*u^2, s, s*t, t*u^2, t*u]
@@ -270,9 +408,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 : C8 [[768, 32, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C3 : C8 [[768,24]]" begin
+    @testset "C3 : C8 [[768, 24, (≤ 16, ≤ 16)]]" begin
         G = small_group(24, 1) # C3 : C8
         r, s, t, u = Oscar.gens(G)
         A = [r*s*t, r, s*t*u, s*u^2, r*s*t*u, r*u, s*t*u^2, s*u]
@@ -288,9 +434,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 : C8 [[768, 24, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C5 x C5 [[800,24]]" begin
+    @testset "C5 x C5 [[800, 24, (≤ 20, ≤ 20)]]" begin
         G = small_group(25, 2) # C5 x C5
         r, s = Oscar.gens(G)
         A = [r*s^2, r^4*s^3, r^3*s, r^2*s^4, r^4*s^2, r*s^3, r, r^4]
@@ -305,10 +459,18 @@
         @test code_k(c) == 24
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
-        @test max(wx, wz) == 16
+        @test max(wx, wz) == 16 
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C5 x C5 [[800, 24, (≤ 20, ≤ 20)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤20, ≤20)")
     end
 
-    @testset "C9 x C3 [[864,32]]" begin
+    @testset "C9 x C3 [[864, 32, (≤ 12, ≤ 12)]]" begin
         G = small_group(27, 2) # C9 x C3
         r, s, t = Oscar.gens(G)
         A = [r^2*t^2, r, t, t^2, r^2, r*t^2, r*s^2, r^2*s*t^2]
@@ -324,9 +486,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C9 x C3 [[864, 32, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "(C3 x C3) : C3 [[864,20]]" begin
+    @testset "(C3 x C3) : C3 [[864, 20, (≤ 24, ≤ 24)]]" begin
         G = small_group(27, 3) # (C3 x C3) : C3
         r, s, t = Oscar.gens(G)
         A = [r^2*t, r*t^2, t^2, t, r*t, r^2*t^2, r, r^2]
@@ -342,9 +512,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C3 x C3) : C3 [[864, 20, (≤ 24, ≤ 24)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤24, ≤24)")
     end
 
-    @testset "(C3 x C3) : C3 [[864,16]]" begin
+    @testset "(C3 x C3) : C3 [[864, 16, (≤ 24, ≤ 24)]]" begin
         G = small_group(27, 3) # (C3 x C3) : C3
         r, s, t = Oscar.gens(G)
         A = [r^2*s, r*s^2*t^2, r^2*s*t, r*s^2*t, s^2, s, s*t, s^2*t^2]
@@ -360,9 +538,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C3 x C3) : C3 [[864, 16, (≤ 24, ≤ 24)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤24, ≤24)")
     end
 
-    @testset "C9 : C3 [[864,28]]" begin
+    @testset "C9 : C3 [[864, 28, (≤ 18, ≤ 18)]]" begin
         G = small_group(27, 4) # C9 : C3
         r, s, t = Oscar.gens(G)
         A = [r, r^2*t^2, r^2, r*t^2, r^2*t, r*t, r^2*s^2, r*s]
@@ -378,9 +564,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C9 : C3 [[864, 28, (≤ 18, ≤ 18)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤18, ≤18)")
     end
 
-    @testset "C3 x C3 x C3 [[864,24]]" begin
+    @testset "C3 x C3 x C3 [[864, 24, (≤ 24, ≤ 24)]]" begin
         G = small_group(27, 5) # C3 x C3 x C3
         r, s, t = Oscar.gens(G)
         A = [s^2*t, s*t^2, r*t, r^2*t^2, s, s^2, r, r^2]
@@ -396,9 +590,18 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 x C3 x C3 [[864, 24, (≤ 24, ≤ 24)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤24, ≤24)")
+
     end
 
-    @testset "C7 : C4 [[896,40]]" begin
+    @testset "C7 : C4 [[896, 40, (≤ 16, ≤ 16)]]" begin
         G = small_group(28, 1) # C7 : C4
         r, s, t = Oscar.gens(G)
         A = [r*s*t^3, r*t^3, r, r*s, r*s*t^5, r*t^5, r*t^4, r*s*t^4]
@@ -414,9 +617,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C7 : C4 [[896, 40, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C14 x C2 [[896,16]]" begin
+    @testset "C14 x C2 [[896, 16, (≤ 16, ≤ 16)]]" begin
         G = small_group(28, 4) # C14 x C2
         r, s, t = Oscar.gens(G)
         A = [s*t^2, s*t^5, t^6, t, r*s*t^4, r*s*t^3, r*t, r*t^6]
@@ -432,9 +643,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C14 x C2 [[896, 16, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C3 x D10 [[960,24]]" begin
+    @testset "C3 x D10 [[960, 24, (≤ 16, ≤ 16)]]" begin
         G = small_group(30, 2) # C3 x D10
         r, s, t = Oscar.gens(G)
         A = [r*s^2*t, r*s*t, s^2*t^3, s*t^2, r*s*t^4, r*s^2*t^4, r*s^2, r*s]
@@ -450,9 +669,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 x D10 [[960, 24, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
-    @testset "C3 x D10 [[960,32]]" begin
+    @testset "C3 x D10 [[960, 32, (≤ 16, ≤ 16)]]" begin
         G = small_group(30, 2) # C3 x D10
         r, s, t = Oscar.gens(G)
         A = [r, s^2*t, s*t^4, s, s^2, s^2*t^3, s*t^2, r*t^4]
@@ -468,13 +695,21 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 x D10 [[960, 32, (≤ 16, ≤ 16)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤16)")
     end
 
     # =====================
     # LRCC appendix table 2
     # =====================
 
-    @testset "(C4 x C2) : C2 [[384,24]]" begin
+    @testset "(C4 x C2) : C2 [[384, 24, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 13) # (C4 x C2) : C2
         r, s, t, u = Oscar.gens(G)
         A = [r, u, s*t*u, s*t, r*s, r*s*u]
@@ -490,9 +725,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C4 x C2) : C2 [[384, 24, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "(C4 x C2) : C2 [[384,8]]" begin
+    @testset "(C4 x C2) : C2 [[384, 8, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 13) # (C4 x C2) : C2
         r, s, t, u = Oscar.gens(G)
         A = [s*t, s*t*u, r*t, r*t*u, u, s*u]
@@ -508,9 +751,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C4 x C2) : C2 [[384, 8, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C2 x D8 [[384,44]]" begin
+    @testset "C2 x D8 [[384, 44, (≤ 10, ≤ 10)]]" begin
         G = small_group(16, 11) # C2 x D8
         r, s, t, u = Oscar.gens(G)
         A = [r*s, r*s*u, s, r*s*t*u, r*s*t, s*u]
@@ -526,9 +777,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x D8 [[384, 44, (≤ 10, ≤ 10)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤10, ≤10)")
     end
 
-    @testset "C2 x D8 [[384,38]]" begin
+    @testset "C2 x D8 [[384, 38, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 11) # C2 x D8
         r, s, t, u = Oscar.gens(G)
         A = [s, r*s, r*s*u, r*u, s*u, u]
@@ -544,9 +803,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x D8 [[384, 38, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "D16 [[384,32]]" begin
+    @testset "D16 [[384, 32, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 7) # D16
         r, s, t, u = Oscar.gens(G)
         A = [s, s*t*u, t, t*u, s*t, s*u]
@@ -562,9 +829,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("D16 [[384, 32, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C4 x C2 x C2 [[384,16]]" begin
+    @testset "C4 x C2 x C2 [[384, 16, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 10) # C4 x C2 x C2
         r, s, t, u = Oscar.gens(G)
         A = [s, r*t*u, r*t, r*s*t, r*s*t*u, u]
@@ -580,9 +855,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C4 x C2 x C2 [[384, 16, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C8 : C2 [[384,32]]" begin
+    @testset "C8 : C2 [[384, 32, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 6) # C8 : C2
         r, s, t, u = Oscar.gens(G)
         A = [s*t*u, s*t, u, t*u, t, s*u]
@@ -598,9 +881,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C8 : C2 [[384, 32, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C8 : C2 [[384,8]]" begin
+    @testset "C8 : C2 [[384, 8, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 6) # C8 : C2
         r, s, t, u = Oscar.gens(G)
         A = [r*s*t, r*s, r*s*t*u, r*s*u, s*u, s]
@@ -616,9 +907,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C8 : C2 [[384, 8, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C8 x C2 [[384,18]]" begin
+    @testset "C8 x C2 [[384, 18, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 5) # C8 x C2
         r, s, t, u = Oscar.gens(G)
         A = [s*u, r*t*u, r, t*u, t, s]
@@ -634,9 +933,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C8 x C2 [[384, 18, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C4 : C4 [[384,16]]" begin
+    @testset "C4 : C4 [[384, 16, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 4) # C4 : C4
         r, s, t, u = Oscar.gens(G)
         A = [r*s*u, r*s, r*s*t, r*s*t*u, t*u, u]
@@ -652,9 +959,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C4 : C4 [[384, 16, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C4 : C4 [[384,48]]" begin
+    @testset "C4 : C4 [[384, 48, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 4) # C4 : C4
         r, s, t, u = Oscar.gens(G)
         A = [s*u, s*t*u, t, s, s*t, u]
@@ -670,9 +985,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C4 : C4 [[384, 48, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C4 x C4 [[392,12]]" begin
+    @testset "C4 x C4 [[392, 12, (≤ 13, ≤ 12)]]" begin
         G = small_group(16, 2) # C4 x C4
         r, s, t, u = Oscar.gens(G)
         A = [s*t*u, s*t, r*t, r, t*u, r*u, r*t*u]
@@ -688,9 +1011,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C4 x C4 [[392, 12, (≤ 13, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤13, ≤12)")
     end
 
-    @testset "C4 : C4 [[392,15]]" begin
+    @testset "C4 : C4 [[392, 15, (≤ 14, ≤ 10)]]" begin
         G = small_group(16, 4) # C4 : C4
         r, s, t, u = Oscar.gens(G)
         A = [t, s, s*t, r*u, r, r*t, r*t*u]
@@ -706,9 +1037,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C4 : C4 [[392, 15, (≤ 14, ≤ 10)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤14, ≤10)")
     end
 
-    @testset "C2 x D8 [[392,36]]" begin
+    @testset "C2 x D8 [[392, 36, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 11) # C2 x D8
         r, s, t, u = Oscar.gens(G)
         A = [r, s, r*u, r*s*u, r*s, u, s*u]
@@ -724,9 +1063,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x D8 [[392, 36, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C2 x Q8 [[392,8]]" begin
+    @testset "C2 x Q8 [[392, 8, (≤ 19, ≤ 20)]]" begin
         G = small_group(16, 12) # C2 x Q8
         r, s, t, u = Oscar.gens(G)
         A = [r*s*t*u, r*s*t, s, s*u, s*t, s*t*u, u]
@@ -742,9 +1089,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x Q8 [[392, 8, (≤ 19, ≤ 20)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤19, ≤20)")
     end
 
-    @testset "C2 x Q8 [[392,15]]" begin
+    @testset "C2 x Q8 [[392, 15, (≤ 20, ≤ 10)]]" begin
         G = small_group(16, 12) # C2 x Q8
         r, s, t, u = Oscar.gens(G)
         A = [s*t*u, s*t, r*t, r*t*u, t, s*u, s]
@@ -760,9 +1115,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x Q8 [[392, 15, (≤ 20, ≤ 10)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤20, ≤10)")
     end
 
-    @testset "(C4 x C2) : C2 [[392,33]]" begin
+    @testset "(C4 x C2) : C2 [[392, 33, (≤ 12, ≤ 12)]]" begin
         G = small_group(16, 13) # (C4 x C2) : C2
         r, s, t, u = Oscar.gens(G)
         A = [u, r*t*u, r*t, r*s, r*s*u, s*t*u, s*t]
@@ -778,9 +1141,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C4 x C2) : C2 [[392, 33, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "(C4 x C2) : C2 [[392,36]]" begin
+    @testset "(C4 x C2) : C2 [[392, 36, (≤ 12, ≤ 10)]]" begin
         G = small_group(16, 13) # (C4 x C2) : C2
         r, s, t, u = Oscar.gens(G)
         A = [s*t*u, s*t, u, t*u, t, r*s*u, r*s]
@@ -796,9 +1167,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C4 x C2) : C2 [[392, 36, (≤ 12, ≤ 10)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤10)")
     end
 
-    @testset "(C3 x C3) : C2 [[432,4]]" begin
+    @testset "(C3 x C3) : C2 [[432, 4, (≤ 24, ≤ 24)]]" begin
         G = small_group(18, 4) # (C3 x C3) : C2
         r, s, t = Oscar.gens(G)
         A = [t, t^2, s^2, s, s*t^2, s^2*t]
@@ -814,9 +1193,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C3 x C3) : C2 [[432, 4, (≤ 24, ≤ 24)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤24, ≤24)")
     end
 
-    @testset "C6 x C3 [[432,12]]" begin
+    @testset "C6 x C3 [[432, 12, (≤ 20, ≤ 20)]]" begin
         G = small_group(18, 5) # C6 x C3
         r, s, t = Oscar.gens(G)
         A = [s^2*t, s*t^2, r*s^2*t, r*s*t^2, t^2, t]
@@ -832,13 +1219,21 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C6 x C3 [[432, 12, (≤ 20, ≤ 20)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤20, ≤20)")
     end
 
     # =====================
     # LRCC appendix table 3
     # =====================
 
-    @testset "C3 : C8 [[576,16]]" begin
+    @testset "C3 : C8 [[576, 16, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 1) # C3 : C8
         r, s, t, u = Oscar.gens(G)
         A = [s*u^2, s*t*u, s*t*u^2, s*u, t*u^2, t*u]
@@ -854,9 +1249,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 : C8 [[576, 16, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "SL(2,3) [[576,12]]" begin
+    @testset "SL(2,3) [[576, 12, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 3) # SL(2,3)
         r, s, t, u = Oscar.gens(G)
         A = [r*s, r^2*s*t*u, r*s*t, r^2*t*u, r*t, r^2*s*u]
@@ -872,9 +1275,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("SL(2,3) [[576, 12, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C3 : Q8 [[576,8]]" begin
+    @testset "C3 : Q8 [[576, 8], (≤ 12, ≤ 12)]" begin
         G = small_group(24, 4) # C3 : Q8
         r, s, t, u = Oscar.gens(G)
         A = [s*t*u, s*u^2, r*s*t*u^2, r*s*u^2, r*s*u, r*s*t*u]
@@ -890,9 +1301,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 : Q8 [[576, 8], (≤ 12, ≤ 12)]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C4 x S3 [[576,28]]" begin
+    @testset "C4 x S3 [[576, 28, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 5) # C4 x S3
         r, s, t, u = Oscar.gens(G)
         A = [r*t*u^2, r*u^2, r*t, t*u^2, t*u, r*u]
@@ -908,9 +1327,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C4 x S3 [[576, 28, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "D24 [[576,26]]" begin
+    @testset "D24 [[576, 26, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 6) # D24
         r, s, t, u = Oscar.gens(G)
         A = [r*t*u^2, r*s*t, t*u^2, t*u, r*s*t*u^2, t]
@@ -926,9 +1353,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("D24 [[576, 26, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C2 x (C3 : C4) [[576,16]]" begin
+    @testset "C2 x (C3 : C4) [[576, 16, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 7) # C2 x (C3 : C4)
         r, s, t, u = Oscar.gens(G)
         A = [t*u^2, t*u, s*t*u^2, s*t*u, t, s]
@@ -944,9 +1379,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x (C3 : C4) [[576, 16, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C2 x (C3 : C4) [[576,40]]" begin
+    @testset "C2 x (C3 : C4) [[576, 40, (≤ 12, ≤ 9)]]" begin
         G = small_group(24, 7) # C2 x (C3 : C4)
         r, s, t, u = Oscar.gens(G)
         A = [s*t*u, s*t*u^2, t, u^2, u, s*t]
@@ -962,9 +1405,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x (C3 : C4) [[576, 40, (≤ 12, ≤ 9)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤9)")
     end
 
-    @testset "(C6 x C2) : C2 [[576,8]]" begin
+    @testset "(C6 x C2) : C2 [[576, 8, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 8) # (C6 x C2) : C2
         r, s, t, u = Oscar.gens(G)
         A = [t*u^2, t*u, u^2, u, s*t*u^2, s*t*u]
@@ -980,9 +1431,18 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C6 x C2) : C2 [[576, 8, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
+
     end
 
-    @testset "(C6 x C2) : C2 [[576,28]]" begin
+    @testset "(C6 x C2) : C2 [[576, 28, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 8) # (C6 x C2) : C2
         r, s, t, u = Oscar.gens(G)
         A = [r*u, u^2, u, s*t, r*u^2, r*t]
@@ -998,9 +1458,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C6 x C2) : C2 [[576, 28, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C12 x C2 [[576,8]]" begin
+    @testset "C12 x C2 [[576, 8, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 9) # C12 x C2
         r, s, t, u = Oscar.gens(G)
         A = [s*u, s*t^2, s*t, t*u, t^2*u, s]
@@ -1016,9 +1484,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C12 x C2 [[576, 8, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C12 x C2 [[576,30]]" begin
+    @testset "C12 x C2 [[576, 30, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 9) # C12 x C2
         r, s, t, u = Oscar.gens(G)
         A = [r*s*t, r*s*t^2*u, u, r*s, r*s*u, s*u]
@@ -1034,9 +1510,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C12 x C2 [[576, 30, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C3 x D8 [[576,16]]" begin
+    @testset "C3 x D8 [[576, 16, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 10) # C3 x D8
         r, s, t, u = Oscar.gens(G)
         A = [r*t*u, r*t^2*u, s*u, r*s, r*s*u, s]
@@ -1052,9 +1536,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 x D8 [[576, 16, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C3 x D8 [[576,32]]" begin
+    @testset "C3 x D8 [[576, 32, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 10) # C3 x D8
         r, s, t, u = Oscar.gens(G)
         A = [r, r*s*u, r*s, s*u, r*u, s]
@@ -1070,9 +1562,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C3 x D8 [[576, 32, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "S4 [[576,23]]" begin
+    @testset "S4 [[576, 23, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 12) # S4
         r, s, t, u = Oscar.gens(G)
         A = [r*s^2*t*u, r*s^2*u, r, r*s, r*s*t, r*s*t*u]
@@ -1088,9 +1588,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("S4 [[576, 23, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C2 x A4 [[576,6]]" begin
+    @testset "C2 x A4 [[576, 6, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 13) # C2 x A4
         r, s, t, u = Oscar.gens(G)
         A = [s^2*t, s*u, s^2*u, s*t*u, r*t*u, r*u]
@@ -1106,9 +1614,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x A4 [[576, 6, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C2 x A4 [[576,28]]" begin
+    @testset "C2 x A4 [[576, 28, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 13) # C2 x A4
         r, s, t, u = Oscar.gens(G)
         A = [t*u, r*s, r*s^2, r*s*u, r*s^2*t, t]
@@ -1124,9 +1640,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x A4 [[576, 28, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C2 x C2 x S3 [[576,20]]" begin
+    @testset "C2 x C2 x S3 [[576, 20, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 14) # C2 x C2 x S3
         r, s, t, u = Oscar.gens(G)
         A = [s*t*u^2, s*t*u, u^2, u, s*t, r*u^2]
@@ -1142,9 +1666,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x C2 x S3 [[576, 20, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C2 x C2 x S3 [[576,16]]" begin
+    @testset "C2 x C2 x S3 [[576, 16, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 14) # C2 x C2 x S3
         r, s, t, u = Oscar.gens(G)
         A = [u^2, u, r*t*u^2, t, s*u^2, s*u]
@@ -1160,9 +1692,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x C2 x S3 [[576, 16, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "C6 x C2 x C2 [[576,26]]" begin
+    @testset "C6 x C2 x C2 [[576, 26, (≤ 12, ≤ 12)]]" begin
         G = small_group(24, 15) # C6 x C2 x C2
         r, s, t, u = Oscar.gens(G)
         A = [r*s*u^2, r*s*u, u, u^2, r*s, r*t]
@@ -1178,9 +1718,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C6 x C2 x C2 [[576, 26, (≤ 12, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤12)")
     end
 
-    @testset "(C3 x C3) : C3 [[648,8]]" begin
+    @testset "(C3 x C3) : C3 [[648, 8, (≤ 20, ≤ 20)]]" begin
         G = small_group(27, 3) # (C3 x C3) : C3
         r, s, t = Oscar.gens(G)
         A = [r*s^2*t^2, r^2*s, r*t^2, r^2*t, t, t^2]
@@ -1196,13 +1744,21 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C3 x C3) : C3 [[648, 8, (≤ 20, ≤ 20)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤20, ≤20)")
     end
 
     # ======================
     # LRCC appendix table 4
     # ======================
 
-    @testset "C7 : C4 [[672,18]]" begin
+    @testset "C7 : C4 [[672, 18, (≤ 24, ≤ 24)]]" begin
         G = small_group(28, 1) # C7 : C4
         r, s, t = Oscar.gens(G)
         A = [s*t^2, s*t^5, s*t^4, s*t^3, t, t^6]
@@ -1218,9 +1774,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C7 : C4 [[672, 18, (≤ 24, ≤ 24)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤24, ≤24)")
     end
 
-    @testset "D28 [[672,12]]" begin
+    @testset "D28 [[672, 12, (≤ 22, ≤ 22)]]" begin
         G = small_group(28, 3) # D28
         r, s, t = Oscar.gens(G)
         A = [r*s*t, s*t^4, s*t^3, t^3, t^4, r*s*t^5]
@@ -1236,9 +1800,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("D28 [[672, 12, (≤ 22, ≤ 22)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤22, ≤22)")
     end
 
-    @testset "C14 x C2 [[672,20]]" begin
+    @testset "C14 x C2 [[672, 20, (≤ 21, ≤ 21)]]" begin
         G = small_group(28, 4) # C14 x C2
         r, s, t = Oscar.gens(G)
         A = [s, s*t^3, s*t^4, t^3, t^4, r*s]
@@ -1254,9 +1826,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C14 x C2 [[672, 20, (≤ 21, ≤ 21)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤21, ≤21)")
     end
 
-    @testset "C5 x S3 [[720,32]]" begin
+    @testset "C5 x S3 [[720, 32, (≤ 15, ≤ 15)]]" begin
         G = small_group(30, 1) # C5 x S3
         r, s, t = Oscar.gens(G)
         A = [s^2*t, s^3*t^2, r*t, r*s^2*t, r*s^3*t, r]
@@ -1272,9 +1852,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C5 x S3 [[720, 32, (≤ 15, ≤ 15)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤15, ≤15)")
     end
 
-    @testset "D30 [[720,16]]" begin
+    @testset "D30 [[720, 16, (≤ 20, ≤ 20)]]" begin
         G = small_group(30, 3) # D30
         r, s, t = Oscar.gens(G)
         A = [s*t^2, s^2*t^3, r*s*t^2, s^2*t, s*t^4, r*s^2*t^3]
@@ -1290,9 +1878,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 12
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("D30 [[720, 16, (≤ 20, ≤ 20)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤20, ≤20)")
     end
 
-    @testset "C2 x A4 [[588,33]]" begin
+    @testset "C2 x A4 [[588, 33, (≤ 19, ≤ 18)]]" begin
         G = small_group(24, 13) # C2 x A4
         r, s, t, u = Oscar.gens(G)
         A = [r*s^2*t*u, r*s*t, r*t, r*s^2, r*s, r*s^2*u, r*s*t*u]
@@ -1308,9 +1904,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x A4 [[588, 33, (≤ 19, ≤ 18)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤19, ≤18)")
     end
 
-    @testset "C2 x C2 x S3 [[588,29]]" begin
+    @testset "C2 x C2 x S3 [[588, 29, (≤ 18, ≤ 12)]]" begin
         G = small_group(24, 14) # C2 x C2 x S3
         r, s, t, u = Oscar.gens(G)
         A = [s*u, s*u^2, s*t*u, s*t*u^2, t, s*t, r]
@@ -1326,9 +1930,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x C2 x S3 [[588, 29, (≤ 18, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤18, ≤12)")
     end
 
-    @testset "C2 x C2 x S3 [[588,39]]" begin
+    @testset "C2 x C2 x S3 [[588, 39, (≤ 12, ≤ 9)]]" begin
         G = small_group(24, 14) # C2 x C2 x S3
         r, s, t, u = Oscar.gens(G)
         A = [s*t, r*s*t*u, r*t*u, s*u^2, s*u, r*s*t*u^2, r*s*t]
@@ -1344,9 +1956,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C2 x C2 x S3 [[588, 39, (≤ 12, ≤ 9)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤9)")
     end
 
-    @testset "C6 x C2 x C2 [[588,40]]" begin
+    @testset "C6 x C2 x C2 [[588, 40, (≤ 9, ≤ 18)]]" begin
         G = small_group(24, 15) # C6 x C2 x C2
         r, s, t, u = Oscar.gens(G)
         A = [r*s*u^2, r*s*u, u, u^2, r*s, r*t, s*t]
@@ -1362,9 +1982,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C6 x C2 x C2 [[588, 40, (≤ 9, ≤ 18)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤9, ≤18)")
     end
 
-    @testset "C6 x C2 x C2 [[588,38]]" begin
+    @testset "C6 x C2 x C2 [[588, 38, (≤ 14, ≤ 10)]]" begin
         G = small_group(24, 15) # C6 x C2 x C2
         r, s, t, u = Oscar.gens(G)
         A = [s*u, s*u^2, r*t*u, r*t*u^2, r*s*t*u, r*s*t*u^2, r*t]
@@ -1380,9 +2008,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C6 x C2 x C2 [[588, 38, (≤ 14, ≤ 10)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤14, ≤10)")
     end
 
-    @testset "C6 x C2 x C2 [[588,21]]" begin
+    @testset "C6 x C2 x C2 [[588, 21, (≤ 21, ≤ 12)]]" begin
         G = small_group(24, 15) # C6 x C2 x C2
         r, s, t, u = Oscar.gens(G)
         A = [r*t, s*u, s*u^2, r*s, r*s*u^2, r*s*u, s]
@@ -1398,9 +2034,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C6 x C2 x C2 [[588, 21, (≤ 21, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤21, ≤12)")
     end
 
-    @testset "C8 x C4 [[784,16]]" begin
+    @testset "C8 x C4 [[784, 16, (≤ 19, ≤ 25)]]" begin
         G = small_group(32, 3) # C8 x C4
         r, s, t, u, v = Oscar.gens(G)
         A = [s*t*u*v, s*t, t*u*v, t*u, r*s, r*s*t*u*v, v]
@@ -1416,9 +2060,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("C8 x C4 [[784, 16, (≤ 19, ≤ 25)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤19, ≤25)")
     end
 
-    @testset "(C8 x C2) : C2 [[784,37]]" begin
+    @testset "(C8 x C2) : C2 [[784, 37, (≤ 14, ≤ 12)]]" begin
         G = small_group(32, 5) # (C8 x C2) : C2
         r, s, t, u, v = Oscar.gens(G)
         A = [r*t*u, r*t*v, t, t*u, t*u*v, r*s*t*u, r*s*v]
@@ -1434,9 +2086,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C8 x C2) : C2 [[784, 37, (≤ 14, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤14, ≤12)")
     end
 
-    @testset "(C2 x C2 x C2) : C4 [[784,40]]" begin
+    @testset "(C2 x C2 x C2) : C4 [[784, 40, (≤ 14, ≤ 12)]]" begin
         G = small_group(32, 6) # (C2 x C2 x C2) : C4
         r, s, t, u, v = Oscar.gens(G)
         A = [r*s*t, r*s*u*v, v, r*s, r*s*t*u, r*s*t*v, r*s*u]
@@ -1452,9 +2112,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C2 x C2 x C2) : C4 [[784, 40, (≤ 14, ≤ 12)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤14, ≤12)")
     end
 
-    @testset "(C8 : C2) : C2 [[784,24]]" begin
+    @testset "(C8 : C2) : C2 [[784, 24, (≤ 16, ≤ 13)]]" begin
         G = small_group(32, 7) # (C8 : C2) : C2
         r, s, t, u, v = Oscar.gens(G)
         A = [r*s*t, r*s*u, v, r*s, r*s*t*u*v, r*s*t*v, r*s*u*v]
@@ -1470,9 +2138,17 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C8 : C2) : C2 [[784, 24, (≤ 16, ≤ 13)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤16, ≤13)")
     end
 
-    @testset "(C8 : C2) : C2 [[784,58]]" begin
+    @testset "(C8 : C2) : C2 [[784, 58, (≤ 12, ≤ 10)]]" begin
         G = small_group(32, 7) # (C8 : C2) : C2
         r, s, t, u, v = Oscar.gens(G)
         A = [r*t*u, r*t, r*v, r*u, s, r*u*v, r]
@@ -1488,5 +2164,13 @@
         wx = maximum(vec(sum(hx, dims=2)))
         wz = maximum(vec(sum(hz, dims=2)))
         @test max(wx, wz) == 16
+        dx_qdist, dz_qdist = compute_qdistrnd_distance(
+            hx,
+            hz;
+            num=QDIST_TRIALS,
+        )
+        println("(C8 : C2) : C2 [[784, 58, (≤ 12, ≤ 10)]]")
+        println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
+        println("  sQetch paper : (dx, dz) = (≤12, ≤10)")
     end
 end
