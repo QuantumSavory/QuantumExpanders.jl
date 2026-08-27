@@ -11,7 +11,7 @@
 
     loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
 
-    const QDIST_TRIALS = 50_000
+    const QDIST_TRIALS = 200_000
 
     function dual_code_int(H)
         H_nemo = matrix(GF(2), H)
