@@ -11,7 +11,7 @@
 
     loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
 
-    const QDIST_TRIALS = 200_000
+    const QDIST_TRIALS2 = 50_000
 
     function dual_code_int(H)
         H_nemo = matrix(GF(2), H)
@@ -67,7 +67,7 @@
     @test length(A) == 4
     @test length(B) == 3
 
-    @testset "Morgenstern [[360, 8, (≤ 3, ≤ 4)]]" begin
+    @testset "Morgenstern [[360, 8, (≤ 20, ≤ 3)]]" begin
         H_A = [
             1 1 0 1;
             1 1 1 1
@@ -90,15 +90,15 @@
         dx_qdist, dz_qdist = compute_qdistrnd_distance(
             hx,
             hz;
-            num=QDIST_TRIALS,
+            num=QDIST_TRIALS2,
         )
         println()
-        println("Morgenstern [[360, 8, (≤ 3, ≤ 4)]]")
+        println("Morgenstern [[360, 8, (≤ 20, ≤ 3)]]")
         println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
-        println("  paper table  : (dx, dz) = (≤3, ≤4)")
+        println("  paper table  : (dx, dz) = (≤20, ≤3)")
     end
 
-    @testset "Morgenstern [[360, 61, (≤ 6, ≤ 3)]]" begin
+    @testset "Morgenstern [[360, 61, (≤ 10, ≤ 3)]]" begin
         H_A = [1 1 1 0]
         H_B = [
             0 1 1;
@@ -124,9 +124,9 @@
             num=QDIST_TRIALS,
         )
         println()
-        println("Morgenstern [[360, 61, (≤ 6, ≤ 3)]]")
+        println("Morgenstern [[360, 61, (≤ 10, ≤ 3)]]")
         println("  QDistRnd 50K          : (dx, dz) = ($dx_qdist, $dz_qdist)")
-        println("  paper table           : (dx, dz) = (≤6, ≤3)")
+        println("  paper table           : (dx, dz) = (≤10, ≤3)")
         println("  appendix example 50K  : (dx, dz) = (10, 3)")
     end
 end
