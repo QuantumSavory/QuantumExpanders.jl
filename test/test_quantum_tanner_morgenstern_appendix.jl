@@ -11,7 +11,7 @@
 
     loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
 
-    const QDIST_TRIALS2 = 50_000
+    const QDIST_TRIALS = 50_000
 
     function dual_code_int(H)
         H_nemo = matrix(GF(2), H)
@@ -90,7 +90,7 @@
         dx_qdist, dz_qdist = compute_qdistrnd_distance(
             hx,
             hz;
-            num=QDIST_TRIALS2,
+            num=QDIST_TRIALS,
         )
         println()
         println("Morgenstern [[360, 8, (≤ 20, ≤ 3)]]")
