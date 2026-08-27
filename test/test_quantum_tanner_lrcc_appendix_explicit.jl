@@ -42,7 +42,7 @@
 
     loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
 
-    const QDIST_TRIALS = 1_000
+    const QDIST_TRIALS = 1000
 
     function julia_to_gap_gf2(M::AbstractMatrix)
         F2 = GAP.Globals.GF(GAP.Obj(2))

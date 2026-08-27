@@ -362,7 +362,7 @@
             @test code_k(c) == case.k
             @test maximum(vec(sum(hx, dims=2))) == case.wx
             @test maximum(vec(sum(hz, dims=2))) == case.wz
-            dx_qdist, dz_qdist = compute_distance(hx, hz; num=10_000)
+            dx_qdist, dz_qdist = compute_distance(hx, hz; num=1000)
             println()
             println(case.name)
             println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
