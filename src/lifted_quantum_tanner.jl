@@ -7,7 +7,22 @@ so that both hand-written parity matrices (`Matrix{Int}`) and outputs of
 [`dual_code`](@ref) (`zzModMatrix`) can be passed interchangeably.
 """
 _to_int_matrix(H::AbstractMatrix{<:Integer}) = Matrix{Int}(mod.(H, 2))
-_to_int_matrix(H) = Matrix{Int}(mod.(lift.(H), 2))
+
+function _to_int_matrix(H::MatElem)
+    m, n = size(H)
+    M = Matrix{Int}(undef, m, n)
+    for i in 1:m, j in 1:n
+        x = H[i, j]
+        if iszero(x)
+            M[i, j] = 0
+        elseif isone(x)
+            M[i, j] = 1
+        else
+            throw(ArgumentError("expected a binary matrix with entries 0 or 1"))
+        end
+    end
+    M
+end
 
 """
 *Left* multiplication permutation matrix ``L_a`` on ``\\mathbb{F}_2^{|G|}``.
@@ -327,7 +342,8 @@ end
 # Simplest convenience constructor: only parity checks per side; generator matrices
 # derived via dual_code.
 function QuantumTannerViaLeftRightActions(group, A::Vector, B::Vector,
-        H_A::AbstractMatrix, H_B::AbstractMatrix;
+        H_A::Union{AbstractMatrix, MatElem},
+        H_B::Union{AbstractMatrix, MatElem};
         p1 = collect(1:size(H_A,2)),
         p2 = collect(1:size(H_B,2)))
     QuantumTannerViaLeftRightActions(group, A, B,
