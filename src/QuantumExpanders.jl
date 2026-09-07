@@ -29,6 +29,7 @@ include("utils.jl")
 include("cayley_graphs.jl")
 include("tensor_codes.jl")
 include("morgenstern.jl")
+include("lifted_quantum_tanner.jl")
 include("quantum_tanner_codes.jl")
 include("quantum_tanner_code_multigraphs.jl")
 include("lubotzky_phillips_sarnak_ramanujan.jl")
@@ -54,6 +55,8 @@ export
     uniformly_random_code_checkmatrix, dual_code, good_css,
     normal_cayley_subset, GeneralizedQuantumTannerCode, find_random_generating_sets,
     # puncturing
-    puncture
+    puncture,
+    # implementation of lifted quantum Tanner codes https://arxiv.org/pdf/2608.12509
+    QuantumTannerViaLeftRightActions
 
 end #module

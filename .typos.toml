@@ -7,6 +7,7 @@ ure = "ure"
 Formen = "Formen"
 Archiv = "Archiv"
 Formes = "Formes"
+Meraj = "Meraj"
 
 [type.ipynb]
 # It detects false possitives in the base64 encoded images inside notebooks
