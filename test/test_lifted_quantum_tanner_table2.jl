@@ -1,42 +1,12 @@
 @testitem "Lifted Quantum Tanner Codes — paper Table 2" begin
     using Test
     using Oscar
-    using GAP
     using QECCore
     using QuantumExpanders
     import Nemo
     using Nemo: matrix, GF
     using QuantumClifford
     using QuantumClifford.ECC
-
-    loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
-
-    function julia_to_gap_gf2(M::AbstractMatrix)
-        F2 = GAP.Globals.GF(GAP.Obj(2))
-        oneF = GAP.Globals.One(F2)
-        zeroF = GAP.Globals.Zero(F2)
-        gap_rows = GAP.GapObj([
-            GAP.GapObj([
-                isodd(Int(M[i, j])) ? oneF : zeroF
-                for j in axes(M, 2)
-            ])
-            for i in axes(M, 1)
-        ])
-        return GAP.Globals.Matrix(gap_rows)
-    end
-
-    function compute_distance(hx, hz; num=50_000)
-        @assert iszero(mod.(hx * hz', 2))
-        GX = julia_to_gap_gf2(hx)
-        GZ = julia_to_gap_gf2(hz)
-        dz = GAP.Globals.DistRandCSS(
-            GX, GZ, GAP.Obj(num), GAP.Obj(0), GAP.Obj(0)
-        )
-        dx = GAP.Globals.DistRandCSS(
-            GZ, GX, GAP.Obj(num), GAP.Obj(0), GAP.Obj(0)
-        )
-        return Int(dx), Int(dz)
-    end
 
     function dual_code(H)
         H_nemo = matrix(GF(2), H)
@@ -90,6 +60,12 @@
         isempty(spec) && return one(G)
         cperm(G, [collect(cycle) for cycle in spec]...)
     end
+
+    # The distance bounds in these names are manuscript metadata obtained from
+    # randomized estimators. They identify the reproduced rows, but are not
+    # asserted by this deterministic construction test.
+    paper_code_name(case) =
+        "[[$(case.n), $(case.k), (≤ $(case.dx), ≤ $(case.dz))]]"
 
     cases = [
         (
@@ -331,6 +307,7 @@
     group_cache = Dict{Tuple{Int,Int}, Any}()
     for case in cases
         @testset "$(case.name)" begin
+            @test case.name == paper_code_name(case)
             group_order, group_id = case.group
             G = get!(group_cache, case.group) do
                 codomain(isomorphism(
@@ -357,16 +334,12 @@
             stab = QuantumClifford.ECC.parity_checks(c)
             mat = matrix(GF(2), stab_to_gf2(stab))
             computed_rank = rank(mat)
+            @test iszero(mod.(hx * hz', 2))
             @test computed_rank == code_n(c) - code_k(c)
             @test code_n(c) == case.n
             @test code_k(c) == case.k
             @test maximum(vec(sum(hx, dims=2))) == case.wx
             @test maximum(vec(sum(hz, dims=2))) == case.wz
-            dx_qdist, dz_qdist = compute_distance(hx, hz; num=1000)
-            println()
-            println(case.name)
-            println("  QDistRnd 50K : (dx, dz) = ($dx_qdist, $dz_qdist)")
-            println("  sQetch paper : (dx, dz) = (≤$(case.dx), ≤$(case.dz))")
         end
     end
 end

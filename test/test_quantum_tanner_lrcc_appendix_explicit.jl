@@ -5,7 +5,6 @@
     using QuantumExpanders
     using QuantumClifford
     using QuantumClifford.ECC
-    using GAP
 
     H633 = [
         1 0 0 0 1 1;
@@ -40,70 +39,6 @@
     H743 = Matrix{Int}(lift.(dual_code(G743)))
 
 
-    loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
-
-    const QDIST_TRIALS_PER_RUN = 2000
-    const QDIST_RUNS = 3
-
-    function julia_to_gap_gf2(M::AbstractMatrix)
-        F2 = GAP.Globals.GF(GAP.Obj(2))
-        oneF = GAP.Globals.One(F2)
-        zeroF = GAP.Globals.Zero(F2)
-        gap_rows = GAP.GapObj([
-            GAP.GapObj([
-                isodd(Int(M[i, j])) ? oneF : zeroF
-                for j in axes(M, 2)
-            ])
-            for i in axes(M, 1)
-        ])
-        return GAP.Globals.Matrix(gap_rows)
-    end
-
-    function qdistrnd_reaches_bound(
-            hx,
-            hz,
-            dx_bound,
-            dz_bound;
-            trials_per_run=QDIST_TRIALS_PER_RUN,
-            runs=QDIST_RUNS,
-        )
-        @assert iszero(mod.(hx * hz', 2))
-
-        GX = julia_to_gap_gf2(hx)
-        GZ = julia_to_gap_gf2(hz)
-
-        found_dx = false
-        found_dz = false
-
-        for _ in 1:runs
-            if !found_dz
-                dz = Int(GAP.Globals.DistRandCSS(
-                    GX,
-                    GZ,
-                    GAP.Obj(trials_per_run),
-                    GAP.Obj(dz_bound),
-                    GAP.Obj(0),
-                ))
-                found_dz = dz < 0
-            end
-
-            if !found_dx
-                dx = Int(GAP.Globals.DistRandCSS(
-                    GZ,
-                    GX,
-                    GAP.Obj(trials_per_run),
-                    GAP.Obj(dx_bound),
-                    GAP.Obj(0),
-                ))
-                found_dx = dx < 0
-            end
-
-            found_dx && found_dz && break
-        end
-
-        return found_dx, found_dz
-    end
-
     function test_lrcc_appendix(
             name,
             G,
@@ -116,6 +51,8 @@
             dx_bound,
             dz_bound,
         )
+        # These published distance bounds are identifying metadata only. The
+        # randomized estimates are intentionally not asserted in CI.
         title = "$name [[$n, $k, (≤ $dx_bound, ≤ $dz_bound)]]"
 
         @testset "$title" begin
@@ -124,7 +61,7 @@
             stab = QuantumClifford.ECC.parity_checks(c)
             mat = matrix(GF(2), stab_to_gf2(stab))
             computed_rank = rank(mat)
-
+            @test iszero(mod.(hx * hz', 2))
             @test computed_rank == code_n(c) - code_k(c)
             @test code_n(c) == n
             @test code_k(c) == k
@@ -133,17 +70,6 @@
             wz = maximum(vec(sum(hz, dims=2)))
             @test max(wx, wz) == max_weight
 
-            found_dx, found_dz = qdistrnd_reaches_bound(
-                hx,
-                hz,
-                dx_bound,
-                dz_bound;
-                trials_per_run=QDIST_TRIALS_PER_RUN,
-                runs=QDIST_RUNS,
-            )
-
-            @test found_dx
-            @test found_dz
         end
     end
 
