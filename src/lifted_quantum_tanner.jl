@@ -228,7 +228,7 @@ Here is a quantum Tanner code from ``\\mathcal{G} = \\text{SmallGroup}(12, 1)`` 
 ``[9, 5, 3]`` code on the ``B``-side:
 
 ```jldoctest lifted
-julia> using QuantumExpanders; using Oscar;
+julia> using QuantumExpanders; using Oscar; using QuantumClifford.ECC; using QuantumClifford;
 
 julia> G734 = [1 0 1 1 1 0 0;
                1 1 1 0 0 1 0;
@@ -351,10 +351,9 @@ function QuantumTannerViaLeftRightActions(group, A::Vector, B::Vector,
 end
 
 parity_matrix_x(c::QuantumTannerViaLeftRightActions) = c.hx
+
 parity_matrix_z(c::QuantumTannerViaLeftRightActions) = c.hz
+
 parity_matrix_xz(c::QuantumTannerViaLeftRightActions) = (c.hx, c.hz)
+
 code_n(c::QuantumTannerViaLeftRightActions) = size(c.hx, 2)
-function code_k(c::QuantumTannerViaLeftRightActions)
-    n = code_n(c)
-    return n - rank(matrix(GF(2), c.hx)) - rank(matrix(GF(2), c.hz))
-end

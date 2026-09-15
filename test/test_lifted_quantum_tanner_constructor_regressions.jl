@@ -2,6 +2,8 @@
     using Test
     using Oscar
     using QuantumExpanders
+    using QuantumClifford.ECC
+    using QECCore
 
     G = cyclic_group(1)
     A = fill(one(G), 2)

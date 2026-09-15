@@ -2,6 +2,8 @@
     using Test
     using Oscar
     using QuantumExpanders
+    using QuantumClifford.ECC
+    using QECCore
 
     G = codomain(isomorphism(PermGroup, small_group(12, 1)))
     x = cperm(G, [5, 6, 7])
