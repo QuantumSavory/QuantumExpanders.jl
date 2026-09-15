@@ -42,7 +42,8 @@
 
     loaded = GAP.Globals.LoadPackage(GAP.GapObj("QDistRnd"))
 
-    const QDIST_TRIALS = 1000
+    const QDIST_TRIALS_PER_RUN = 2000
+    const QDIST_RUNS = 3
 
     function julia_to_gap_gf2(M::AbstractMatrix)
         F2 = GAP.Globals.GF(GAP.Obj(2))
@@ -58,25 +59,49 @@
         return GAP.Globals.Matrix(gap_rows)
     end
 
-    function compute_qdistrnd_distance(hx, hz; num=QDIST_TRIALS)
+    function qdistrnd_reaches_bound(
+            hx,
+            hz,
+            dx_bound,
+            dz_bound;
+            trials_per_run=QDIST_TRIALS_PER_RUN,
+            runs=QDIST_RUNS,
+        )
         @assert iszero(mod.(hx * hz', 2))
+
         GX = julia_to_gap_gf2(hx)
         GZ = julia_to_gap_gf2(hz)
-        dz = GAP.Globals.DistRandCSS(
-            GX,
-            GZ,
-            GAP.Obj(num),
-            GAP.Obj(0),
-            GAP.Obj(0),
-        )
-        dx = GAP.Globals.DistRandCSS(
-            GZ,
-            GX,
-            GAP.Obj(num),
-            GAP.Obj(0),
-            GAP.Obj(0),
-        )
-        return Int(dx), Int(dz)
+
+        found_dx = false
+        found_dz = false
+
+        for _ in 1:runs
+            if !found_dz
+                dz = Int(GAP.Globals.DistRandCSS(
+                    GX,
+                    GZ,
+                    GAP.Obj(trials_per_run),
+                    GAP.Obj(dz_bound),
+                    GAP.Obj(0),
+                ))
+                found_dz = dz < 0
+            end
+
+            if !found_dx
+                dx = Int(GAP.Globals.DistRandCSS(
+                    GZ,
+                    GX,
+                    GAP.Obj(trials_per_run),
+                    GAP.Obj(dx_bound),
+                    GAP.Obj(0),
+                ))
+                found_dx = dx < 0
+            end
+
+            found_dx && found_dz && break
+        end
+
+        return found_dx, found_dz
     end
 
     function test_lrcc_appendix(
@@ -90,7 +115,6 @@
             max_weight,
             dx_bound,
             dz_bound,
-            distance_slack=2,
         )
         title = "$name [[$n, $k, (≤ $dx_bound, ≤ $dz_bound)]]"
 
@@ -100,12 +124,26 @@
             stab = QuantumClifford.ECC.parity_checks(c)
             mat = matrix(GF(2), stab_to_gf2(stab))
             computed_rank = rank(mat)
+
             @test computed_rank == code_n(c) - code_k(c)
             @test code_n(c) == n
             @test code_k(c) == k
+
             wx = maximum(vec(sum(hx, dims=2)))
             wz = maximum(vec(sum(hz, dims=2)))
-            @test max(wx, wz) == max_weight 
+            @test max(wx, wz) == max_weight
+
+            found_dx, found_dz = qdistrnd_reaches_bound(
+                hx,
+                hz,
+                dx_bound,
+                dz_bound;
+                trials_per_run=QDIST_TRIALS_PER_RUN,
+                runs=QDIST_RUNS,
+            )
+
+            @test found_dx
+            @test found_dz
         end
     end
 
