@@ -47,8 +47,6 @@ julia> using QuantumExpanders, Oscar, LinearAlgebra;
 
 julia> using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color;
 
-julia> using GraphsColoring: DSATUR, color, Greedy;
-
 julia> l = 1; i = 2;
 
 julia> q = 2^l; r = q + 1; # q = 2, so Γ is 3-regular
@@ -112,6 +110,14 @@ true
 
 The girth satisfies ``g(\Gamma) \geq \tfrac{2}{3}\log_q |\Gamma|``:
 
+The following numerical check is optional and uses
+[IGraphs.jl](https://github.com/juliagraphs/IGraphs.jl), which is not required by
+`QuantumExpanders.jl` itself.
+
+```julia
+pkg> add IGraphs
+```
+
 ```julia
 julia> using IGraphs: IGraph, IGVectorInt, LibIGraph;
 
@@ -142,12 +148,6 @@ The chromatic number satisfies ``\chi(\Gamma) \geq \frac{q+1}{2\sqrt{q}} + 1``:
 julia> χ_lower_bound = (q + 1)/(2√q) + 1;
 
 julia> greedy_color(Γ; sort_degree=false, reps=1000).num_colors >= χ_lower_bound
-true
-
-julia> length(color(Γ; algorithm=DSATUR()).colors) >= χ_lower_bound
-true
-
-julia> length(color(Γ; algorithm=Greedy()).colors) >= χ_lower_bound
 true
 ```
 

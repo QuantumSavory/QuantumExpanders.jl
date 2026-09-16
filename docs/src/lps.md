@@ -41,16 +41,12 @@ The graph is constructed with [`LPS`](@ref).
  
 ## Example: ``p = 13,\ q = 17``
  
-Here we construct the LPS Ramanujan graph ``X^{13,17}`` and verify the properties established on page 263 of [lubotzky1988ramanujan](@cite). Since ``\left(\frac{13}{17 \right) = 1``, this is the non-bipartite case (case ii), a ``14``-regular graph on ``|\mathrm{PSL}_2(\mathbb{F}_{17})| = 2448`` vertices.
+Here we construct the LPS Ramanujan graph ``X^{13,17}`` and verify the properties established on page 263 of [lubotzky1988ramanujan](@cite). Since ``\left(\frac{13}{17}\right) = 1``, this is the non-bipartite case (case ii), a ``14``-regular graph on ``|\mathrm{PSL}_2(\mathbb{F}_{17})| = 2448`` vertices.
  
 ```julia
 julia> using QuantumExpanders, Oscar, LinearAlgebra;
 
-julia> using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color;
-
-julia> using GraphsColoring: DSATUR, color, Greedy;
-
-julia> using NautyGraphs: NautyGraph, is_isomorphic;
+julia> using Graphs: degree, vertices, nv, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, MaximalIndependentSet;
  
 julia> p = 13; q = 17;
  
@@ -109,6 +105,14 @@ false
 ### Girth bound (case ii (a))
  
 The girth satisfies ``g(X^{p,q}) \geq 2\log_p q``:
+
+The following numerical check is optional and uses
+[IGraphs.jl](https://github.com/juliagraphs/IGraphs.jl), which is not required by
+`QuantumExpanders.jl` itself.
+
+```julia
+pkg> add IGraphs
+```
  
 ```julia
 julia> using IGraphs: IGraph, IGVectorInt, LibIGraph;

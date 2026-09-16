@@ -11,35 +11,42 @@ using QECCore
 using QuantumClifford
 using QuantumClifford.ECC
 
-#bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"))
-
-ENV["LINES"] = 80    # for forcing `displaysize(io)` to be big enough
+ENV["LINES"] = 80
 ENV["COLUMNS"] = 80
 
-
-bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"),style=:authoryear)
+bib = CitationBibliography(
+    joinpath(@__DIR__, "src/references.bib"),
+    style = :authoryear,
+)
 
 makedocs(
-plugins = [bib],
-doctest = false,
-clean = true,
-warnonly = :missing_docs,
-sitename = "QuantumExpanders.jl",
-format = Documenter.HTML(),
-authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
-pages = [
-    "QuantumExpanders.jl" => "index.md",
-    "Quantum Tanner Codes" => "quantum_tanner.md",
-    "Lubotzky–Phillips–Sarnak Ramanujan Graphs" => "lps.md",
-    "Morgenstern Ramanujan Graphs" => "morgenstern.md",
-    "API" => "API.md",
-],
-linkcheck = true
+    plugins = [bib],
+    doctest = false,
+    clean = true,
+    warnonly = :missing_docs,
+    sitename = "QuantumExpanders.jl",
+    format = Documenter.HTML(),
+    authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
+    pages = [
+        "Home" => "index.md",
+        "Getting started" => "getting_started.md",
+        "Quantum Tanner codes" => [
+            "LRCC construction" => "quantum_tanner.md",
+            "Lifted left-right actions" => "quantum_tanner_left_right_actions.md",
+            "Reproducing the manuscript" => "paper_instances.md",
+        ],
+        "Ramanujan graphs" => [
+            "Lubotzky–Phillips–Sarnak" => "lps.md",
+            "Morgenstern" => "morgenstern.md",
+        ],
+        "API reference" => "API.md",
+    ],
+    linkcheck = true,
 )
 
 deploydocs(
     repo = "github.com/QuantumSavory/QuantumExpanders.jl.git",
     devbranch = "main",
     deploy_config = Documenter.GitHubActions(),
-    push_preview = true
+    push_preview = true,
 )
