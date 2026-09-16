@@ -1,103 +1,57 @@
 # QuantumExpanders.jl
 
-<table>
-    <tr>
-        <td>Documentation</td>
-        <td>
-            <a href="https://quantumsavory.github.io/QuantumExpanders.jl/stable"><img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Documentation of latest stable version"></a>
-            <a href="https://quantumsavory.github.io/QuantumExpanders.jl/dev"><img src="https://img.shields.io/badge/docs-dev-blue.svg" alt="Documentation of dev version"></a>
-        </td>
-    </tr><tr></tr>
-    <tr>
-        <td>Continuous integration</td>
-        <td>
-            <a href="https://github.com/QuantumSavory/QuantumExpanders.jl/actions?query=workflow%3ACI+branch%3Amaster"><img src="https://github.com/QuantumSavory/QuantumExpanders.jl/actions/workflows/ci.yml/badge.svg" alt="GitHub Workflow Status"></a>
-            <a href="https://buildkite.com/quantumsavory/QuantumExpanders"><img src="https://badge.buildkite.com/8ef137151415f29c03544c5b7963f6bc6afc1022f29cfc072a.svg?branch=master" alt="Buildkite Workflow Status"></a>
-        </td>
-    </tr><tr></tr>
-    <tr>
-        <td>Code coverage</td>
-        <td>
-            <a href="https://codecov.io/gh/QuantumSavory/QuantumExpanders.jl"><img src="https://img.shields.io/codecov/c/gh/QuantumSavory/QuantumExpanders.jl?label=codecov" alt="Test coverage from codecov"></a>
-        </td>
-    </tr><tr></tr>
-</table>
+[![Documentation (stable)](https://img.shields.io/badge/docs-stable-blue.svg)](https://quantumsavory.github.io/QuantumExpanders.jl/stable)
+[![Documentation (dev)](https://img.shields.io/badge/docs-dev-blue.svg)](https://quantumsavory.github.io/QuantumExpanders.jl/dev)
+[![CI](https://github.com/QuantumSavory/QuantumExpanders.jl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/QuantumSavory/QuantumExpanders.jl/actions/workflows/ci.yml)
+[![codecov](https://img.shields.io/codecov/c/gh/QuantumSavory/QuantumExpanders.jl?label=codecov)](https://codecov.io/gh/QuantumSavory/QuantumExpanders.jl)
 
-QuantumExpanders is a &nbsp;
-    <a href="https://julialang.org">
-        <img src="https://raw.githubusercontent.com/JuliaLang/julia-logo-graphics/master/images/julia.ico" width="16em">
-        Julia Language
-    </a>
-    &nbsp; package for constructing quantum Tanner codes. To install QuantumExpanders,
-    please <a href="https://docs.julialang.org/en/v1/manual/getting-started/">open
-    Julia's interactive session (known as REPL)</a> and press the <kbd>]</kbd> key in the REPL to use the package mode, and then type:
-</p>
+`QuantumExpanders.jl` constructs quantum Tanner (QT) codes and the finite-group
+expander graphs used to build them. It integrates with
+[Oscar.jl](https://www.oscar-system.org/),
+[QECCore.jl](https://github.com/QuantumSavory/QECCore.jl), and
+[QuantumClifford.jl](https://github.com/QuantumSavory/QuantumClifford.jl), so a
+constructed code can be used directly with the broader QuantumSavory ecosystem.
+
+The package implements two constructions of quantum Tanner codes: the
+square-complex construction `QuantumTannerCode` and the lifted construction
+`QuantumTannerViaLeftRightActions`. Together they build every code in
+[*Quantum Tanner Codes at Moderate Blocklength*](https://arxiv.org/abs/2608.12509).
+
+## Installation
+
+The package is currently installed directly from GitHub:
 
 ```julia
 pkg> add https://github.com/QuantumSavory/QuantumExpanders.jl.git
 ```
 
-To update, just type `up` in the package mode.
+Julia 1.12 or later is required.
 
-### Lifted quantum Tanner code construction
+## Quick start
 
-In our recent paper [*Quantum Tanner Codes at Moderate
-Blocklength*](https://arxiv.org/pdf/2608.12509), we find explicit instances
-of quantum Tanner codes at moderate blocklengths using the lifted construction
-of [*Small quantum Tanner codes from left–right Cayley complexes*](https://arxiv.org/pdf/2512.20532). Every code in the main text of our paper is built via this construction, and it is now available in `QuantumExpanders.jl` as `QuantumTannerViaLeftRightActions`.
-
-The lifted construction is equivalent to the square-complex construction of
-Leverrier & Zémor (which is also available as `QuantumTannerCode`), but presents the code via commuting left and right actions on the group algebra rather than as
-classical Tanner codes on a square complex. This is much more convenient for
-search: multisets that maximise the classical Tanner distance on each
-`A`-slice and `B`-slice can be selected cheaply, before the more expensive
-quantum distance estimation runs. We have also discovered codes using `QuantumTannerCode` as well.
-
-**Example**. Consider a quantum Tanner code from `SmallGroup(12, 1)` with a local-code pair (`[7,3,4]` on the `A`-side, `[9,5,3]` on the `B`-side):
+This small lifted example uses the group `C₂`, the local repetition code, and
+one copy of each group element in both multisets:
 
 ```julia
-julia> using QuantumExpanders, Oscar
+using QuantumExpanders, Oscar
 
-julia> G734 = [1 0 1 1 1 0 0;
-               1 1 1 0 0 1 0;
-               0 1 1 1 0 0 1];
+G = cyclic_group(2)
+g = gens(G)[1]
+A = [one(G), g]
+B = [one(G), g]
+H = [1 1]
 
-julia> H734 = dual_code(G734);
+code = QuantumTannerViaLeftRightActions(G, A, B, H, H)
 
-julia> G953 = [1 0 0 0 0 1 1 1 1;
-               0 1 0 0 0 1 1 1 0;
-               0 0 1 0 0 1 1 0 1;
-               0 0 0 1 0 1 0 1 1;
-               0 0 0 0 1 0 1 1 1];
-
-julia> H953 = dual_code(G953);
-
-julia> G = codomain(isomorphism(PermGroup, small_group(12, 1)));
-
-julia> A = [one(G), one(G),
-            cperm(G,[5,6,7]), cperm(G,[5,6,7]),
-            cperm(G,[1,4,3,2],[6,7]), cperm(G,[1,4,3,2],[6,7]),
-            cperm(G,[1,4,3,2],[5,7])];
-
-julia> B = [one(G), one(G),
-            cperm(G,[5,6,7]), cperm(G,[5,6,7]),
-            cperm(G,[1,4,3,2],[6,7]),
-            cperm(G,[1,4,3,2],[5,7]),
-            cperm(G,[1,4,3,2],[5,6]),
-            cperm(G,[1,2,3,4],[6,7]),
-            cperm(G,[1,2,3,4],[5,7])];
-
-julia> c = QuantumTannerViaLeftRightActions(G, A, B, H734, G734, H953, G953;
-                                            p1 = [1,2,3,4,5,6,7],
-                                            p2 = [1,2,3,4,5,7,8,9,6]);
-
-julia> code_n(c), code_k(c)
-(756, 10)
+code_n(code), code_k(code)       # (8, 2)
+hx, hz = parity_matrix_xz(code)
+iszero(mod.(hx * hz', 2))        # true
 ```
 
-Distance estimation on codes of this size uses external tools such as
-[sqetch](https://github.com/a7b/yarn) (GPU random-ISD estimator) or
-[QDistRnd](https://github.com/QEC-pages/QDistRnd) (GAP-based).
+The constructor returns an `AbstractCSSCode`, so standard functions such as
+`parity_matrix_x`, `parity_matrix_z`, `code_n`, and `code_k` work directly.
+
+## Construction methods
 
 ```mermaid
 graph TD
@@ -112,337 +66,110 @@ graph TD
         DeterministicMethods --> SquareComplex["Square-complex construction"]
         DeterministicMethods --> Lifted["Lifted construction"]
         SquareComplex --> QuantumTannerCode["`QuantumTannerCode`"]
-        SquareComplex --> GeneralizedQuantumTannerCode["`GeneralizedQuantumTannerCode`"]
         Lifted --> QuantumTannerViaLeftRightActions["`QuantumTannerViaLeftRightActions`"]
     end
 ```
 
-## Quantum Tanner codes
+The lifted construction is equivalent to the square-complex construction of
+Leverrier & Zémor, but presents the code via commuting left and right actions
+rather than as classical Tanner codes on a square complex. This is much more
+convenient for search: multisets that maximise the classical Tanner distance on
+each `A`-slice and `B`-slice can be selected cheaply, before the more expensive
+quantum distance estimation runs. Every code in the main text of
+[our paper](https://arxiv.org/abs/2608.12509) is built through
+`QuantumTannerViaLeftRightActions`; see the
+[lifted construction guide](https://quantumsavory.github.io/QuantumExpanders.jl/dev/quantum_tanner_left_right_actions/)
+for a worked `[[756, 10]]` example and the full argument mapping.
 
-Here is the novel `[[360, 61, (3, 10)]]` quantum Tanner code constructed from [Morgenstern Ramanujan graphs](https://www.sciencedirect.com/science/article/pii/S0095895684710549)
-for even prime power q.
+## Which constructor should I use?
 
-```julia
-julia> l = 1; i = 2;
+| Goal | Constructor |
+|---|---|
+| Build from an explicit left-right Cayley complex | `QuantumTannerCode` |
+| Use commuting left/right actions, multisets, or column permutations | `QuantumTannerViaLeftRightActions` |
+| Generate random local codes for an LRCC | `random_quantum_Tanner_code` |
+| Construct a Morgenstern or LPS Ramanujan graph | `morgenstern_generators` or `LPS` |
 
-julia> q = 2^l
-2
+Start with the
+[Getting started](https://quantumsavory.github.io/QuantumExpanders.jl/dev/getting_started/)
+guide, then see the dedicated pages for the
+[LRCC construction](https://quantumsavory.github.io/QuantumExpanders.jl/dev/quantum_tanner/)
+and the
+[lifted construction](https://quantumsavory.github.io/QuantumExpanders.jl/dev/quantum_tanner_left_right_actions/).
 
-julia> Δ = q+1
-3
+## Ramanujan graphs
 
-julia> SL₂, B = morgenstern_generators(l, i)
-[ Info: |SL₂(𝔽(4))| = 60
-(SL(2,4), Oscar.MatrixGroupElem{Nemo.FqFieldElem, Nemo.FqMatrix}[[o+1 o+1; 1 o+1], [o+1 1; o+1 o+1], [o+1 o; o o+1]])
+The library provides two explicit constructions of Ramanujan graphs used to build
+the codes:
 
-julia> A = alternative_morgenstern_generators(B, FirstOnly())
-4-element Vector{Oscar.MatrixGroupElem{Nemo.FqFieldElem, Nemo.FqMatrix}}:
- [0 1; 1 o+1]
- [o+1 1; 1 0]
- [o+1 o+1; o 0]
- [0 o+1; o o+1]
+- **Morgenstern** `(q+1)`-regular graphs for even prime power `q`, via
+  `morgenstern_generators` / `alternative_morgenstern_generators`; and
+- **Lubotzky-Phillips-Sarnak** `(p+1)`-regular graphs `Xᵖ˒ᑫ` for primes
+  `p, q ≡ 1 (mod 4)`, via `LPS`.
 
-julia> rng = MersenneTwister(892529278);
+The documentation verifies that both families satisfy the properties guaranteed
+by their source theorems, including regularity, order, connectivity, the Ramanujan
+spectral bound, girth, diameter, chromatic and independence bounds, and the
+second-eigenvalue expansion bounds of
+[Dinur et al. (2022)](https://arxiv.org/abs/2111.04808). See the
+[Morgenstern graphs](https://quantumsavory.github.io/QuantumExpanders.jl/dev/)
+and [LPS graphs](https://quantumsavory.github.io/QuantumExpanders.jl/dev/)
+pages for the full checks.
 
-julia> hx, hz = random_quantum_Tanner_code(0.75, SL₂, A, B, rng=rng);
-(length(group), length(A), length(B)) = (60, 4, 3)
-length(group) * length(A) * length(B) = 720
-[ Info: |V₀| = |V₁| = |G| = 60
-[ Info: |E_A| = Δ|G| = 240, |E_B| = Δ|G| = 180
-[ Info: |Q| = Δ²|G|/2 = 360
-Hᴬ = [1 1 1 0]
-Hᴮ = [0 1 1; 1 1 0]
-Cᴬ = [1 1 0 0; 1 0 1 0; 0 0 0 1]
-Cᴮ = [1 1 1]
-size(Cˣ) = (3, 12)
-size(Cᶻ) = (2, 12)
-r1 = rank(𝒞ˣ) = 179
-r2 = rank(𝒞ᶻ) = 120
+## Data and reproducing the paper's codes
 
-julia> c = CSS(hx, hz);
+The explicit code instances reported in
+[*Quantum Tanner Codes at Moderate Blocklength*](https://arxiv.org/abs/2608.12509),
+including their groups, generator multisets, local codes, and parity-check data,
+are collected in the companion data repository
+[**QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength**](https://github.com/QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength).
+Use it together with `QuantumExpanders.jl` to rebuild any published code from its
+recorded constructor arguments.
 
-julia> import JuMP; import HiGHS;
+The documentation mention how the published data map to constructor arguments and
+how to verify blocklength, dimension, CSS orthogonality, stabilizer rank, and check
+weights. Randomized distance estimates are reported as upper bounds. See
+[Reproducing the manuscript instances](https://quantumsavory.github.io/QuantumExpanders.jl/dev/paper_instances/).
 
-julia> code_n(c), code_k(c)
-(360, 61)
+Distance estimation on the larger codes uses external tools such as
+[sqetch](https://github.com/a7b/yarn) (GPU random-ISD estimator) or
+[QDistRnd](https://github.com/QEC-pages/QDistRnd) (GAP-based).
 
-julia> distance(c, DistanceMIPAlgorithm(solver = name ,logical_operator_type = :Z,time_limit = 900)), distance(c, DistanceMIPAlgorithm(solver = name ,logical_operator_type = :X,time_limit = 900))
-(3, 10)
+## Citation
+
+If you use the moderate-blocklength QT constructions or the accompanying code
+data, please cite:
+
+```bibtex
+@article{mian2026quantum,
+  title   = {Quantum Tanner Codes at Moderate Blocklength},
+  author  = {Mian, Feroz Ahmed and Addala, Vaishnavi L. and Meraj, Arman and
+             Chadha, Adhiraj and Krastanov, Stefan},
+  journal = {arXiv preprint arXiv:2608.12509},
+  year    = {2026}
+}
 ```
 
-The library also provides two **explicit constructions** of Ramanujan graphs:
-
-```mermaid
-flowchart TB
-    A["Ramanujan Graphs"]
-    A --> B["Lubotzky–Phillips–Sarnak <br>(1986)"]
-    A --> C["Morgenstern (1994)<br/>(even prime power q)"]
-```
-
-## Morgenstern Ramanujan graphs
-
-Here we construct the Morgenstern Ramanujan graph `Γ = Cay(SL₂(𝔽_{qⁱ}), B)` for `l = 1, i = 2` (so `q = 2ˡ = 2`) and verify that it satisfies **all** the properties guaranteed by Theorem 5.13 of Morgenstern's [*Existence and Explicit Constructions of (q+1)-Regular Ramanujan Graphs for Every Prime Power q*](https://www.sciencedirect.com/science/article/pii/S0095895684710549), as well as the spectral expansion bounds of Claims 6.1 and 6.2 of
-[Dinur et al. (2022), *Locally testable codes with constant rate, distance, and locality*](https://arxiv.org/abs/2111.04808).
-
-```julia
-julia> using QuantumExpanders, Oscar, LinearAlgebra;
-
-julia> using Graphs: degree, vertices, nv, ne, is_bipartite, adjacency_matrix, diameter, is_connected, independent_set, has_edge, MaximalIndependentSet, greedy_color;
-
-julia> using GraphsColoring: DSATUR, color, Greedy;
-
-julia> using NautyGraphs: NautyGraph, is_isomorphic;
-
-julia> using IGraphs: IGraph, IGVectorInt, LibIGraph;
-
-julia> l = 1; i = 2;
-
-julia> q = 2^l; r = q + 1; # q = 2, so Γ is 3-regular
-
-julia> G, B = morgenstern_generators(l, i);
-[ Info: |SL₂(𝔽(4))| = 60
-
-julia> Γ = cayley_right(G, B);
-```
-
-**Generator set `B`.** The set `B` contains `q + 1` generators, each of determinant `1`
-and order `2` (so `Γ` is an undirected simple graph):
-
-```julia
-julia> length(B) == q + 1
-true
-
-julia> all(det(b) == one(base_ring(b)) for b in B)
-true
-
-julia> all(matrix(b^2) == identity_matrix(base_ring(b), 2) for b in B)
-true
-```
-
-**Property I: `(q+1)`-regularity and order `|Γ| = q³ⁱ − qⁱ`.**
-
-```julia
-julia> all(degree(Γ, v) == q + 1 for v in vertices(Γ))
-true
-
-julia> nv(Γ) == q^(3i) - q^i == 60
-true
-
-julia> is_connected(Γ)
-true
-```
-
-**Property II: Non-bipartiteness.**
-
-```julia
-julia> is_bipartite(Γ)
-false
-```
-
-**Property III: Ramanujan bound.** The trivial eigenvalue is `q + 1`, and every other
-eigenvalue `μ` satisfies `|μ| ≤ 2√q`:
-
-```julia
-julia> λs = sort(real.(eigvals(Matrix(adjacency_matrix(Γ)))), rev=true);
-
-julia> λs[1] ≈ q + 1
-true
-
-julia> all(abs(μ) ≤ 2√q + 1e-10 for μ in λs[2:end])
-true
-```
-
-**Girth bound.** `g(Γ) ≥ (2/3)·log_q(|Γ|)`:
-
-```julia
-julia> girth_lower_bound = floor(Int, (2/3)*log(q, nv(Γ)));
-
-julia> g_igraph = IGraph(Γ); girth_val = Ref{LibIGraph.igraph_real_t}(0.0); cycle = IGVectorInt();
-
-julia> LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref);
-
-julia> Int(girth_val[]) >= girth_lower_bound
-true
-```
-
-**Property IV: Diameter bound.** `diam(Γ) ≤ 2·log_q(|Γ|) + 2`:
-
-```julia
-julia> diameter(Γ) ≤ ceil(Int, 2*log(q, nv(Γ)) + 2)
-true
-```
-
-**Property V: Chromatic number.** `χ(Γ) ≥ (q+1)/(2√q) + 1`:
-
-```julia
-julia> χ_lower_bound = (q + 1)/(2√q) + 1;
-
-julia> greedy_color(Γ; sort_degree=false, reps=1000).num_colors >= χ_lower_bound
-true
-
-julia> length(color(Γ; algorithm=DSATUR()).colors) >= χ_lower_bound
-true
-
-julia> length(color(Γ; algorithm=Greedy()).colors) >= χ_lower_bound
-true
-```
-
-**Property VI: Independence number.** `i(Γ) ≤ (2√q/(q+1))·|Γ|`:
-
-```julia
-julia> ind_set = independent_set(Γ, MaximalIndependentSet());
-
-julia> length(ind_set) ≤ ceil(Int, (2√q/(q + 1))*nv(Γ))
-true
-
-julia> all(u == v || !has_edge(Γ, u, v) for u in ind_set, v in ind_set)
-true
-```
-
-**Expander properties.** `Γ` is an `(n, r, 1 − λ²/r²)`-expander with
-`λ = max_{μ ≠ q+1} |μ|`, where `λ ≤ r − d²/8r` and `λ ≤ 2√(r−1)` (optimality):
-
-```julia
-julia> λ = maximum(abs.(λs[2:end]));
-
-julia> d = 1 - λ^2/r^2; d > 0;
-
-julia> λ ≤ r - d^2/(8r) + 1e-10
-true
-
-julia> λ ≤ 2√(r - 1) + 1e-10
-true
-```
-
-### Spectral expansion of the alternative generator sets
-
-The alternative generator sets `A = alternative_morgenstern_generators(B, ...)` used in
-the quantum Tanner code construction also satisfy the explicit second-eigenvalue bounds
-of [Dinur et al. (2022)](https://arxiv.org/abs/2111.04808):
-
-```julia
-julia> A₁ = alternative_morgenstern_generators(B, AllPairs()); # Claim 6.1 (ii): AllPairs generators, degree k₁ = q² + q
-
-julia> Γ₁ = cayley_right(G, A₁);
-
-julia> λ₂ = sort(real.(eigvals(Matrix(adjacency_matrix(Γ₁))/(q^2 + q))), rev=true)[2];
-
-julia> λ₂ < (3q - 1)/(q^2 + q)
-true
-
-julia> A₂ = alternative_morgenstern_generators(B, FirstOnly()); # Claim 6.2: FirstOnly generators, degree k₁ = 2q
-
-julia> Γ₂ = cayley_right(G, A₂);
-
-julia> λ₂ = sort(real.(eigvals(Matrix(adjacency_matrix(Γ₂))/(2q))), rev=true)[2];
-
-julia> λ₂ < 3√(2q - 1)/(2q)
-true
-```
-
-## Lubotzky–Phillips–Sarnak (LPS) Ramanujan graphs
-
-The LPS construction gives explicit `(p+1)`-regular Ramanujan graphs `Xᵖ˒ᑫ` for primes `p, q ≡ 1 (mod 4)` with `p ≠ q`. The structure of the graph depends on the Legendre symbol `(p/q)`: when `(p/q) = 1` the graph is the *non-bipartite* Cayley graph of `PSL₂(𝔽_q)` with `|Xᵖ˒ᑫ| = q(q² − 1)/2`, and when `(p/q) = −1` it is the *bipartite* Cayley graph of `PGL₂(𝔽_q)` with `|Xᵖ˒ᑫ| = q(q² − 1)`.
-
-Here we construct the LPS Ramanujan graph for `p = 13, q = 17` and verify thepr operties established on page 263 of
-[Lubotzky, Phillips, and Sarnak (1988), *Ramanujan graphs*](https://link.springer.com/article/10.1007/BF02126799).
-
-```julia
-julia> using QuantumExpanders, Oscar, LinearAlgebra
-
-julia> using QuantumExpanders: legendre_symbol, is_ramanujan; # and same libraries as above
-
-julia> p = 13; q = 17;
-
-julia> legendre_symbol(p, q) # (p/q) = 1: non-bipartite PSL₂(𝔽_q) case
-1
-
-julia> X = LPS(p, q);
-
-julia> n = q*(q^2 - 1)÷2 # |PSL₂(𝔽₁₇)| = 2448
-2448
-```
-
-**`(p+1)`-regularity, order, and connectivity.**
-
-```julia
-julia> all(degree(X, v) == p + 1 for v in vertices(X))
-true
-
-julia> nv(X) == n
-true
-
-julia> is_connected(X)
-true
-```
-
-**Ramanujan bound.** The trivial eigenvalue is `p + 1`, and every other eigenvalue
-`μ` satisfies `|μ| ≤ 2√p`:
-
-```julia
-julia> λs = sort(real.(eigvals(Matrix(adjacency_matrix(X)))), rev=true);
-
-julia> λs[1] ≈ p + 1
-true
-
-julia> all(abs(μ) ≤ 2√p + 1e-10 for μ in λs[2:end])
-true
-```
-
-The same check is available as a convenience predicate:
-
-```julia
-julia> is_ramanujan(X, p)
-true
-```
-
-**Non-bipartiteness.** Since `(p/q) = 1`, the graph is non-bipartite (case ii):
-
-```julia
-julia> is_bipartite(X)
-false
-```
-
-**Girth bound (case ii (a)).** `g(Xᵖ˒ᑫ) ≥ 2·log_p(q)`:
-
-```julia
-julia> girth_lower_bound = floor(Int, 2*log(p, q));
-
-julia> g_igraph = IGraph(X); girth_val = Ref{LibIGraph.igraph_real_t}(0.0); cycle = IGVectorInt();
-
-julia> LibIGraph.igraph_girth(g_igraph.objref, girth_val, cycle.objref);
-
-julia> Int(girth_val[]) >= girth_lower_bound
-true
-```
-
-**Diameter bound (case ii (b)).** `diam(Xᵖ˒ᑫ) ≤ 2·log_p(n) + 2·log_p(2) + 1`:
-
-```julia
-julia> diameter(X) ≤ ceil(Int, 2*log(p, n) + 2*log(p, 2) + 1)
-true
-```
-
-**Independence number (case ii (c)).** `i(Xᵖ˒ᑫ) ≤ (2√p/(p+1))·n`:
-
-```julia
-julia> ind_set = independent_set(X, MaximalIndependentSet());
-
-julia> length(ind_set) ≤ ceil(Int, (2√p/(p + 1))*n)
-true
-```
-
-When `(p/q) = −1`, the graph is instead the bipartite Cayley graph of
-`PGL₂(𝔽_q)` on `q(q² − 1)` vertices, satisfying the corresponding case i bounds:
-girth `g(Xᵖ˒ᑫ) ≥ 4·log_p(q) − log_p(4)` and the same diameter bound.
-
-## Support
-
-QuantumExpanders.jl is developed by [many volunteers](https://github.com/QuantumSavory/QuantumExpanders.jl/graphs/contributors), managed at [Prof. Krastanov's lab](https://lab.krastanov.org/) at [University of Massachusetts Amherst](https://www.umass.edu/quantum/).
-
-The development effort is supported by The [NSF Engineering and Research Center for Quantum Networks](https://cqn-erc.arizona.edu/), and
-by NSF Grant 2346089 "Research Infrastructure: CIRC: New: Full-stack Codesign Tools for Quantum Hardware".
+The code data are archived at
+[QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength](https://github.com/QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength).
+
+## Contributing and support
+
+Bug reports, documentation improvements, and pull requests are welcome through
+the [GitHub issue tracker](https://github.com/QuantumSavory/QuantumExpanders.jl/issues).
+The project is developed by [many volunteers](https://github.com/QuantumSavory/QuantumExpanders.jl/graphs/contributors),
+managed at [Prof. Krastanov's lab](https://lab.krastanov.org/) at the
+[University of Massachusetts Amherst](https://www.umass.edu/quantum/).
+
+The development effort is supported by the
+[NSF Engineering and Research Center for Quantum Networks](https://cqn-erc.arizona.edu/),
+and by NSF Grant 2346089 "Research Infrastructure: CIRC: New: Full-stack Codesign
+Tools for Quantum Hardware".
+
+See [`CHANGELOG.md`](CHANGELOG.md) for the paper-related features and fixes in the
+current development branch.
 
 ## Bounties
 
-[We run many bug bounties and encourage submissions from novices (we are happy to help onboard you in the field).](https://github.com/QuantumSavory/.github/blob/main/BUG_BOUNTIES.md)
+[We run many bug bounties and encourage submissions from novices (we are happy to
+help onboard you in the field).](https://github.com/QuantumSavory/.github/blob/main/BUG_BOUNTIES.md)

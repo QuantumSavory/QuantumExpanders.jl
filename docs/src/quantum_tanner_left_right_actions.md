@@ -15,8 +15,26 @@ This construction is particularly convenient for explicit code searches because:
   is not needed; and
 - different column permutations of the local codes can be searched efficiently.
 
-For the geometric LRCC description, see
-[Quantum Tanner Codes](@ref quantum-tanner-codes).
+For the geometric LRCC description, see [Quantum Tanner Codes](@ref quantum-tanner-codes).
+
+## Model
+
+It helps to separate the construction into four steps:
+
+1. arrange ``n_A n_B`` base qubits in an ``n_A\times n_B`` grid;
+2. replace every base qubit by a fiber containing ``|G|`` qubits;
+3. use the left actions from `A` and right actions from `B` to connect those
+   fibers; and
+4. lift the base ``X``- and ``Z``-checks through the resulting permutation
+   operators.
+
+![A base grid and the group-valued fibers of its lift](assets/lifted_fibers.svg)
+
+*The fiber viewpoint used in [mian2026quantum](@cite). Each base coordinate
+``(i,j)`` is replaced by ``|G|`` physical coordinates ``(i,j,g)``. One fiber is
+highlighted in red.*
+
+The matrix formulas below implement exactly these four steps.
 
 ## Construction
 
@@ -87,7 +105,7 @@ L_aR_b=R_bL_a
 for all ``a,b\\in G``.
 
 For the multisets ``A`` and ``B``, the implementation assembles block-diagonal
-operators
+matrices
 
 ```math
 L_A
@@ -153,6 +171,12 @@ n=|G|\\,n_A n_B.
 
 Three forms of [`QuantumTannerViaLeftRightActions`](@ref) are available.
 
+| Available local-code data | Constructor to use |
+|---|---|
+| Only ``H_A,H_B`` | Parity-check-only form; dual generators are computed internally |
+| ``(H_A,G_A)`` and ``(H_B,G_B)`` | Parity-check/generator form; optionally use `p1,p2` |
+| Four independent local pairs | Fully explicit form |
+
 ### 1. Parity-check matrices only
 
 ```julia
@@ -169,6 +193,10 @@ QuantumTannerViaLeftRightActions(
 
 This is the shortest constructor. Generator matrices are obtained internally
 using [`dual_code`](@ref).
+
+`H_A` and `H_B` may be ordinary Julia integer matrices or Oscar matrices over
+``\mathbb F_2``. In particular, matrices created with `matrix(GF(2), ...)` and
+matrices returned by [`dual_code`](@ref) are accepted directly.
 
 By default,
 
@@ -217,6 +245,11 @@ G_1' = G_B[:,p_2].
 Thus `p1` acts on the ``A``-side local code and `p2` acts on the ``B``-side
 local code.
 
+!!! warning "Permutations define the code"
+    `p1` and `p2` are not display metadata. Changing either permutation can
+    change the stabilizer rank and therefore `code_k`, even when the group,
+    multisets, and unpermuted local codes remain fixed.
+
 ### 3. Fully explicit local-code pairs
 
 ```julia
@@ -245,7 +278,7 @@ CSS orthogonality condition.
 
 The following example constructs a ``[[288, 8, (≤15, ≤15)]]`` lifted QT code over ``S_3``.
 
-```julia
+```jldoctest lifted-example
 julia> using QuantumExpanders, Oscar, QECCore
 
 julia> G = codomain(isomorphism(PermGroup, small_group(6, 1)));
@@ -368,7 +401,7 @@ regular actions.
 
 The resulting object implements the usual `QECCore` CSS-code interface:
 
-```julia
+```jldoctest lifted-interface
 julia> hx = parity_matrix_x(c);
 
 julia> hz = parity_matrix_z(c);
@@ -385,6 +418,12 @@ julia> code_k(c)
 The parity-check matrices may then be passed to the rest of the
 `QECCore` / `QuantumClifford.ECC` ecosystem for distance estimation, decoding,
 or other code analysis.
+
+!!! note "Constructing a code does not certify its distance"
+    Randomized distance algorithms return the lightest logical operator found,
+    hence an upper bound on the true distance. Keep estimator names, trial
+    counts, and returned values separate from deterministic constructor data.
+    See [Reproducing the manuscript instances](@ref paper-instances).
 
 ## Choosing between the two QT constructions
 

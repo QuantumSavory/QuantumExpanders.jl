@@ -18,6 +18,18 @@ construction implemented by [`QuantumTannerCode`](@ref). The lifted construction
 is documented separately on
 [Quantum Tanner Codes via Left-Right Actions](@ref quantum-tanner-left-right-actions).
 
+After reading this page, you should be able to identify the group data, the
+local classical codes, the qubits, and the stabilizer supports required by the
+LRCC constructor.
+
+![From a repetition code to a two-dimensional code and an LRCC](assets/qt_construction_overview.svg)
+
+*Geometric roadmap from the manuscript [mian2026quantum](@cite): a repetition
+code on a cycle, its two-dimensional product, and an LRCC square labelled by
+``g\in G``, ``a\in A``, and ``b\in B``. The right panel uses the quadripartite
+labels that make the four corners of a square explicit; the bipartite
+constructor below uses the corresponding quotient description.*
+
 ## Two QT constructors in `QuantumExpanders.jl`
 
 The two high-level constructors represent the same QT-code framework in different
@@ -44,6 +56,23 @@ ways, but their inputs obey different constraints.
 The LRCC description is especially useful when one wants the square-complex
 geometry explicitly. The lifted description is often more convenient for
 systematic searches over finite groups and local codes.
+
+## Cayley graph intuition
+
+A Cayley graph turns multiplication by a small set of group elements into
+edges. Its vertices are the elements of ``G``; an edge labelled by ``s`` joins
+``g`` to either ``sg`` or ``gs``, depending on whether a left or right action is
+used. The graph therefore depends on both the group and the chosen generators.
+
+![Three Cayley graphs with generator-labelled edges](assets/cayley_graph_examples.svg)
+
+*Examples from [mian2026quantum](@cite). The two right panels use the same group
+``S_3`` with different generators, illustrating why the generator data are an
+essential part of a QT-code instance.*
+
+The LRCC combines a left Cayley action from ``A`` with a right Cayley action
+from ``B``. Left and right multiplication commute, which is the algebraic
+reason squares can be formed consistently.
 
 ## The bipartite left-right Cayley complex
 
@@ -131,7 +160,12 @@ Q(v) \cong A\times B.
 
 Thus the local view around a vertex is an ``|A|\times|B|`` grid.
 
-![Q-neighborhoods of neighboring vertices share a row or column](assets/q_neighborhood.svg)
+![Four LRCC local views and their shared rows and columns](assets/lrcc_local_views.png)
+
+*Local ``A\times B`` views from [mian2026quantum](@cite). An ``A``-edge shares a
+row, while a ``B``-edge shares a column. Blue-bordered vertices support
+``X``-type constraints and red-bordered vertices support ``Z``-type
+constraints.*
 
 This local grid is the key geometric feature of the LRCC. Neighboring vertices
 share an entire row or column rather than a single qubit, which makes it
@@ -242,6 +276,17 @@ QuantumTannerCode(
     ((H_A, G_A), (H_B, G_B)),
 )
 ```
+
+Before constructing the code, check that:
+
+- `length(A) == size(H_A, 2) == size(G_A, 2)` and likewise on the `B` side;
+- each local pair satisfies ``H_AG_A^\mathsf{T}=0`` or
+  ``H_BG_B^\mathsf{T}=0`` over ``\mathbb F_2``;
+- `A` and `B` are symmetric and exclude the identity; and
+- the pair satisfies total non-conjugacy.
+
+These are mathematical requirements of the LRCC presentation, not merely input
+formatting conventions.
 
 Here is a small explicit example using ``G=C_3\times S_3`` and the ``[6,3,3]``
 classical code on both sides:

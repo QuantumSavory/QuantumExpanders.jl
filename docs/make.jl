@@ -28,12 +28,18 @@ makedocs(
     format = Documenter.HTML(),
     authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
     pages = [
-        "QuantumExpanders.jl" => "index.md",
-        "Quantum Tanner Codes" => "quantum_tanner.md",
-        "Quantum Tanner Codes via Left-Right Actions" => "quantum_tanner_left_right_actions.md",
-        "Lubotzky–Phillips–Sarnak Ramanujan Graphs" => "lps.md",
-        "Morgenstern Ramanujan Graphs" => "morgenstern.md",
-        "API" => "API.md",
+        "Home" => "index.md",
+        "Getting started" => "getting_started.md",
+        "Quantum Tanner codes" => [
+            "LRCC construction" => "quantum_tanner.md",
+            "Lifted left-right actions" => "quantum_tanner_left_right_actions.md",
+            "Reproducing the manuscript" => "paper_instances.md",
+        ],
+        "Ramanujan graphs" => [
+            "Lubotzky–Phillips–Sarnak" => "lps.md",
+            "Morgenstern" => "morgenstern.md",
+        ],
+        "API reference" => "API.md",
     ],
     linkcheck = true,
 )
