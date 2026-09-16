@@ -5,12 +5,17 @@
 [![CI](https://github.com/QuantumSavory/QuantumExpanders.jl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/QuantumSavory/QuantumExpanders.jl/actions/workflows/ci.yml)
 [![codecov](https://img.shields.io/codecov/c/gh/QuantumSavory/QuantumExpanders.jl?label=codecov)](https://codecov.io/gh/QuantumSavory/QuantumExpanders.jl)
 
-`QuantumExpanders.jl` constructs quantum Tanner (QT) codes and the finite-group
-expander graphs used to build them. It integrates with
+QuantumExpanders is a &nbsp;
+    <a href="https://julialang.org">
+        <img src="https://raw.githubusercontent.com/JuliaLang/julia-logo-graphics/master/images/julia.ico" width="16em">
+        Julia Language
+    </a>
+    &nbsp; package for constructing quantum Tanner (QT) codes and the finite-group expander graphs used to build them. It integrates with
 [Oscar.jl](https://www.oscar-system.org/),
 [QECCore.jl](https://github.com/QuantumSavory/QECCore.jl), and
 [QuantumClifford.jl](https://github.com/QuantumSavory/QuantumClifford.jl), so a
 constructed code can be used directly with the broader QuantumSavory ecosystem.
+</p>
 
 The package implements two constructions of quantum Tanner codes: the
 square-complex construction `QuantumTannerCode` and the lifted construction
