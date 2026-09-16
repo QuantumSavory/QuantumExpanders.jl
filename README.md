@@ -59,20 +59,19 @@ The constructor returns an `AbstractCSSCode`, so standard functions such as
 ## Construction methods
 
 ```mermaid
-graph TD
-    QuantumTannerCodes["Quantum Tanner Codes"] --> RandomMethods["Random Methods"]
-    QuantumTannerCodes --> DeterministicMethods["Deterministic Methods"]
+flowchart TD
+    QT["Quantum Tanner Codes"]
 
-    subgraph "Random construction"
-        RandomMethods --> RandomQuantumTannerCode["`random_quantum_Tanner_code`"]
-    end
+    QT --> LRCC["LRCC construction"]
+    QT --> Lifted["Lifted left-right actions"]
+    QT --> Search["Randomized search helpers"]
 
-    subgraph "Deterministic construction"
-        DeterministicMethods --> SquareComplex["Square-complex construction"]
-        DeterministicMethods --> Lifted["Lifted construction"]
-        SquareComplex --> QuantumTannerCode["`QuantumTannerCode`"]
-        Lifted --> QuantumTannerViaLeftRightActions["`QuantumTannerViaLeftRightActions`"]
-    end
+    LRCC --> QTC["QuantumTannerCode"]
+    LRCC --> GQTC["GeneralizedQuantumTannerCode"]
+
+    Lifted --> LRA["QuantumTannerViaLeftRightActions"]
+
+    Search --> RQTC["random_quantum_Tanner_code"]
 ```
 
 The lifted construction is equivalent to the square-complex construction of
