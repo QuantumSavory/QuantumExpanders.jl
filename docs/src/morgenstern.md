@@ -108,7 +108,7 @@ true
 
 ### Girth bound
 
-The girth satisfies ``g(\\Gamma) \\geq \\tfrac{2}{3}\\log_q |\Gamma|``:
+The girth satisfies ``g(\\Gamma) \\geq \\tfrac{2}{3}\\log_q |\\Gamma|``:
 
 The following numerical check is optional and uses
 [IGraphs.jl](https://github.com/juliagraphs/IGraphs.jl), which is not required by
