@@ -2,8 +2,7 @@
 
 `QuantumExpanders.jl` is a Julia library for constructing quantum Tanner (QT)
 codes and explicit constructions of expander graphs. The package is
-built on [Oscar](https://www.oscar-system.org/),
-[QECCore](https://github.com/QuantumSavory/QECCore.jl), and
+built on [Oscar](https://www.oscar-system.org/), and
 [QuantumClifford](https://github.com/QuantumSavory/QuantumClifford.jl).
 
 The library supports two complementary descriptions of QT codes:
@@ -95,7 +94,7 @@ sets.
 
 The following example constructs a quantum Tanner code using explicit
 [Morgenstern generators](@ref morgenstern-graphs) of
-``\\mathrm{SL}_2(\\mathbb{F}_4)``.
+``\mathrm{SL}_2(\mathbb{F}_4)``.
 
 ```julia
 julia> using QuantumExpanders, Oscar, QECCore, QuantumClifford, QuantumClifford.ECC

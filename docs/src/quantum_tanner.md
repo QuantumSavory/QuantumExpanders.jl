@@ -50,7 +50,7 @@ The complete construction has five ingredients.
 | Ingredient | Purpose |
 |:--|:--|
 | A finite group ``G`` | Repeats the same local geometry throughout the complex |
-| Two subsets ``A,B\\subseteq G`` | Supply the two directions of the local grid |
+| Two subsets ``A,B\subseteq G`` | Supply the two directions of the local grid |
 | LRCC squares ``Q`` | Label the physical qubits |
 | Two binary codes ``C_A`` and ``C_B`` | Specify valid patterns along the two grid directions |
 | Two vertex classes ``V_0`` and ``V_1`` | Carry the local ``Z``- and ``X``-type stabilizers |
@@ -62,93 +62,93 @@ The following sections build these ingredients one at a time.
 Let ``G`` be a finite group. Choose two symmetric subsets
 
 ```math
-\\begin{aligned}
-A=A^{-1}, \\qquad B=B^{-1},
-\\end{aligned}
+\begin{aligned}
+A=A^{-1}, \qquad B=B^{-1},
+\end{aligned}
 ```
 
 neither of which contains the identity. The elements of ``A`` and ``B``
-label two families of edges. For ``a\\in A``, left multiplication sends
-``g`` to ``ag``; for ``b\\in B``, right multiplication sends ``g`` to ``gb``.
+label two families of edges. For ``a\in A``, left multiplication sends
+``g`` to ``ag``; for ``b\in B``, right multiplication sends ``g`` to ``gb``.
 
 These left and right actions commute:
 
 ```math
-\\begin{aligned}
+\begin{aligned}
 a(gb)=(ag)b=agb.
-\\end{aligned}
+\end{aligned}
 ```
 
 We can therefore reach ``agb`` in either order. These two paths form the boundary of a square:
 
 ```math
-\\begin{array}{ccc}
-g & \\xrightarrow{\\ b\\ } & gb \\\\
-{\\scriptstyle a}\\downarrow & & \\downarrow{\\scriptstyle a} \\\\
-ag & \\xrightarrow{\\ b\\ } & agb .
-\\end{array}
+\begin{array}{ccc}
+g & \xrightarrow{\ b\ } & gb \\
+{\scriptstyle a}\downarrow & & \downarrow{\scriptstyle a} \\
+ag & \xrightarrow{\ b\ } & agb .
+\end{array}
 ```
 
 The LRCC uses a bipartite version of this picture. Its vertices are two copies of the group,
 
 ```math
-\\begin{aligned}
-V_0=G\\times\\{0\\},
-\\qquad
-V_1=G\\times\\{1\\}.
-\\end{aligned}
+\begin{aligned}
+V_0=G\times\{0\},
+\qquad
+V_1=G\times\{1\}.
+\end{aligned}
 ```
 
-For ``g\\in G``, an ``A``-edge and a ``B``-edge are respectively
+For ``g\in G``, an ``A``-edge and a ``B``-edge are respectively
 
 ```math
-\\begin{aligned}
-(g,0)\\sim(ag,1),
-\\qquad
-(g,0)\\sim(gb,1).
-\\end{aligned}
+\begin{aligned}
+(g,0)\sim(ag,1),
+\qquad
+(g,0)\sim(gb,1).
+\end{aligned}
 ```
 
 Together they bound the square
 
 ```math
-\\begin{aligned}
+\begin{aligned}
 q(g,a,b)
 =
-\\bigl\\{(g,0),(ag,1),(gb,1),(agb,0)\\bigr\\}.
-\\end{aligned}
+\bigl\{(g,0),(ag,1),(gb,1),(agb,0)\bigr\}.
+\end{aligned}
 ```
 
 The construction places **one physical qubit on each such square**.
 
 ## **Total non-conjugacy (TNC)** condition
 
-Requiring ``ag\\neq gb`` for every choice of ``g``, ``a``, and ``b`` gives the
+Requiring ``ag\neq gb`` for every choice of ``g``, ``a``, and ``b`` gives the
 **total non-conjugacy (TNC)** condition
 
 ```math
-\\begin{aligned}
-g^{-1}ag\\neq b
-\\qquad
-\\text{for all }g\\in G,\\ a\\in A,\\ b\\in B.
-\\end{aligned}
+\begin{aligned}
+g^{-1}ag\neq b
+\qquad
+\text{for all }g\in G,\ a\in A,\ b\in B.
+\end{aligned}
 ```
 
 One also checks
 
 ```math
-\\begin{aligned}
-\\langle A\\cup B\\rangle=G.
-\\end{aligned}
+\begin{aligned}
+\langle A\cup B\rangle=G.
+\end{aligned}
 ```
 
 The square ``q(g,a,b)`` has the equivalent description ``q(agb,a^{-1},b^{-1})``.
 Accounting for this description gives
 
 ```math
-\\begin{aligned}
-n=|Q|=\\frac{|G|\\,|A|\\,|B|}{2}
-\\end{aligned}
+\begin{aligned}
+n=|Q|=\frac{|G|\,|A|\,|B|}{2}
+\end{aligned}
 ```
 
 physical qubits.
@@ -159,9 +159,9 @@ Fix a vertex ``v`` and let ``Q(v)`` denote the squares incident to it.
 Choosing one direction from ``A`` and one from ``B`` identifies the local view with
 
 ```math
-\\begin{aligned}
-Q(v)\\cong A\\times B.
-\\end{aligned}
+\begin{aligned}
+Q(v)\cong A\times B.
+\end{aligned}
 ```
 
 It is helpful to draw ``Q(v)`` as a matrix whose rows are indexed by ``A``
@@ -170,15 +170,15 @@ selected by that pair of directions.
 
 This matrix picture also describes how neighboring local views overlap:
 
-- crossing an ``A``-edge fixes ``a`` and varies ``b``, so the two vertices share a row ``\\{a\\}\\times B``;
-- crossing a ``B``-edge fixes ``b`` and varies ``a``, so the two vertices share a column ``A\\times\\{b\\}``.
+- crossing an ``A``-edge fixes ``a`` and varies ``b``, so the two vertices share a row ``\{a\}\times B``;
+- crossing a ``B``-edge fixes ``b`` and varies ``a``, so the two vertices share a column ``A\times\{b\}``.
 
 The inverse labels ``a^{-1}`` and ``b^{-1}`` appear when the same shared slice
 is read from the neighboring vertex. The physical squares, however, are the same.
 
 ![Four LRCC local views and their shared rows and columns](assets/lrcc_local_views.png)
 
-*Four local ``A\\times B`` views from [mian2026quantum](@cite). Adjacent views share a complete row or column. The two vertex classes support the two types of CSS stabilizer.*
+*Four local ``A\times B`` views from [mian2026quantum](@cite). Adjacent views share a complete row or column. The two vertex classes support the two types of CSS stabilizer.*
 
 At this point the group has done its job: it has produced a large global
 combinatorial complex in which every vertex sees the same small rectangular arrangement of qubits.
@@ -188,23 +188,23 @@ combinatorial complex in which every vertex sees the same small rectangular arra
 Choose two binary linear codes
 
 ```math
-\\begin{aligned}
-C_A\\subseteq\\mathbb F_2^A,
-\\qquad
-C_B\\subseteq\\mathbb F_2^B.
-\\end{aligned}
+\begin{aligned}
+C_A\subseteq\mathbb F_2^A,
+\qquad
+C_B\subseteq\mathbb F_2^B.
+\end{aligned}
 ```
 
 A codeword of ``C_A`` assigns bits to the ``A`` direction, and a codeword of
 ``C_B`` assigns bits to the ``B`` direction. Their tensor product
 
 ```math
-\\begin{aligned}
-C_A\\otimes C_B
-\\end{aligned}
+\begin{aligned}
+C_A\otimes C_B
+\end{aligned}
 ```
 
-is a code on the local ``A\\times B`` matrix. A matrix belongs to this
+is a code on the local ``A\times B`` matrix. A matrix belongs to this
 tensor code when its columns obey ``C_A`` and its rows obey ``C_B``.
 
 ![The tensor code](assets/tensor_code.svg)
@@ -212,26 +212,26 @@ tensor code when its columns obey ``C_A`` and its rows obey ``C_B``.
 Let
 
 - ``G_A`` and ``G_B`` be generator matrices for ``C_A`` and ``C_B``; and
-- ``H_A`` and ``H_B`` be parity-check matrices whose row spaces are ``C_A^\\perp`` and ``C_B^\\perp``.
+- ``H_A`` and ``H_B`` be parity-check matrices whose row spaces are ``C_A^\perp`` and ``C_B^\perp``.
 
 Thus
 
 ```math
-\\begin{aligned}
-H_AG_A^{\\mathsf T}=0,
-\\qquad
-H_BG_B^{\\mathsf T}=0
-\\end{aligned}
+\begin{aligned}
+H_AG_A^{\mathsf T}=0,
+\qquad
+H_BG_B^{\mathsf T}=0
+\end{aligned}
 ```
 
-over ``\\mathbb F_2``. The Kronecker-product rows of ``G_A\\otimes G_B`` generate ``C_A\\otimes C_B``, while the rows of ``H_A\\otimes H_B`` generate ``C_A^\\perp\\otimes C_B^\\perp``.
+over ``\mathbb F_2``. The Kronecker-product rows of ``G_A\otimes G_B`` generate ``C_A\otimes C_B``, while the rows of ``H_A\otimes H_B`` generate ``C_A^\perp\otimes C_B^\perp``.
 
 ## Step 4: embed the local patterns as CSS checks
 
 The two copies of the group now receive different local stabilizers:
 
-- for every vertex in ``V_0``, embed the rows of ``G_A\\otimes G_B`` into its incident qubits to obtain **Z-type stabilizers**;
-- for every vertex in ``V_1``, embed the rows of ``H_A\\otimes H_B`` into its incident qubits to obtain **X-type stabilizers**.
+- for every vertex in ``V_0``, embed the rows of ``G_A\otimes G_B`` into its incident qubits to obtain **Z-type stabilizers**;
+- for every vertex in ``V_1``, embed the rows of ``H_A\otimes H_B`` into its incident qubits to obtain **X-type stabilizers**.
 
 ![Local views of the X and Z codes](assets/local_codes.svg)
 
@@ -240,16 +240,16 @@ The two copies of the group now receive different local stabilizers:
 Consider one ``Z`` check centered at a vertex of ``V_0`` and one ``X`` check centered at a vertex of ``V_1``.
 
 - If the vertices are not adjacent, their supports do not share a square.
-- If they meet across an ``A``-edge, their common qubits form a row. The two restrictions lie in ``C_B`` and ``C_B^\\perp``, so their binary inner product is zero.
-- If they meet across a ``B``-edge, their common qubits form a column. The two restrictions lie in ``C_A`` and ``C_A^\\perp``, so their binary inner product is zero.
+- If they meet across an ``A``-edge, their common qubits form a row. The two restrictions lie in ``C_B`` and ``C_B^\perp``, so their binary inner product is zero.
+- If they meet across a ``B``-edge, their common qubits form a column. The two restrictions lie in ``C_A`` and ``C_A^\perp``, so their binary inner product is zero.
 
 Consequently every pair of local checks overlaps on an even number of qubits, which is exactly the CSS commutation condition
 
 ```math
-\\begin{aligned}
-H_XH_Z^{\\mathsf T}=0
-\\qquad\\text{over }\\mathbb F_2.
-\\end{aligned}
+\begin{aligned}
+H_XH_Z^{\mathsf T}=0
+\qquad\text{over }\mathbb F_2.
+\end{aligned}
 ```
 
 ## Parameters and the LDPC property
@@ -257,38 +257,38 @@ H_XH_Z^{\\mathsf T}=0
 Suppose for simplicity that
 
 ```math
-\\begin{aligned}
-|A|=|B|=\\Delta,
-\\end{aligned}
+\begin{aligned}
+|A|=|B|=\Delta,
+\end{aligned}
 ```
 
 and choose local dimensions
 
 ```math
-\\begin{aligned}
-\\dim C_A=\\rho\\Delta,
-\\qquad
-\\dim C_B=(1-\\rho)\\Delta.
-\\end{aligned}
+\begin{aligned}
+\dim C_A=\rho\Delta,
+\qquad
+\dim C_B=(1-\rho)\Delta.
+\end{aligned}
 ```
 
 The blocklength is
 
 ```math
-\\begin{aligned}
-n=\\frac{|G|\\Delta^2}{2}.
-\\end{aligned}
+\begin{aligned}
+n=\frac{|G|\Delta^2}{2}.
+\end{aligned}
 ```
 
 Counting the local constraints gives the rate lower bound
 
 ```math
-\\begin{aligned}
-\\frac{k}{n}\\geq(1-2\\rho)^2.
-\\end{aligned}
+\begin{aligned}
+\frac{k}{n}\geq(1-2\rho)^2.
+\end{aligned}
 ```
 
-When ``\\Delta`` is constant, a local check touches at most ``\\Delta^2`` qubits,
+When ``\Delta`` is constant, a local check touches at most ``\Delta^2`` qubits,
 and every qubit participates in only a constant number of local checks. The resulting family is therefore LDPC.
 
 The local construction alone does **not** guarantee large distance. The asymptotic proof also uses:
@@ -319,29 +319,29 @@ QuantumTannerCode(
 | Finite group ``G`` | `G` | Supplies the global vertex labels |
 | Left directions ``A`` | `A` | Symmetric group-element vector, without the identity |
 | Right directions ``B`` | `B` | Symmetric group-element vector, without the identity |
-| ``C_A^\\perp`` and ``C_A`` | `(H_A, G_A)` | Parity-check and generator matrices with `length(A)` columns |
-| ``C_B^\\perp`` and ``C_B`` | `(H_B, G_B)` | Parity-check and generator matrices with `length(B)` columns |
+| ``C_A^\perp`` and ``C_A`` | `(H_A, G_A)` | Parity-check and generator matrices with `length(A)` columns |
+| ``C_B^\perp`` and ``C_B`` | `(H_B, G_B)` | Parity-check and generator matrices with `length(B)` columns |
 
 Before calling the constructor, check that:
 
 - `length(A) == size(H_A, 2) == size(G_A, 2)`, and similarly for `B`;
-- ``H_AG_A^{\\mathsf T}=0`` and ``H_BG_B^{\\mathsf T}=0`` over ``\\mathbb F_2``;
+- ``H_AG_A^{\mathsf T}=0`` and ``H_BG_B^{\mathsf T}=0`` over ``\mathbb F_2``;
 - `A` and `B` are symmetric and exclude `one(G)`;
 - the TNC condition holds; and
-- ``A\\cup B`` generates `G` if a connected complex is desired.
+- ``A\cup B`` generates `G` if a connected complex is desired.
 
 These requirements define the LRCC itself; they are more than input-shape conventions.
 
 ## A complete small example
 
-The following example uses ``G=C_3\\times S_3``. Both direction sets contain six
+The following example uses ``G=C_3\times S_3``. Both direction sets contain six
 elements, and both local codes are the binary ``[6,3,3]`` code. Therefore the qubit
 count can already be predicted from the construction:
 
 ```math
-\\begin{aligned}
-n=\\frac{18\\cdot6\\cdot6}{2}=324.
-\\end{aligned}
+\begin{aligned}
+n=\frac{18\cdot6\cdot6}{2}=324.
+\end{aligned}
 ```
 
 First create the group and the two LRCC direction sets:
