@@ -60,7 +60,7 @@ flowchart TD
     QT["Quantum Tanner Codes"]
 
     QT --> LRCC["LRCC construction"]
-    QT --> Lifted["Lifted left-right actions"]
+    QT --> Lifted["Lifted QT code via left-right actions"]
     QT --> Search["Randomized search helpers"]
 
     LRCC --> QTC["QuantumTannerCode"]

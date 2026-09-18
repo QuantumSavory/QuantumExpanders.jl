@@ -21,6 +21,7 @@ StableRNGs = "860ef19b-820b-49d6-a774-d7a799459cd3"
 
 [sources]
 QuantumExpanders = {path = ".."}
+DocumenterMermaid = {url = "https://github.com/RuaridhMacd/DocumenterMermaid.jl", rev = "8e2d9bd94f3e2f60ef48180235b72249754bf64e"}
 
 [compat]
 Graphs = "1.14.0"
