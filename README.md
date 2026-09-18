@@ -36,63 +36,29 @@ The following example constructs a ``[[288, 8, (≤15, ≤15)]]`` lifted QT code
 ```julia
 julia> G = codomain(isomorphism(PermGroup, small_group(6, 1)));
 
-julia> A = [
-           one(G),
-           one(G),
-           cperm(G, [2,3]),
-           cperm(G, [2,3]),
-           cperm(G, [1,2,3]),
-           cperm(G, [1,2]),
-           cperm(G, [1,2]),
-           cperm(G, [1,3,2]),
-       ];
+julia> A = [one(G), one(G), cperm(G, [2,3]), cperm(G, [2,3]), cperm(G, [1,2,3]), cperm(G, [1,2]), cperm(G, [1,2]), cperm(G, [1,3,2]),];
 
-julia> B = [
-           one(G),
-           one(G),
-           cperm(G, [2,3]),
-           cperm(G, [1,2,3]),
-           cperm(G, [1,2]),
-           cperm(G, [1,3,2]),
-       ];
+julia> B = [one(G), one(G), cperm(G, [2,3]), cperm(G, [1,2,3]), cperm(G, [1,2]), cperm(G, [1,3,2]),];
 
-julia> H844 = [
-           1 0 0 0 0 1 1 1;
-           0 1 0 0 1 0 1 1;
-           0 0 1 0 1 1 0 1;
-           0 0 0 1 1 1 1 0
-       ];
+julia> H844 = [1 0 0 0 0 1 1 1;
+               0 1 0 0 1 0 1 1;
+               0 0 1 0 1 1 0 1;
+               0 0 0 1 1 1 1 0];
 
-julia> G844 = [
-           0 1 1 1 1 0 0 0;
-           1 0 1 1 0 1 0 0;
-           1 1 0 1 0 0 1 0;
-           1 1 1 0 0 0 0 1
-       ];
+julia> G844 = [0 1 1 1 1 0 0 0;
+               1 0 1 1 0 1 0 0;
+               1 1 0 1 0 0 1 0;
+               1 1 1 0 0 0 0 1];
 
-julia> H633 = [
-           1 0 0 0 1 1;
-           0 1 0 1 0 1;
-           0 0 1 1 1 0
-       ];
+julia> H633 = [1 0 0 0 1 1;
+               0 1 0 1 0 1;
+               0 0 1 1 1 0];
 
-julia> G633 = [
-           0 1 1 1 0 0;
-           1 0 1 0 1 0;
-           1 1 0 0 0 1
-       ];
+julia> G633 = [0 1 1 1 0 0;
+               1 0 1 0 1 0;
+               1 1 0 0 0 1];
 
-julia> c = QuantumTannerViaLeftRightActions(
-           G,
-           A,
-           B,
-           H844,
-           G844,
-           H633,
-           G633;
-           p1 = 1:8,
-           p2 = [1,2,4,3,6,5],
-       );
+julia> c = QuantumTannerViaLeftRightActions(G,A,B,H844,G844,H633,G633;p1 = 1:8,p2 = [1,2,4,3,6,5],);
 
 julia> code_n(c), code_k(c)
 (288, 8)
