@@ -35,17 +35,9 @@
             (Matrix{Int}(lift.(H_A)), Matrix{Int}(lift.(G_A))),
             (Matrix{Int}(lift.(H_B)), Matrix{Int}(lift.(G_B))),
         )
-
         reference = QuantumTannerCode(G, A, B, classical_codes)
         hx_reference, hz_reference = parity_matrix_xz(reference)
-        hx_random, hz_random = random_quantum_Tanner_code(
-            ρ,
-            G,
-            A,
-            B;
-            rng=MersenneTwister(seed),
-        )
-
+        hx_random, hz_random = random_quantum_Tanner_code(ρ,G,A,B;rng=MersenneTwister(seed),)
         @test same_row_space(hx_random, hx_reference)
         @test same_row_space(hz_random, hz_reference)
         @test iszero(mod.(hx_random * hz_random', 2))
@@ -53,35 +45,12 @@
 
     @testset "Gu convention explicitly exchanges X and Z" begin
         for bipartite in (true, false)
-            hx_default, hz_default = random_quantum_Tanner_code(
-                ρ,
-                G,
-                A,
-                B;
-                bipartite,
-                rng=MersenneTwister(seed),
-            )
-            hx_gu, hz_gu = random_quantum_Tanner_code(
-                ρ,
-                G,
-                A,
-                B;
-                bipartite,
-                stabilizer_convention=:gu,
-                rng=MersenneTwister(seed),
-            )
-
+            hx_default, hz_default = random_quantum_Tanner_code(ρ,G,A,B;bipartite,rng=MersenneTwister(seed),)
+            hx_gu, hz_gu = random_quantum_Tanner_code(ρ,G,A,B;bipartite,stabilizer_convention=:gu,rng=MersenneTwister(seed),)
             @test hx_gu == hz_default
             @test hz_gu == hx_default
             @test iszero(mod.(hx_gu * hz_gu', 2))
         end
-
-        @test_throws ArgumentError random_quantum_Tanner_code(
-            ρ,
-            G,
-            A,
-            B;
-            stabilizer_convention=:unknown,
-        )
+        @test_throws ArgumentError random_quantum_Tanner_code(ρ,G,A,B;stabilizer_convention=:unknown,)
     end
 end
