@@ -1,272 +1,309 @@
 # [Quantum Tanner Codes](@id quantum-tanner-codes)
 
-Quantum Tanner (QT) codes, introduced by Leverrier and Zémor
-([*Quantum Tanner codes*](https://arxiv.org/abs/2202.13641),
-[*Decoding quantum Tanner codes*](https://arxiv.org/abs/2208.05537)),
-form an asymptotically good family of quantum LDPC codes: they can simultaneously
-have constant rate, linear distance, and bounded-weight stabilizer checks.
+**Quantum Tanner** (QT) codes turn two small **classical Tanner** codes
+and a finite group into a much larger CSS quantum code. With suitable expansion
+assumptions of the underlying graphs, the blocklength, dimension, and distance all
+grow linearly while the stabilizer checks remain sparse [leverrier2022quantum](@cite).
 
-QT codes admit two complementary descriptions:
+This page introduces the construction. The central idea is:
 
-1. the original **left-right Cayley complex (LRCC)** description, which gives the
-   geometric square-complex picture used in the original construction; and
-2. the **lifted left-right action** description, in which a small CSS template is
-   lifted through commuting left and right regular actions of a finite group.
+> Put qubits on the squares (a.k.a faces) of a combinatorial square complex.
+> Around every vertex, those squares form a 2D grid.
+> The product structure of the classical tensor codes specify the allowed ``Z``- and ``X``-generator support on that 2D grid.
 
-`QuantumExpanders.jl` supports both descriptions. This page focuses on the LRCC
-construction implemented by [`QuantumTannerCode`](@ref). The lifted construction
-is documented separately on
-[Quantum Tanner Codes via Left-Right Actions](@ref quantum-tanner-left-right-actions).
+`QuantumExpanders.jl` provides two related constructors:
 
-After reading this page, you should be able to identify the group data, the
-local classical codes, the qubits, and the stabilizer supports required by the
-LRCC constructor.
+- [`QuantumTannerCode`](@ref) implements the original **left-right Cayley complex (LRCC)** description explained on this page. It is used to find the instances of codes in Appendix of [mian2026quantum](@cite).
+- [`QuantumTannerViaLeftRightActions`](@ref) implements the lifted description used for the code searches in [mian2026quantum (@cite). It is covered in [Quantum Tanner Codes via Left-Right Actions](@ref quantum-tanner-left-right-actions).
+
+## Why move from a graph to a square complex?
+
+A classical Tanner code begins with a graph. A symbol is placed on each edge,
+and every vertex checks the symbols on its incident edges against a small local
+code. The graph supplies the global connectivity; the same small constraint is reused at every vertex.
+
+For a CSS quantum code we need two families of checks, one of ``X`` type
+and one of ``Z`` type, and every ``X`` check must commute with every ``Z``
+check. A square complex provides a useful two-dimensional analogue of the
+Tanner-graph picture:
+
+1. physical qubits are placed on **squares** rather than edges;
+2. a vertex sees all the squares that touch it;
+3. those **incident squares** are arranged as a small matrix; and
+4. neighboring vertices share one complete row or column of that matrix.
+
+The row-or-column overlap is what makes the CSS commutation rule easy to
+enforce with a classical code and its dual.
 
 ![From a repetition code to a two-dimensional code and an LRCC](assets/qt_construction_overview.svg)
 
-*Geometric roadmap from the manuscript [mian2026quantum](@cite): a repetition
-code on a cycle, its two-dimensional product, and an LRCC square labelled by
-``g\in G``, ``a\in A``, and ``b\in B``. The right panel uses the quadripartite
-labels that make the four corners of a square explicit; the bipartite
-constructor below uses the corresponding quotient description.*
+*A geometric roadmap, adapted from [mian2026quantum](@cite). A one-dimensional
+cycle supports a repetition code. Taking two independent directions produces a
+grid of faces. The LRCC reproduces this local grid around every vertex while
+using a finite group to create the global geometry. Hence, it is a generalization
+of the 2D grid structure.*
 
-## Two QT constructors in `QuantumExpanders.jl`
+## The construction at a glance
 
-The two high-level constructors represent the same QT-code framework in different
-ways, but their inputs obey different constraints.
+The complete construction has five ingredients.
 
-- [`QuantumTannerCode`](@ref) uses the **bipartite LRCC**. Its sets `A` and `B`
-  must be symmetric, must not contain the identity, and must satisfy the total
-  non-conjugacy condition. The resulting code has
+| Ingredient | Purpose |
+|:--|:--|
+| A finite group ``G`` | Repeats the same local geometry throughout the complex |
+| Two subsets ``A,B\\subseteq G`` | Supply the two directions of the local grid |
+| LRCC squares ``Q`` | Label the physical qubits |
+| Two binary codes ``C_A`` and ``C_B`` | Specify valid patterns along the two grid directions |
+| Two vertex classes ``V_0`` and ``V_1`` | Carry the local ``Z``- and ``X``-type stabilizers |
 
-  ```math
-  n = \frac{|G|\,|A|\,|B|}{2}.
-  ```
+The following sections build these ingredients one at a time.
 
-- [`QuantumTannerViaLeftRightActions`](@ref) uses the **lifted algebraic
-  description**. Here `A` and `B` are multisets associated with the left and
-  right regular actions; repeated elements are allowed and the LRCC total
-  non-conjugacy condition is not required. If the two local-code lengths are
-  ``n_A`` and ``n_B``, then
+## Step 1: two group actions produce squares
 
-  ```math
-  n = |G|\,n_A n_B.
-  ```
-
-The LRCC description is especially useful when one wants the square-complex
-geometry explicitly. The lifted description is often more convenient for
-systematic searches over finite groups and local codes.
-
-## Cayley graph intuition
-
-A Cayley graph turns multiplication by a small set of group elements into
-edges. Its vertices are the elements of ``G``; an edge labelled by ``s`` joins
-``g`` to either ``sg`` or ``gs``, depending on whether a left or right action is
-used. The graph therefore depends on both the group and the chosen generators.
-
-![Three Cayley graphs with generator-labelled edges](assets/cayley_graph_examples.svg)
-
-*Examples from [mian2026quantum](@cite). The two right panels use the same group
-``S_3`` with different generators, illustrating why the generator data are an
-essential part of a QT-code instance.*
-
-The LRCC combines a left Cayley action from ``A`` with a right Cayley action
-from ``B``. Left and right multiplication commute, which is the algebraic
-reason squares can be formed consistently.
-
-## The bipartite left-right Cayley complex
-
-Let ``G`` be a finite group and let ``A,B \subseteq G`` be symmetric generating
-sets,
+Let ``G`` be a finite group. Choose two symmetric subsets
 
 ```math
-A=A^{-1}, \qquad B=B^{-1}.
+\\begin{aligned}
+A=A^{-1}, \\qquad B=B^{-1},
+\\end{aligned}
 ```
 
-For the bipartite LRCC used by [`QuantumTannerCode`](@ref), the generating sets
-must also satisfy
+neither of which contains the identity. The elements of ``A`` and ``B``
+label two families of edges. For ``a\\in A``, left multiplication sends
+``g`` to ``ag``; for ``b\\in B``, right multiplication sends ``g`` to ``gb``.
+
+These left and right actions commute:
 
 ```math
-1_G \notin A,\qquad 1_G \notin B,
+\\begin{aligned}
+a(gb)=(ag)b=agb.
+\\end{aligned}
 ```
 
-and the **total non-conjugacy (TNC)** condition
+We can therefore reach ``agb`` in either order. These two paths form the boundary of a square:
 
 ```math
-g^{-1}ag \neq b
-\qquad
-\text{for every } g\in G,\ a\in A,\ b\in B.
+\\begin{array}{ccc}
+g & \\xrightarrow{\\ b\\ } & gb \\\\
+{\\scriptstyle a}\\downarrow & & \\downarrow{\\scriptstyle a} \\\\
+ag & \\xrightarrow{\\ b\\ } & agb .
+\\end{array}
 ```
 
-In particular, TNC implies ``A\cap B=\varnothing``. In typical searches one also
-requires
+The LRCC uses a bipartite version of this picture. Its vertices are two copies of the group,
 
 ```math
-\langle A\cup B\rangle = G
+\\begin{aligned}
+V_0=G\\times\\{0\\},
+\\qquad
+V_1=G\\times\\{1\\}.
+\\end{aligned}
 ```
 
-so that the construction uses the full group.
-
-The vertex set consists of two copies of ``G``,
+For ``g\\in G``, an ``A``-edge and a ``B``-edge are respectively
 
 ```math
-V = V_0 \sqcup V_1,
-\qquad
-V_i = G\times\{i\}.
+\\begin{aligned}
+(g,0)\\sim(ag,1),
+\\qquad
+(g,0)\\sim(gb,1).
+\\end{aligned}
 ```
 
-For each ``a\in A``, an ``A``-edge connects
+Together they bound the square
 
 ```math
-(g,0) \sim (ag,1),
-```
-
-while for each ``b\in B``, a ``B``-edge connects
-
-```math
-(g,0) \sim (gb,1).
-```
-
-These are bipartite double covers of the left and right Cayley graphs,
-respectively.
-
-## Squares and qubits
-
-The faces of the complex are the four-cycles
-
-```math
+\\begin{aligned}
 q(g,a,b)
 =
-\{(g,0),\ (ag,1),\ (gb,1),\ (agb,0)\},
-\qquad
-g\in G,\ a\in A,\ b\in B.
+\\bigl\\{(g,0),(ag,1),(gb,1),(agb,0)\\bigr\\}.
+\\end{aligned}
 ```
 
-Each square carries one physical qubit.
+The construction places **one physical qubit on each such square**.
 
-Because the generating sets are symmetric, the same geometric square has
-multiple equivalent descriptions. After quotienting these redundant
-descriptions, the number of physical qubits is
+## **Total non-conjugacy (TNC)** condition
+
+Requiring ``ag\\neq gb`` for every choice of ``g``, ``a``, and ``b`` gives the
+**total non-conjugacy (TNC)** condition
 
 ```math
-|Q| = \frac{|G|\,|A|\,|B|}{2}.
+\\begin{aligned}
+g^{-1}ag\\neq b
+\\qquad
+\\text{for all }g\\in G,\\ a\\in A,\\ b\\in B.
+\\end{aligned}
 ```
 
-For every vertex ``v``, the incident squares are naturally indexed by
+One also checks
 
 ```math
-Q(v) \cong A\times B.
+\\begin{aligned}
+\\langle A\\cup B\\rangle=G.
+\\end{aligned}
 ```
 
-Thus the local view around a vertex is an ``|A|\times|B|`` grid.
+The square ``q(g,a,b)`` has the equivalent description ``q(agb,a^{-1},b^{-1})``.
+Accounting for this description gives
+
+```math
+\\begin{aligned}
+n=|Q|=\\frac{|G|\\,|A|\\,|B|}{2}
+\\end{aligned}
+```
+
+physical qubits.
+
+## Step 2: every vertex sees a small matrix
+
+Fix a vertex ``v`` and let ``Q(v)`` denote the squares incident to it.
+Choosing one direction from ``A`` and one from ``B`` identifies the local view with
+
+```math
+\\begin{aligned}
+Q(v)\\cong A\\times B.
+\\end{aligned}
+```
+
+It is helpful to draw ``Q(v)`` as a matrix whose rows are indexed by ``A``
+and whose columns are indexed by ``B``. The entry ``(a,b)`` represents the square
+selected by that pair of directions.
+
+This matrix picture also describes how neighboring local views overlap:
+
+- crossing an ``A``-edge fixes ``a`` and varies ``b``, so the two vertices share a row ``\\{a\\}\\times B``;
+- crossing a ``B``-edge fixes ``b`` and varies ``a``, so the two vertices share a column ``A\\times\\{b\\}``.
+
+The inverse labels ``a^{-1}`` and ``b^{-1}`` appear when the same shared slice
+is read from the neighboring vertex. The physical squares, however, are the same.
 
 ![Four LRCC local views and their shared rows and columns](assets/lrcc_local_views.png)
 
-*Local ``A\times B`` views from [mian2026quantum](@cite). An ``A``-edge shares a
-row, while a ``B``-edge shares a column. Blue-bordered vertices support
-``X``-type constraints and red-bordered vertices support ``Z``-type
-constraints.*
+*Four local ``A\\times B`` views from [mian2026quantum](@cite). Adjacent views share a complete row or column. The two vertex classes support the two types of CSS stabilizer.*
 
-This local grid is the key geometric feature of the LRCC. Neighboring vertices
-share an entire row or column rather than a single qubit, which makes it
-possible to impose commuting ``X``- and ``Z``-type constraints.
+At this point the group has done its job: it has produced a large global
+combinatorial complex in which every vertex sees the same small rectangular arrangement of qubits.
 
-## Local tensor codes
+## Step 3: classical codes define local patterns
 
-Choose two binary classical codes
+Choose two binary linear codes
 
 ```math
-C_A \subseteq \mathbb{F}_2^A,
-\qquad
-C_B \subseteq \mathbb{F}_2^B.
+\\begin{aligned}
+C_A\\subseteq\\mathbb F_2^A,
+\\qquad
+C_B\\subseteq\\mathbb F_2^B.
+\\end{aligned}
 ```
 
-Let ``G_A`` and ``G_B`` be generator matrices for these codes and let ``H_A`` and
-``H_B`` be parity-check matrices, so the rows of ``H_A`` and ``H_B`` generate the
-corresponding dual spaces.
-
-The natural code on the local ``A\times B`` grid is the tensor code
+A codeword of ``C_A`` assigns bits to the ``A`` direction, and a codeword of
+``C_B`` assigns bits to the ``B`` direction. Their tensor product
 
 ```math
-C_A\otimes C_B.
+\\begin{aligned}
+C_A\\otimes C_B
+\\end{aligned}
 ```
+
+is a code on the local ``A\\times B`` matrix. A matrix belongs to this
+tensor code when its columns obey ``C_A`` and its rows obey ``C_B``.
 
 ![The tensor code](assets/tensor_code.svg)
 
-In the implementation of [`QuantumTannerCode`](@ref),
+Let
 
-- the rows of ``G_A\otimes G_B`` generate the local **Z-type stabilizers** on
-  ``V_0``; and
-- the rows of ``H_A\otimes H_B`` generate the local **X-type stabilizers** on
-  ``V_1``.
+- ``G_A`` and ``G_B`` be generator matrices for ``C_A`` and ``C_B``; and
+- ``H_A`` and ``H_B`` be parity-check matrices whose row spaces are ``C_A^\\perp`` and ``C_B^\\perp``.
 
-Equivalently, the two local stabilizer spaces are
+Thus
 
 ```math
-C_A\otimes C_B
-\qquad\text{and}\qquad
-C_A^\perp\otimes C_B^\perp.
+\\begin{aligned}
+H_AG_A^{\\mathsf T}=0,
+\\qquad
+H_BG_B^{\\mathsf T}=0
+\\end{aligned}
 ```
+
+over ``\\mathbb F_2``. The Kronecker-product rows of ``G_A\\otimes G_B`` generate ``C_A\\otimes C_B``, while the rows of ``H_A\\otimes H_B`` generate ``C_A^\\perp\\otimes C_B^\\perp``.
+
+## Step 4: embed the local patterns as CSS checks
+
+The two copies of the group now receive different local stabilizers:
+
+- for every vertex in ``V_0``, embed the rows of ``G_A\\otimes G_B`` into its incident qubits to obtain **Z-type stabilizers**;
+- for every vertex in ``V_1``, embed the rows of ``H_A\\otimes H_B`` into its incident qubits to obtain **X-type stabilizers**.
 
 ![Local views of the X and Z codes](assets/local_codes.svg)
 
-Why do the stabilizers commute? Whenever an ``X``- and a ``Z``-type local view
-overlap, their intersection is a row or a column of the local grid. On that
-shared slice, one restriction lies in a classical code and the other lies in
-its dual, so their binary inner product vanishes.
+### Why the checks commute
 
-## Parameters
+Consider one ``Z`` check centered at a vertex of ``V_0`` and one ``X`` check centered at a vertex of ``V_1``.
 
-For the standard asymptotic setting, take
+- If the vertices are not adjacent, their supports do not share a square.
+- If they meet across an ``A``-edge, their common qubits form a row. The two restrictions lie in ``C_B`` and ``C_B^\\perp``, so their binary inner product is zero.
+- If they meet across a ``B``-edge, their common qubits form a column. The two restrictions lie in ``C_A`` and ``C_A^\\perp``, so their binary inner product is zero.
 
-```math
-|A|=|B|=\Delta,
-```
-
-with local-code dimensions
+Consequently every pair of local checks overlaps on an even number of qubits, which is exactly the CSS commutation condition
 
 ```math
-\dim C_A = \rho\Delta,
-\qquad
-\dim C_B = (1-\rho)\Delta.
+\\begin{aligned}
+H_XH_Z^{\\mathsf T}=0
+\\qquad\\text{over }\\mathbb F_2.
+\\end{aligned}
 ```
 
-The number of physical qubits is
+## Parameters and the LDPC property
+
+Suppose for simplicity that
 
 ```math
-n=\frac{|G|\Delta^2}{2}.
+\\begin{aligned}
+|A|=|B|=\\Delta,
+\\end{aligned}
 ```
 
-Counting the local ``X``- and ``Z``-type generators gives the familiar rate
-lower bound
+and choose local dimensions
 
 ```math
-k \geq (1-2\rho)^2 n.
+\\begin{aligned}
+\\dim C_A=\\rho\\Delta,
+\\qquad
+\\dim C_B=(1-\\rho)\\Delta.
+\\end{aligned}
 ```
 
-Thus the construction has constant rate whenever ``\rho\neq 1/2``. For constant
-``\Delta``, both stabilizer weight and qubit degree remain bounded, so the family
-is LDPC.
+The blocklength is
 
-Linear distance requires additional expansion hypotheses. Two ingredients enter
-the original analysis:
+```math
+\\begin{aligned}
+n=\\frac{|G|\\Delta^2}{2}.
+\\end{aligned}
+```
 
-1. **Spectral expansion.** The Cayley graphs generated by ``A`` and ``B`` should
-   have strong spectral expansion. Explicit Ramanujan constructions such as
-   [Morgenstern](@ref morgenstern-graphs) and [LPS](@ref lps-graphs) provide
-   useful sources of generating sets.
+Counting the local constraints gives the rate lower bound
 
-2. **Product expansion.** The local classical codes must prevent cancellation
-   between the row and column components of a local view. Random local codes
-   satisfy the required product-expansion property with high probability in the
-   asymptotic construction.
+```math
+\\begin{aligned}
+\\frac{k}{n}\\geq(1-2\\rho)^2.
+\\end{aligned}
+```
 
-Together these ingredients yield constant relative distance.
+When ``\\Delta`` is constant, a local check touches at most ``\\Delta^2`` qubits,
+and every qubit participates in only a constant number of local checks. The resulting family is therefore LDPC.
 
-## Constructing an LRCC quantum Tanner code
+The local construction alone does **not** guarantee large distance. The asymptotic proof also uses:
 
-[`QuantumTannerCode`](@ref) takes a finite group, two LRCC generating sets, and
-one classical code pair for each side:
+1. expansion of the Cayley graphs defined by ``A`` and ``B``; and
+2. a product-expansion property of the two local classical codes.
+
+Under the hypotheses of [leverrier2022quantum](@cite), these ingredients
+give linear distance and hence an asymptotically good quantum LDPC family. Explicit
+Ramanujan constructions, including [Morgenstern](@ref morgenstern-graphs) and
+[LPS](@ref lps-graphs), provide useful sources of expanding Cayley graphs.
+
+## `QuantumTannerCode` Constructor
+
+[`QuantumTannerCode`](@ref) follows the mathematical construction directly:
 
 ```julia
 QuantumTannerCode(
@@ -277,19 +314,37 @@ QuantumTannerCode(
 )
 ```
 
-Before constructing the code, check that:
+| Mathematical object | Julia input | Required role |
+|:--|:--|:--|
+| Finite group ``G`` | `G` | Supplies the global vertex labels |
+| Left directions ``A`` | `A` | Symmetric group-element vector, without the identity |
+| Right directions ``B`` | `B` | Symmetric group-element vector, without the identity |
+| ``C_A^\\perp`` and ``C_A`` | `(H_A, G_A)` | Parity-check and generator matrices with `length(A)` columns |
+| ``C_B^\\perp`` and ``C_B`` | `(H_B, G_B)` | Parity-check and generator matrices with `length(B)` columns |
 
-- `length(A) == size(H_A, 2) == size(G_A, 2)` and likewise on the `B` side;
-- each local pair satisfies ``H_AG_A^\mathsf{T}=0`` or
-  ``H_BG_B^\mathsf{T}=0`` over ``\mathbb F_2``;
-- `A` and `B` are symmetric and exclude the identity; and
-- the pair satisfies total non-conjugacy.
+Before calling the constructor, check that:
 
-These are mathematical requirements of the LRCC presentation, not merely input
-formatting conventions.
+- `length(A) == size(H_A, 2) == size(G_A, 2)`, and similarly for `B`;
+- ``H_AG_A^{\\mathsf T}=0`` and ``H_BG_B^{\\mathsf T}=0`` over ``\\mathbb F_2``;
+- `A` and `B` are symmetric and exclude `one(G)`;
+- the TNC condition holds; and
+- ``A\\cup B`` generates `G` if a connected complex is desired.
 
-Here is a small explicit example using ``G=C_3\times S_3`` and the ``[6,3,3]``
-classical code on both sides:
+These requirements define the LRCC itself; they are more than input-shape conventions.
+
+## A complete small example
+
+The following example uses ``G=C_3\\times S_3``. Both direction sets contain six
+elements, and both local codes are the binary ``[6,3,3]`` code. Therefore the qubit
+count can already be predicted from the construction:
+
+```math
+\\begin{aligned}
+n=\\frac{18\\cdot6\\cdot6}{2}=324.
+\\end{aligned}
+```
+
+First create the group and the two LRCC direction sets:
 
 ```jldoctest quantum-tanner-lrcc
 julia> using QuantumExpanders, Oscar, QECCore
@@ -301,7 +356,11 @@ julia> r, s, t = Oscar.gens(G);
 julia> A = [s, s^2, t, t^2, r*t^2, r];
 
 julia> B = [r*s, r*s^2, s*t, s^2*t^2, r*s*t^2, r*s^2*t^2];
+```
 
+Next supply a parity-check matrix and a generator matrix for the local code:
+
+```jldoctest quantum-tanner-lrcc
 julia> H633 = [1 0 0 0 1 1;
                0 1 0 1 0 1;
                0 0 1 1 1 0];
@@ -310,6 +369,14 @@ julia> G633 = [0 1 1 1 0 0;
                1 0 1 0 1 0;
                1 1 0 0 0 1];
 
+julia> iszero(mod.(H633 * G633', 2))
+true
+```
+
+The last line verifies that the two row spaces are orthogonal. Now build the
+quantum code, using the same classical code in the ``A`` and ``B`` directions:
+
+```jldoctest quantum-tanner-lrcc
 julia> c = QuantumTannerCode(
            G,
            A,
@@ -321,36 +388,23 @@ julia> code_n(c), code_k(c)
 (324, 8)
 ```
 
-The parity-check matrices can then be obtained in the usual way:
+Finally obtain the global CSS parity-check matrices and verify their commutation relation:
 
-```julia
-hx, hz = parity_matrix_xz(c)
+```jldoctest quantum-tanner-lrcc
+julia> hx, hz = parity_matrix_xz(c);
+
+julia> size(hx, 2) == code_n(c) && size(hz, 2) == code_n(c)
+true
+
+julia> iszero(mod.(hx * hz', 2))
+true
 ```
-
-## When to use each construction
-
-Use [`QuantumTannerCode`](@ref) when:
-
-- you want the original LRCC geometry explicitly;
-- you already have symmetric generating sets satisfying TNC; or
-- you are searching directly over LRCC generating-set pairs.
-
-Use [`QuantumTannerViaLeftRightActions`](@ref) when:
-
-- you want to work directly with the lifted left/right regular actions;
-- your generating data are multisets or contain repeated elements;
-- you want to vary the two local-code lengths independently; or
-- you want to search over local-code permutations and group lifts without
-  imposing the LRCC TNC condition.
 
 ## Further reading
 
-- Leverrier & Zémor, [*Quantum Tanner codes*](https://arxiv.org/abs/2202.13641)
-  and [*Decoding quantum Tanner codes*](https://arxiv.org/abs/2208.05537).
-- [dinur2022locally](@cite) — the left-right Cayley complex and locally testable
-  codes with constant rate, distance, and locality.
-- Panteleev & Kalachev,
-  [*Asymptotically good quantum and locally testable classical LDPC codes*](https://arxiv.org/abs/2111.03654).
+- Leverrier and ZÃ©mor, [*Quantum Tanner codes*](https://arxiv.org/abs/2202.13641) and [*Decoding quantum Tanner codes*](https://arxiv.org/abs/2208.05537).
+- [dinur2022locally](@cite) for the left-right Cayley complex and its classical coding applications.
+- [mian2026quantum](@cite) for moderate-blocklength QT constructions and the lifted left-right-action formulation implemented in this package.
 
 ## References
 

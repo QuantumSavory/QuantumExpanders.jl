@@ -1,7 +1,7 @@
 # QuantumExpanders.jl
 
 `QuantumExpanders.jl` is a Julia library for constructing quantum Tanner (QT)
-codes and the finite-group expander graphs used to build them. The package is
+codes and explicit constructions of expander graphs. The package is
 built on [Oscar](https://www.oscar-system.org/),
 [QECCore](https://github.com/QuantumSavory/QECCore.jl), and
 [QuantumClifford](https://github.com/QuantumSavory/QuantumClifford.jl).
@@ -19,23 +19,17 @@ It also implements explicit [Morgenstern](@ref morgenstern-graphs) and
 !!! info "Connection to the manuscript"
     The code instances from [*Quantum Tanner Codes at Moderate
     Blocklength*](https://arxiv.org/abs/2608.12509) are reconstructed in the
-    package's regression tests. See [Reproducing the manuscript
+    package's tests. See [Reproducing the manuscript
     instances](@ref paper-instances) for the mapping from published data to
-    constructor inputs and for an explanation of the randomized distance
-    bounds.
-
+    constructor inputs.
 ## Start here
 
 If this is your first visit, follow the pages in this order:
 
-1. [Getting started](@ref getting-started) — install the package, construct a
-   small code, and inspect its CSS matrices.
-2. [Quantum Tanner Codes](@ref quantum-tanner-codes) — learn the LRCC geometry
-   and the role of the local tensor codes.
-3. [Quantum Tanner Codes via Left-Right Actions](@ref quantum-tanner-left-right-actions)
-   — learn the lifted construction and its three constructors.
-4. [Reproducing the manuscript instances](@ref paper-instances) — reproduce
-   and validate the published moderate-blocklength examples.
+1. [Getting started](@ref getting-started) to install the package, construct a small code, and inspect its CSS matrices.
+2. [Quantum Tanner Codes](@ref quantum-tanner-codes) to learn about the LRCC and the role of the local tensor codes.
+3. [Quantum Tanner Codes via Left-Right Actions](@ref quantum-tanner-left-right-actions) to learn the lifted construction and its three constructors.
+4. [Reproducing the manuscript instances](@ref paper-instances) to reconstruct and validate the published moderate-blocklength examples.
 
 
 ## Choose a workflow
@@ -57,7 +51,7 @@ n = code_n(code)
 k = code_k(code)
 ```
 
-The resulting objects can be passed to QuantumClifford distance algorithms,
+The resulting objects can be passed to QuantumClifford distance algorithm,
 decoders, and circuit tools without a package-specific conversion step.
 
 ## Quantum Tanner code constructions
@@ -101,7 +95,7 @@ sets.
 
 The following example constructs a quantum Tanner code using explicit
 [Morgenstern generators](@ref morgenstern-graphs) of
-``\mathrm{SL}_2(\mathbb{F}_4)``.
+``\\mathrm{SL}_2(\\mathbb{F}_4)``.
 
 ```julia
 julia> using QuantumExpanders, Oscar, QECCore, QuantumClifford, QuantumClifford.ECC
@@ -250,7 +244,6 @@ commuting left/right regular actions.
 ```mermaid
 flowchart TB
     R["Ramanujan Graphs"]
-
     R --> LPS["Lubotzky–Phillips–Sarnak<br/>odd prime-power setting"]
     R --> Morgenstern["Morgenstern<br/>even prime-power setting"]
 ```
@@ -278,10 +271,8 @@ The main workflows are:
 
 ## Research and citation
 
-The moderate-blocklength constructions are described in
-[mian2026quantum](@cite). The LRCC construction originates with
-[leverrier2022quantum](@cite), and the lifting formulation used by
-[`QuantumTannerViaLeftRightActions`](@ref) follows
+The moderate-blocklength constructions are described in [mian2026quantum](@cite). The LRCC construction originates with
+[leverrier2022quantum](@cite), and the lifted QT code formulation used by [`QuantumTannerViaLeftRightActions`](@ref) follows
 [leverrier2025small](@cite).
 
 ## References

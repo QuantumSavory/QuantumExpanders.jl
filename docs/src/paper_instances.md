@@ -2,8 +2,8 @@
 
 The code tables in *Quantum Tanner Codes at Moderate Blocklength*
 [mian2026quantum](@cite) specify each QT code through a finite group, group
-elements, local classical codes, and—in the lifted description—column
-permutations. This page explains how those data map to `QuantumExpanders.jl`
+elements, local classical codes, and in the lifted description via column
+permutations. This page explains how those input data correspond to `QuantumExpanders.jl`
 and what the package tests deterministically.
 
 ## What specifies an instance?
@@ -73,9 +73,7 @@ hx, hz = parity_matrix_xz(code)
 @assert maximum(vec(sum(hz, dims=2))) == 16
 ```
 
-Changing only `p2` to `[1,2,3,4,5,7,8,6]` produces a different code with
-``k=16``. This is why permutations are part of the reproducibility data rather
-than presentation-only metadata.
+Changing only `p2` to `[1,2,3,4,5,7,8,6]` produces a different code with ``k=16``. This is why permutations are part of the reproducibility data rather than presentation-only metadata.
 
 ## Regression-test coverage
 
@@ -107,9 +105,7 @@ The manuscript writes the lifted-code parameters as
 [[n,k,(\leq d_X,\leq d_Z)]].
 ```
 
-The inequalities are essential: the reported values are the smallest non-trivial logical weights observed by randomized distance estimators and therefore provide
-**upper bounds** on the true distances. More trials can tighten an upper bound,
-but failing to find a lighter logical operator does not prove that none exists.
+Randomized code distancs are reported as **upper bounds** on the true distances. More trials can tighten an upper bound.
 
 !!! warning "Do not convert an estimate into an equality"
     If an estimator returns `(dx, dz) = (21, 18)`, report the code as
@@ -121,7 +117,7 @@ but failing to find a lighter logical operator does not prove that none exists.
 For a new manuscript row:
 
 1. record the constructor inputs in one deterministic data structure;
-2. construct the code and assert ``n``, ``k``, orthogonality, rank, and weights;
+2. construct the code and assert $n$, $k$, orthogonality, rank, and weights;
 3. run randomized distance estimation separately and record the estimator,
    trial count, seed when applicable, and returned pair; and
 4. generate or copy the manuscript row from the same canonical data whenever
