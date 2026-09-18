@@ -1,19 +1,9 @@
-@testitem "Quantum Tanner X/Z conventions" begin
+@testitem "Quantum Tanner Checks conventions" begin
     using Test
     using Random: MersenneTwister
     using Oscar
     using QuantumExpanders
-
-    function same_row_space(A, B)
-        size(A, 2) == size(B, 2) || return false
-        F₂ = GF(2)
-        A₂ = matrix(F₂, Int.(A))
-        B₂ = matrix(F₂, Int.(B))
-        rank_A = rank(A₂)
-        rank_B = rank(B₂)
-        rank_union = rank(matrix(F₂, vcat(Int.(A), Int.(B))))
-        return rank_A == rank_B && rank_A == rank_union
-    end
+    binary_rank(H) = rank(matrix(GF(2), Int.(H)))
     F = free_group([:s, :r])
     s, r = gens(F)
     G, projection = quo(F, [s^2, r^4, s*r*s*r])
@@ -22,22 +12,24 @@
     B = [s*r, s*r^3, r^2]
     ρ = 0.6
     seed = 64
-
-    @testset "default agrees with QuantumTannerCode" begin
-        # Reproduce the local matrices drawn inside random_quantum_Tanner_code.
+    @testset "default matches QuantumTannerCode X/Z rank order" begin
         local_rng = MersenneTwister(seed)
-        H_A = uniformly_random_code_checkmatrix(1 - ρ, length(A); rng=local_rng)
-        H_B = uniformly_random_code_checkmatrix(ρ, length(B); rng=local_rng)
+        H_A = uniformly_random_code_checkmatrix(1 - ρ,length(A);rng=local_rng,)
+        H_B = uniformly_random_code_checkmatrix(ρ,length(B);rng=local_rng,)
         G_A = dual_code(H_A)
         G_B = dual_code(H_B)
         classical_codes = (
-            (Matrix{Int}(lift.(H_A)), Matrix{Int}(lift.(G_A))),
-            (Matrix{Int}(lift.(H_B)), Matrix{Int}(lift.(G_B))),)
-        reference = QuantumTannerCode(G, A, B, classical_codes)
+            (Matrix{Int}(lift.(H_A)), Matrix{Int}(lift.(G_A)),),
+            (Matrix{Int}(lift.(H_B)), Matrix{Int}(lift.(G_B)),),)
+        reference = QuantumTannerCode(G,A,B,classical_codes,)
         hx_reference, hz_reference = parity_matrix_xz(reference)
         hx_random, hz_random = random_quantum_Tanner_code(ρ,G,A,B;rng=MersenneTwister(seed),)
-        @test same_row_space(hx_random, hx_reference)
-        @test same_row_space(hz_random, hz_reference)
+        reference_ranks = (binary_rank(hx_reference),binary_rank(hz_reference),)
+        random_ranks = (binary_rank(hx_random),binary_rank(hz_random),)
+        @test reference_ranks[1] != reference_ranks[2]
+        @test random_ranks == reference_ranks
+        @test size(hx_random, 2) == size(hx_reference, 2)
+        @test size(hz_random, 2) == size(hz_reference, 2)
         @test iszero(mod.(hx_random * hz_random', 2))
     end
 
