@@ -102,8 +102,7 @@ By default, the X/Z assignment follows [leverrier2022quantum](@cite):
 `C₀ = C_A ⊗ C_B` on `V₀` gives Z checks and
 `C₁ = C_A^⊥ ⊗ C_B^⊥` on `V₁` gives X checks. This agrees with
 [`QuantumTannerCode`](@ref). Set `stabilizer_convention=:gu` to use the
-opposite assignment from [gu2022efficient](@cite). The two conventions differ
-by a global Hadamard transformation and therefore exchange X and Z distances.
+opposite assignment from [gu2022efficient](@cite).
 """
 function random_quantum_Tanner_code(
     ρ::Real,
