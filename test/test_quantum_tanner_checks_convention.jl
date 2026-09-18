@@ -1,4 +1,4 @@
-@testitem "Quantum Tanner Checks conventions" begin
+@testitem "Quantum Tanner X/Z conventions" begin
     using Test
     using Random: MersenneTwister
     using Oscar
@@ -14,7 +14,6 @@
         rank_union = rank(matrix(F₂, vcat(Int.(A), Int.(B))))
         return rank_A == rank_B && rank_A == rank_union
     end
-
     F = free_group([:s, :r])
     s, r = gens(F)
     G, projection = quo(F, [s^2, r^4, s*r*s*r])
@@ -33,8 +32,7 @@
         G_B = dual_code(H_B)
         classical_codes = (
             (Matrix{Int}(lift.(H_A)), Matrix{Int}(lift.(G_A))),
-            (Matrix{Int}(lift.(H_B)), Matrix{Int}(lift.(G_B))),
-        )
+            (Matrix{Int}(lift.(H_B)), Matrix{Int}(lift.(G_B))),)
         reference = QuantumTannerCode(G, A, B, classical_codes)
         hx_reference, hz_reference = parity_matrix_xz(reference)
         hx_random, hz_random = random_quantum_Tanner_code(ρ,G,A,B;rng=MersenneTwister(seed),)
