@@ -32,8 +32,8 @@ makedocs(
         "Getting started" => "getting_started.md",
         "Quantum Tanner codes" => [
             "LRCC construction" => "quantum_tanner.md",
-            "Lifted left-right actions" => "quantum_tanner_left_right_actions.md",
-            "Reproducing the manuscript" => "paper_instances.md",
+            "Lifted QT code via left-right actions" => "quantum_tanner_left_right_actions.md",
+            "Reconstructing instances from the manuscript" => "paper_instances.md",
         ],
         "Ramanujan graphs" => [
             "Lubotzky–Phillips–Sarnak" => "lps.md",

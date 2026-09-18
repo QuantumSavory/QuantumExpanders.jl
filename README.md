@@ -10,16 +10,13 @@ QuantumExpanders is a &nbsp;
         <img src="https://raw.githubusercontent.com/JuliaLang/julia-logo-graphics/master/images/julia.ico" width="16em">
         Julia Language
     </a>
-    &nbsp; package for constructing quantum Tanner (QT) codes and the finite-group expander graphs used to build them. It integrates with
-[Oscar.jl](https://www.oscar-system.org/),
-[QECCore.jl](https://github.com/QuantumSavory/QECCore.jl), and
-[QuantumClifford.jl](https://github.com/QuantumSavory/QuantumClifford.jl), so a
-constructed code can be used directly with the broader QuantumSavory ecosystem.
+    &nbsp; library for constructing **quantum Tanner** (QT) codes and *explicit* constructions of **expander** graphs. It uses with
+[Oscar.jl](https://www.oscar-system.org/), and [QuantumClifford.jl](https://github.com/QuantumSavory/QuantumClifford.jl), so a constructed code can be used directly with the broader QuantumSavory ecosystem.
 </p>
 
 The package implements two constructions of quantum Tanner codes: the
-square-complex construction `QuantumTannerCode` and the lifted construction
-`QuantumTannerViaLeftRightActions`. Together they build every code in
+**square-complex** construction `QuantumTannerCode` and the **lifted QT code** construction
+`QuantumTannerViaLeftRightActions`. Together they build *each and every code instance* in
 [*Quantum Tanner Codes at Moderate Blocklength*](https://arxiv.org/abs/2608.12509).
 
 ## Installation
@@ -34,23 +31,76 @@ Julia 1.12 or later is required.
 
 ## Quick start
 
-This small lifted example uses the group `C₂`, the local repetition code, and
-one copy of each group element in both multisets:
+The following example constructs a ``[[288, 8, (≤15, ≤15)]]`` lifted QT code over $S_3$ from [mian2026quantum](@cite).
 
 ```julia
-using QuantumExpanders, Oscar
+julia> G = codomain(isomorphism(PermGroup, small_group(6, 1)));
 
-G = cyclic_group(2)
-g = gens(G)[1]
-A = [one(G), g]
-B = [one(G), g]
-H = [1 1]
+julia> A = [
+           one(G),
+           one(G),
+           cperm(G, [2,3]),
+           cperm(G, [2,3]),
+           cperm(G, [1,2,3]),
+           cperm(G, [1,2]),
+           cperm(G, [1,2]),
+           cperm(G, [1,3,2]),
+       ];
 
-code = QuantumTannerViaLeftRightActions(G, A, B, H, H)
+julia> B = [
+           one(G),
+           one(G),
+           cperm(G, [2,3]),
+           cperm(G, [1,2,3]),
+           cperm(G, [1,2]),
+           cperm(G, [1,3,2]),
+       ];
 
-code_n(code), code_k(code)       # (8, 2)
-hx, hz = parity_matrix_xz(code)
-iszero(mod.(hx * hz', 2))        # true
+julia> H844 = [
+           1 0 0 0 0 1 1 1;
+           0 1 0 0 1 0 1 1;
+           0 0 1 0 1 1 0 1;
+           0 0 0 1 1 1 1 0
+       ];
+
+julia> G844 = [
+           0 1 1 1 1 0 0 0;
+           1 0 1 1 0 1 0 0;
+           1 1 0 1 0 0 1 0;
+           1 1 1 0 0 0 0 1
+       ];
+
+julia> H633 = [
+           1 0 0 0 1 1;
+           0 1 0 1 0 1;
+           0 0 1 1 1 0
+       ];
+
+julia> G633 = [
+           0 1 1 1 0 0;
+           1 0 1 0 1 0;
+           1 1 0 0 0 1
+       ];
+
+julia> c = QuantumTannerViaLeftRightActions(
+           G,
+           A,
+           B,
+           H844,
+           G844,
+           H633,
+           G633;
+           p1 = 1:8,
+           p2 = [1,2,4,3,6,5],
+       );
+
+julia> code_n(c), code_k(c)
+(288, 8)
+
+julia> hx, hz = parity_matrix_xz(c);
+
+julia> maximum(vec(sum(hx, dims=2))), maximum(vec(sum(hz, dims=2)))
+(12, 12)
 ```
 
 The constructor returns an `AbstractCSSCode`, so standard functions such as
@@ -63,7 +113,7 @@ flowchart TD
     QT["Quantum Tanner Codes"]
 
     QT --> LRCC["LRCC construction"]
-    QT --> Lifted["Lifted left-right actions"]
+    QT --> Lifted["Lifted QT code via left-right actions"]
     QT --> Search["Randomized search helpers"]
 
     LRCC --> QTC["QuantumTannerCode"]
@@ -74,23 +124,22 @@ flowchart TD
     Search --> RQTC["random_quantum_Tanner_code"]
 ```
 
-The lifted construction is equivalent to the square-complex construction of
-Leverrier & Zémor, but presents the code via commuting left and right actions
-rather than as classical Tanner codes on a square complex. This is much more
-convenient for search: multisets that maximise the classical Tanner distance on
-each `A`-slice and `B`-slice can be selected cheaply, before the more expensive
-quantum distance estimation runs. Every code in the main text of
-[our paper](https://arxiv.org/abs/2608.12509) is built through
-`QuantumTannerViaLeftRightActions`; see the
-[lifted construction guide](https://quantumsavory.github.io/QuantumExpanders.jl/dev/quantum_tanner_left_right_actions/)
-for a worked `[[756, 10]]` example and the full argument mapping.
+The **lifted QT code** construction is equivalent to the **square-complex**
+construction of Leverrier & Zémor, but presents the lifted QT code via commuting
+left and right actions rather than as classical Tanner codes on a square complex.
+This is much more convenient for finding new instances of QT codes: multisets that
+maximise the classical Tanner distance on each `A`-slice and `B`-slice can be selected
+cheaply, before the more expensive quantum distance estimation runs. Every code in the
+main text of [our paper](https://arxiv.org/abs/2608.12509) is built through lifted QT code construction
+`QuantumTannerViaLeftRightActions`; see the [lifted construction guide](https://quantumsavory.github.io/QuantumExpanders.jl/dev/quantum_tanner_left_right_actions/) for a worked `[[756, 10, (≤9, ≤42)]]` example and
+to see how the inputs arguments mentioned in our paper are used to constructed this code.
 
 ## Which constructor should I use?
 
 | Goal | Constructor |
 |---|---|
-| Build from an explicit left-right Cayley complex | `QuantumTannerCode` |
-| Use commuting left/right actions, multisets, or column permutations | `QuantumTannerViaLeftRightActions` |
+| Build QT code from an explicit left-right Cayley complex (LRCC) | `QuantumTannerCode` |
+| Lift a base CSS code (a.k.a alocal template) to many |G| copies using commuting left/right group actions | `QuantumTannerViaLeftRightActions` |
 | Generate random local codes for an LRCC | `random_quantum_Tanner_code` |
 | Construct a Morgenstern or LPS Ramanujan graph | `morgenstern_generators` or `LPS` |
 
@@ -112,7 +161,7 @@ the codes:
   `p, q ≡ 1 (mod 4)`, via `LPS`.
 
 The documentation verifies that both families satisfy the properties guaranteed
-by their source theorems, including regularity, order, connectivity, the Ramanujan
+by their constructions such as regularity, order, connectivity, the Ramanujan
 spectral bound, girth, diameter, chromatic and independence bounds, and the
 second-eigenvalue expansion bounds of
 [Dinur et al. (2022)](https://arxiv.org/abs/2111.04808). See the
@@ -127,15 +176,15 @@ The explicit code instances reported in
 including their groups, generator multisets, local codes, and parity-check data,
 are collected in the companion data repository
 [**QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength**](https://github.com/QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength).
-Use it together with `QuantumExpanders.jl` to rebuild any published code from its
+Use it together with `QuantumExpanders.jl` to reconsttuct any published code instance from its
 recorded constructor arguments.
 
-The documentation mention how the published data map to constructor arguments and
+The documentation mention how the published code instances data correspond with constructor arguments and
 how to verify blocklength, dimension, CSS orthogonality, stabilizer rank, and check
 weights. Randomized distance estimates are reported as upper bounds. See
 [Reproducing the manuscript instances](https://quantumsavory.github.io/QuantumExpanders.jl/dev/paper_instances/).
 
-Distance estimation on the larger codes uses external tools such as
+Distance estimation on the larger codes uses powerful external tools such as
 [sqetch](https://github.com/a7b/yarn) (GPU random-ISD estimator) or
 [QDistRnd](https://github.com/QEC-pages/QDistRnd) (GAP-based).
 

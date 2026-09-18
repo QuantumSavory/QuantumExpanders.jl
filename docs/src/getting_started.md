@@ -95,15 +95,6 @@ is checked for duality.
 
 ## Choose the next page
 
-- To understand the square-complex geometry, continue to
-  [Quantum Tanner Codes](@ref quantum-tanner-codes).
-- To understand the lifted matrices and constructor forms, continue to
-  [Quantum Tanner Codes via Left-Right Actions](@ref quantum-tanner-left-right-actions).
-- To rebuild the published examples, continue to
-  [Reproducing the manuscript instances](@ref paper-instances).
-
-!!! note "Distance is a separate computation"
-    Constructing a code determines ``H_X``, ``H_Z``, ``n``, and ``k``. It does
-    not automatically determine the minimum distance. Randomized estimators
-    return upper bounds that may improve when more trials are run; exact
-    algorithms can become expensive at moderate blocklength.
+- To visit the QT code using LRCCs, continue to [Quantum Tanner Codes](@ref quantum-tanner-codes).
+- To visit the lifted QT code, continue to [Quantum Tanner Codes via Left-Right Actions](@ref quantum-tanner-left-right-actions).
+- To rebuild the published examples of code instances , continue to[Reproducing the manuscript instances](@ref paper-instances).

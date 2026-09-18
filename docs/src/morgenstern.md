@@ -8,12 +8,14 @@ DocTestSetup = quote
 end
 ```
 
-Morgenstern's construction [morgenstern1994existence](@cite) provides explicit ``(q+1)``-regular Ramanujan graphs for **every even prime power** ``q = 2^l``, extending the celebrated Lubotzky–Phillips–Sarnak construction [lubotzky1988ramanujan](@cite), which requires ``q`` to be an odd prime.
+Morgenstern's construction [morgenstern1994existence](@cite) provides *explicit* $(q+1)$-regular Ramanujan graphs for **every even prime power** $q = 2^l$, extending the celebrated Lubotzky–Phillips–Sarnak construction [lubotzky1988ramanujan](@cite), which requires $q$ to be an odd prime.
 
-A ``k``-regular graph is a **Ramanujan graph** if every eigenvalue ``\mu`` of its adjacency matrix other than ``\pm k`` satisfies
+A $k$-regular graph is a **Ramanujan graph** if every eigenvalue ``\mu`` of its adjacency matrix other than ``\pm k`` satisfies
 
 ```math
+\begin{aligned}
 |\mu| \leq 2\sqrt{k-1}.
+\end{aligned}
 ```
 
 This is asymptotically optimal by the [Alon–Boppana bound](https://en.wikipedia.org/wiki/Alon%E2%80%93Boppana_bound),
@@ -21,26 +23,28 @@ which makes Ramanujan graphs the best possible spectral expanders.
 
 ## Construction
 
-For ``q = 2^l`` and even ``i``, the Morgenstern graph is the Cayley graph
+For $q = 2^l$ and even $i$, the Morgenstern graph is the Cayley graph
 
 ```math
+\begin{aligned}
 \Gamma = \mathrm{Cay}\bigl(\mathrm{SL}_2(\mathbb{F}_{q^i}),\, B\bigr),
+\end{aligned}
 ```
 
-where ``B`` is a set of ``q+1`` involutions in 𝕊𝕃₂(𝔽_{qⁱ}) arising from a [quaternion algebra](https://en.wikipedia.org/wiki/Quaternion_algebra)
-over the function field ``\mathbb{F}_q(x)``. The resulting graph is ``(q+1)``-regular, connected, and non-bipartite, with
+where $B$ is a set of $q+1$ involutions in 𝕊𝕃₂(𝔽_{qⁱ}) arising from a [quaternion algebra](https://en.wikipedia.org/wiki/Quaternion_algebra) over the function field ``\mathbb{F}_q(x)``. The resulting graph is $(q+1)$-regular, connected, and non-bipartite, with
 
 ```math
+\begin{aligned}
 |\Gamma| = q^{3i} - q^{i}.
+\end{aligned}
 ```
-
 
 The generator set is produced by [`morgenstern_generators`](@ref), and the Cayley
 graph is constructed with [`cayley_right`](@ref).
 
-## Example: ``l = 1,\\ i = 2``
+## Example: $l = 1, i = 2$
 
-Here we construct the Morgenstern Ramanujan graph for ``l = 1, i = 2`` (so ``q = 2^l = 2``) and verify that it satisfies **all** the properties guaranteed by Theorem 5.13 of [morgenstern1994existence](@cite), as well as the spectral expansion bounds of Claims 6.1 and 6.2 of [dinur2022locally](@cite).
+Here we construct the Morgenstern Ramanujan graph for $l = 1, i = 2$ (so $q = 2^l = 2$) and verify that it satisfies **all** the properties guaranteed by *Theorem 5.13* of [morgenstern1994existence](@cite), as well as the spectral expansion bounds of Claims 6.1 and 6.2 of [dinur2022locally](@cite).
 
 ```julia
 julia> using QuantumExpanders, Oscar, LinearAlgebra;
@@ -57,9 +61,9 @@ julia> G, B = morgenstern_generators(l, i);
 julia> Γ = cayley_right(G, B);
 ```
 
-### Generator set ``B``
+### Generator set $B$
 
-The set ``B`` contains ``q + 1`` generators, each of determinant ``1`` and order ``2`` (so ``\Gamma`` is an undirected simple graph):
+The set $B$ contains $q + 1$ generators, each of determinant $1$ and order $2$ (so ``\Gamma`` is an undirected simple graph):
 
 ```julia
 julia> length(B) == q + 1
@@ -72,7 +76,7 @@ julia> all(matrix(b^2) == identity_matrix(base_ring(b), 2) for b in B)
 true
 ```
 
-### Property I: ``(q+1)``-regularity and order ``|\Gamma| = q^{3i} - q^{i}``
+### Property I: $(q+1)$-regularity and order ``|\Gamma| = q^{3i} - q^{i}``
 
 ```julia
 julia> all(degree(Γ, v) == q + 1 for v in vertices(Γ))
@@ -94,7 +98,7 @@ false
 
 ### Property III: Ramanujan bound
 
-The trivial eigenvalue is ``q + 1``, and every other eigenvalue ``\mu`` satisfies ``|\mu| \leq 2\sqrt{q}``:
+The trivial eigenvalue is $q + 1$, and every other eigenvalue ``\mu`` satisfies ``|\mu| \leq 2\sqrt{q}``:
 
 ```julia
 julia> λs = sort(real.(eigvals(Matrix(adjacency_matrix(Γ)))), rev=true);
@@ -142,7 +146,7 @@ true
 
 ### Property V: Chromatic number
 
-The chromatic number satisfies ``\chi(\Gamma) \geq \frac{q+1}{2\sqrt{q}} + 1``:
+The chromatic number satisfies ``\chi(\Gamma)\geq \frac{q+1}{2\sqrt{q}} + 1``:
 
 ```julia
 julia> χ_lower_bound = (q + 1)/(2√q) + 1;
@@ -186,12 +190,8 @@ true
 
 The alternative generator sets produced by [`alternative_morgenstern_generators`](@ref), which are used in the quantum Tanner code construction, satisfy the explicit second-eigenvalue bounds of [dinur2022locally](@cite):
 
-- **Claim 6.1 (ii)** — the `AllPairs` generators yield a Cayley graph of degree
-  ``k_1 = q^2 + q`` with normalized second eigenvalue
-  ``\lambda_2 < \frac{3q-1}{q^2+q}``.
-- **Claim 6.2** — the `FirstOnly` generators yield a Cayley graph of degree
-  ``k_1 = 2q`` with normalized second eigenvalue
-  ``\lambda_2 < \frac{3\sqrt{2q-1}}{2q}``.
+- **Claim 6.1 (ii)**: the `AllPairs` generators yield a Cayley graph of degree ``k_1 = q^2 + q`` with normalized second eigenvalue ``\lambda_2 < \frac{3q-1}{q^2+q}``.
+- **Claim 6.2**: the `FirstOnly` generators yield a Cayley graph of degree $k_1 = 2q$ with normalized second eigenvalue ``\lambda_2 < \frac{3\sqrt{2q-1}}{2q}``.
 
 ```julia
 julia> A₁ = alternative_morgenstern_generators(B, AllPairs());
