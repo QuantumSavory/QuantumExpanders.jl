@@ -25,7 +25,7 @@ makedocs(
     clean = true,
     warnonly = :missing_docs,
     sitename = "QuantumExpanders.jl",
-    format = Documenter.HTML(),
+    format = Documenter.MathJax3(),
     authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
     pages = [
         "Home" => "index.md",
