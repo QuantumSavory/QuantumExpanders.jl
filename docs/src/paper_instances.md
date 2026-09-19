@@ -8,7 +8,7 @@ and what the package tests deterministically.
 
 ## What specifies an instance?
 
-For a lifted code, the complete deterministic input is:
+For a lifted quantum Tanner code, the complete deterministic input is:
 
 1. the finite group ``G``;
 2. the ordered multisets ``A`` and ``B``;
@@ -36,28 +36,14 @@ G = codomain(isomorphism(PermGroup, small_group(12, 1)))
 x = cperm(G, [5,6,7])
 y = cperm(G, [1,4,3,2], [6,7])
 
-A = [
-    one(G), one(G),
-    x, x,
-    y, y*x^2, y*x, inv(y),
-]
+A = [one(G), one(G), x, x, y, y*x^2, y*x, inv(y),]
 
-H = [
-    1 0 0 0 0 1 1 1;
-    0 1 0 0 1 0 1 1;
-    0 0 1 0 1 1 0 1;
-    0 0 0 1 1 1 1 0
-]
+H = [1 0 0 0 0 1 1 1;
+     0 1 0 0 1 0 1 1;
+     0 0 1 0 1 1 0 1;
+     0 0 0 1 1 1 1 0]
 
-code = QuantumTannerViaLeftRightActions(
-    G,
-    A,
-    A,
-    H,
-    H;
-    p1 = 1:8,
-    p2 = [1,2,3,4,5,6,8,7],
-)
+code = QuantumTannerViaLeftRightActions(G,A,A,H,H;p1 = 1:8,p2 = [1,2,3,4,5,6,8,7],)
 
 code_n(code), code_k(code)
 # (768, 24)
