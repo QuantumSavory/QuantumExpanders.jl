@@ -377,12 +377,7 @@ The last line verifies that the two row spaces are orthogonal. Now build the
 quantum code, using the same classical code in the ``A`` and ``B`` directions:
 
 ```jldoctest quantum-tanner-lrcc
-julia> c = QuantumTannerCode(
-           G,
-           A,
-           B,
-           ((H633, G633), (H633, G633)),
-       );
+julia> c = QuantumTannerCode(G,A,B,((H633, G633), (H633, G633)),);
 
 julia> code_n(c), code_k(c)
 (324, 8)

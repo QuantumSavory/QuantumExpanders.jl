@@ -109,13 +109,7 @@ julia> A = alternative_morgenstern_generators(B, FirstOnly());
 
 julia> rng = MersenneTwister(892529278);
 
-julia> hx, hz = random_quantum_Tanner_code(
-           0.75,
-           SL₂,
-           A,
-           B;
-           rng = rng,
-       );
+julia> hx, hz = random_quantum_Tanner_code(0.75,SL₂,A,B;rng = rng,);
 
 julia> c = CSS(hx, hz);
 
@@ -130,23 +124,9 @@ compute distances using any supported distance algorithm:
 ```julia
 julia> import JuMP; import HiGHS
 
-julia> dz = distance(
-           c,
-           DistanceMIPAlgorithm(
-               solver = HiGHS.Optimizer,
-               logical_operator_type = :Z,
-               time_limit = 900,
-           ),
-       );
+julia> dz = distance(c,DistanceMIPAlgorithm(solver = HiGHS.Optimizer,logical_operator_type = :Z,time_limit = 900,),);
 
-julia> dx = distance(
-           c,
-           DistanceMIPAlgorithm(
-               solver = HiGHS.Optimizer,
-               logical_operator_type = :X,
-               time_limit = 900,
-           ),
-       );
+julia> dx = distance(c,DistanceMIPAlgorithm(solver = HiGHS.Optimizer,logical_operator_type = :X,time_limit = 900,),);
 
 julia> (dx, dz)
 (10, 3)
@@ -163,63 +143,29 @@ julia> using QuantumExpanders, Oscar, QECCore
 
 julia> G = codomain(isomorphism(PermGroup, small_group(6, 1)));
 
-julia> A = [
-           one(G),
-           one(G),
-           cperm(G, [2,3]),
-           cperm(G, [2,3]),
-           cperm(G, [1,2,3]),
-           cperm(G, [1,2]),
-           cperm(G, [1,2]),
-           cperm(G, [1,3,2]),
-       ];
+julia> A = [one(G), one(G), cperm(G, [2,3]), cperm(G, [2,3]), cperm(G, [1,2,3]), cperm(G, [1,2]), cperm(G, [1,2]), cperm(G, [1,3,2]),];
 
-julia> B = [
-           one(G),
-           one(G),
-           cperm(G, [2,3]),
-           cperm(G, [1,2,3]),
-           cperm(G, [1,2]),
-           cperm(G, [1,3,2]),
-       ];
+julia> B = [one(G), one(G), cperm(G, [2,3]), cperm(G, [1,2,3]), cperm(G, [1,2]), cperm(G, [1,3,2]),];
 
-julia> H844 = [
-           1 0 0 0 0 1 1 1;
-           0 1 0 0 1 0 1 1;
-           0 0 1 0 1 1 0 1;
-           0 0 0 1 1 1 1 0
-       ];
+julia> H844 = [1 0 0 0 0 1 1 1;
+               0 1 0 0 1 0 1 1;
+               0 0 1 0 1 1 0 1;
+               0 0 0 1 1 1 1 0];
 
-julia> G844 = [
-           0 1 1 1 1 0 0 0;
-           1 0 1 1 0 1 0 0;
-           1 1 0 1 0 0 1 0;
-           1 1 1 0 0 0 0 1
-       ];
+julia> G844 = [0 1 1 1 1 0 0 0;
+               1 0 1 1 0 1 0 0;
+               1 1 0 1 0 0 1 0;
+               1 1 1 0 0 0 0 1];
 
-julia> H633 = [
-           1 0 0 0 1 1;
-           0 1 0 1 0 1;
-           0 0 1 1 1 0
-       ];
+julia> H633 = [1 0 0 0 1 1;
+               0 1 0 1 0 1;
+               0 0 1 1 1 0];
 
-julia> G633 = [
-           0 1 1 1 0 0;
-           1 0 1 0 1 0;
-           1 1 0 0 0 1
-       ];
+julia> G633 = [0 1 1 1 0 0;
+               1 0 1 0 1 0;
+               1 1 0 0 0 1];
 
-julia> c = QuantumTannerViaLeftRightActions(
-           G,
-           A,
-           B,
-           H844,
-           G844,
-           H633,
-           G633;
-           p1 = 1:8,
-           p2 = [1,2,4,3,6,5],
-       );
+julia> c = QuantumTannerViaLeftRightActions(G,A,B,H844,G844,H633,G633;p1 = 1:8,p2 = [1,2,4,3,6,5],);
 
 julia> code_n(c), code_k(c)
 (288, 8)
