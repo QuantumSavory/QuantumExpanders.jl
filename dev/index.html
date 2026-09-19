@@ -26,99 +26,45 @@ julia&gt; A = alternative_morgenstern_generators(B, FirstOnly());
 
 julia&gt; rng = MersenneTwister(892529278);
 
-julia&gt; hx, hz = random_quantum_Tanner_code(
-           0.75,
-           SL₂,
-           A,
-           B;
-           rng = rng,
-       );
+julia&gt; hx, hz = random_quantum_Tanner_code(0.75,SL₂,A,B;rng = rng,);
 
 julia&gt; c = CSS(hx, hz);
 
 julia&gt; code_n(c), code_k(c)
 (360, 61)</code></pre><p>The parity-check matrices can be passed directly to the rest of the <code>QECCore</code> / <code>QuantumClifford.ECC</code> ecosystem. For example, one may estimate or compute distances using any supported distance algorithm:</p><pre><code class="language-julia hljs">julia&gt; import JuMP; import HiGHS
 
-julia&gt; dz = distance(
-           c,
-           DistanceMIPAlgorithm(
-               solver = HiGHS.Optimizer,
-               logical_operator_type = :Z,
-               time_limit = 900,
-           ),
-       );
+julia&gt; dz = distance(c,DistanceMIPAlgorithm(solver = HiGHS.Optimizer,logical_operator_type = :Z,time_limit = 900,),);
 
-julia&gt; dx = distance(
-           c,
-           DistanceMIPAlgorithm(
-               solver = HiGHS.Optimizer,
-               logical_operator_type = :X,
-               time_limit = 900,
-           ),
-       );
+julia&gt; dx = distance(c,DistanceMIPAlgorithm(solver = HiGHS.Optimizer,logical_operator_type = :X,time_limit = 900,),);
 
 julia&gt; (dx, dz)
 (10, 3)</code></pre><h2 id="Lifted-quantum-Tanner-code-example"><a class="docs-heading-anchor" href="#Lifted-quantum-Tanner-code-example">Lifted quantum Tanner code example</a><a id="Lifted-quantum-Tanner-code-example-1"></a><a class="docs-heading-anchor-permalink" href="#Lifted-quantum-Tanner-code-example" title="Permalink"></a></h2><p>The lifted construction works directly with commuting left and right actions of a finite group. For example, the following reconstructs a <span>$[[288, 8, (≤ 15, ≤ 15)]]$</span> quantum Tanner code over <span>$S_3$</span>:</p><pre><code class="language-julia hljs">julia&gt; using QuantumExpanders, Oscar, QECCore
 
 julia&gt; G = codomain(isomorphism(PermGroup, small_group(6, 1)));
 
-julia&gt; A = [
-           one(G),
-           one(G),
-           cperm(G, [2,3]),
-           cperm(G, [2,3]),
-           cperm(G, [1,2,3]),
-           cperm(G, [1,2]),
-           cperm(G, [1,2]),
-           cperm(G, [1,3,2]),
-       ];
+julia&gt; A = [one(G), one(G), cperm(G, [2,3]), cperm(G, [2,3]), cperm(G, [1,2,3]), cperm(G, [1,2]), cperm(G, [1,2]), cperm(G, [1,3,2]),];
 
-julia&gt; B = [
-           one(G),
-           one(G),
-           cperm(G, [2,3]),
-           cperm(G, [1,2,3]),
-           cperm(G, [1,2]),
-           cperm(G, [1,3,2]),
-       ];
+julia&gt; B = [one(G), one(G), cperm(G, [2,3]), cperm(G, [1,2,3]), cperm(G, [1,2]), cperm(G, [1,3,2]),];
 
-julia&gt; H844 = [
-           1 0 0 0 0 1 1 1;
-           0 1 0 0 1 0 1 1;
-           0 0 1 0 1 1 0 1;
-           0 0 0 1 1 1 1 0
-       ];
+julia&gt; H844 = [1 0 0 0 0 1 1 1;
+               0 1 0 0 1 0 1 1;
+               0 0 1 0 1 1 0 1;
+               0 0 0 1 1 1 1 0];
 
-julia&gt; G844 = [
-           0 1 1 1 1 0 0 0;
-           1 0 1 1 0 1 0 0;
-           1 1 0 1 0 0 1 0;
-           1 1 1 0 0 0 0 1
-       ];
+julia&gt; G844 = [0 1 1 1 1 0 0 0;
+               1 0 1 1 0 1 0 0;
+               1 1 0 1 0 0 1 0;
+               1 1 1 0 0 0 0 1];
 
-julia&gt; H633 = [
-           1 0 0 0 1 1;
-           0 1 0 1 0 1;
-           0 0 1 1 1 0
-       ];
+julia&gt; H633 = [1 0 0 0 1 1;
+               0 1 0 1 0 1;
+               0 0 1 1 1 0];
 
-julia&gt; G633 = [
-           0 1 1 1 0 0;
-           1 0 1 0 1 0;
-           1 1 0 0 0 1
-       ];
+julia&gt; G633 = [0 1 1 1 0 0;
+               1 0 1 0 1 0;
+               1 1 0 0 0 1];
 
-julia&gt; c = QuantumTannerViaLeftRightActions(
-           G,
-           A,
-           B,
-           H844,
-           G844,
-           H633,
-           G633;
-           p1 = 1:8,
-           p2 = [1,2,4,3,6,5],
-       );
+julia&gt; c = QuantumTannerViaLeftRightActions(G,A,B,H844,G844,H633,G633;p1 = 1:8,p2 = [1,2,4,3,6,5],);
 
 julia&gt; code_n(c), code_k(c)
 (288, 8)</code></pre><p>The corresponding CSS parity-check matrices are available through</p><pre><code class="language-julia hljs">julia&gt; hx, hz = parity_matrix_xz(c);</code></pre><p>For the construction itself, see <a href="quantum_tanner_left_right_actions/#quantum-tanner-left-right-actions">Quantum Tanner Codes via Left-Right Actions</a>, which explains the multisets <span>$A,B$</span>, the column permutations <span>$p1,p2$</span>, and the commuting left/right regular actions.</p><h2 id="Explicit-Ramanujan-graph-constructions"><a class="docs-heading-anchor" href="#Explicit-Ramanujan-graph-constructions">Explicit Ramanujan graph constructions</a><a id="Explicit-Ramanujan-graph-constructions-1"></a><a class="docs-heading-anchor-permalink" href="#Explicit-Ramanujan-graph-constructions" title="Permalink"></a></h2><p><code>QuantumExpanders.jl</code> also implements two explicit families of Ramanujan graphs:</p><div class="mermaid">flowchart TB
@@ -129,4 +75,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="getting_started/">Getting started »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Saturday 19 September 2026 11:39">Saturday 19 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="getting_started/">Getting started »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Saturday 19 September 2026 13:25">Saturday 19 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

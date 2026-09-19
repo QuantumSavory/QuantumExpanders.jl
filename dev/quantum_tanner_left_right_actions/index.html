@@ -76,63 +76,29 @@ G_1&#39; = G_B[:,p_2].\]</p><p>Thus <code>p1</code> acts on the <span>$A$</span>
 
 julia&gt; G = codomain(isomorphism(PermGroup, small_group(6, 1)));
 
-julia&gt; A = [
-           one(G),
-           one(G),
-           cperm(G, [2,3]),
-           cperm(G, [2,3]),
-           cperm(G, [1,2,3]),
-           cperm(G, [1,2]),
-           cperm(G, [1,2]),
-           cperm(G, [1,3,2]),
-       ];
+julia&gt; A = [one(G), one(G), cperm(G, [2,3]), cperm(G, [2,3]), cperm(G, [1,2,3]), cperm(G, [1,2]), cperm(G, [1,2]), cperm(G, [1,3,2]), ];
 
-julia&gt; B = [
-           one(G),
-           one(G),
-           cperm(G, [2,3]),
-           cperm(G, [1,2,3]),
-           cperm(G, [1,2]),
-           cperm(G, [1,3,2]),
-       ];
+julia&gt; B = [one(G), one(G), cperm(G, [2,3]), cperm(G, [1,2,3]), cperm(G, [1,2]), cperm(G, [1,3,2]),];
 
-julia&gt; H844 = [
-           1 0 0 0 0 1 1 1;
-           0 1 0 0 1 0 1 1;
-           0 0 1 0 1 1 0 1;
-           0 0 0 1 1 1 1 0
-       ];
+julia&gt; H844 = [1 0 0 0 0 1 1 1;
+               0 1 0 0 1 0 1 1;
+               0 0 1 0 1 1 0 1;
+               0 0 0 1 1 1 1 0];
 
-julia&gt; G844 = [
-           0 1 1 1 1 0 0 0;
-           1 0 1 1 0 1 0 0;
-           1 1 0 1 0 0 1 0;
-           1 1 1 0 0 0 0 1
-       ];
+julia&gt; G844 = [0 1 1 1 1 0 0 0;
+               1 0 1 1 0 1 0 0;
+               1 1 0 1 0 0 1 0;
+               1 1 1 0 0 0 0 1];
 
-julia&gt; H633 = [
-           1 0 0 0 1 1;
-           0 1 0 1 0 1;
-           0 0 1 1 1 0
-       ];
+julia&gt; H633 = [1 0 0 0 1 1;
+               0 1 0 1 0 1;
+               0 0 1 1 1 0];
 
-julia&gt; G633 = [
-           0 1 1 1 0 0;
-           1 0 1 0 1 0;
-           1 1 0 0 0 1
-       ];
+julia&gt; G633 = [0 1 1 1 0 0;
+               1 0 1 0 1 0;
+               1 1 0 0 0 1];
 
-julia&gt; c = QuantumTannerViaLeftRightActions(
-           G,
-           A,
-           B,
-           H844,
-           G844,
-           H633,
-           G633;
-           p1 = 1:8,
-           p2 = [1,2,4,3,6,5],
-       );
+julia&gt; c = QuantumTannerViaLeftRightActions(G,A,B,H844,G844,H633,G633;p1 = 1:8,p2 = [1,2,4,3,6,5],);
 
 julia&gt; code_n(c), code_k(c)
 (288, 8)
@@ -140,14 +106,7 @@ julia&gt; code_n(c), code_k(c)
 julia&gt; hx, hz = parity_matrix_xz(c);
 
 julia&gt; maximum(vec(sum(hx, dims=2))), maximum(vec(sum(hz, dims=2)))
-(12, 12)</code></pre><p>Here</p><p class="math-container">\[|G|=6,\qquad n_A=8,\qquad n_B=6,\]</p><p>so the blocklength follows immediately from</p><p class="math-container">\[n=6\cdot8\cdot6=288.\]</p><p>The nontrivial <code>p2</code> changes the second <span>$B$</span>-side local-code pair and therefore changes the resulting quantum code while keeping the same group and multisets.</p><h2 id="Multisets-and-repeated-elements"><a class="docs-heading-anchor" href="#Multisets-and-repeated-elements">Multisets and repeated elements</a><a id="Multisets-and-repeated-elements-1"></a><a class="docs-heading-anchor-permalink" href="#Multisets-and-repeated-elements" title="Permalink"></a></h2><p>Unlike the generating sets used by <a href="../API/#QuantumExpanders.QuantumTannerCode"><code>QuantumTannerCode</code></a>, the vectors <code>A</code> and <code>B</code> in the lifted constructor are genuinely <strong>multisets</strong>.</p><p>For example,</p><pre><code class="language-julia hljs">A = [
-    one(G),
-    one(G),
-    a,
-    a,
-    b,
-    c,
-]</code></pre><p>is valid. The two copies of <code>one(G)</code> and the two copies of <code>a</code> correspond to separate positions in the base code and therefore to separate blocks in <span>$L_A$</span>.</p><p>No symmetry condition such as</p><p class="math-container">\[A=A^{-1}\]</p><p>is required, and no total non-conjugacy condition between <span>$A$</span> and <span>$B$</span> is needed. CSS commutation instead follows from the commuting left and right regular actions.</p><h2 id="Accessing-the-code"><a class="docs-heading-anchor" href="#Accessing-the-code">Accessing the code</a><a id="Accessing-the-code-1"></a><a class="docs-heading-anchor-permalink" href="#Accessing-the-code" title="Permalink"></a></h2><p>The resulting object implements the usual <code>QECCore</code> CSS-code interface:</p><pre><code class="language-julia-repl hljs">julia&gt; hx = parity_matrix_x(c);
+(12, 12)</code></pre><p>Here</p><p class="math-container">\[|G|=6,\qquad n_A=8,\qquad n_B=6,\]</p><p>so the blocklength follows immediately from</p><p class="math-container">\[n=6\cdot8\cdot6=288.\]</p><p>The nontrivial <code>p2</code> changes the second <span>$B$</span>-side local-code pair and therefore changes the resulting quantum code while keeping the same group and multisets.</p><h2 id="Multisets-and-repeated-elements"><a class="docs-heading-anchor" href="#Multisets-and-repeated-elements">Multisets and repeated elements</a><a id="Multisets-and-repeated-elements-1"></a><a class="docs-heading-anchor-permalink" href="#Multisets-and-repeated-elements" title="Permalink"></a></h2><p>Unlike the generating sets used by <a href="../API/#QuantumExpanders.QuantumTannerCode"><code>QuantumTannerCode</code></a>, the vectors <code>A</code> and <code>B</code> in the lifted constructor are genuinely <strong>multisets</strong>.</p><p>For example,</p><pre><code class="language-julia hljs">A = [one(G),one(G),a,a,b,c,]</code></pre><p>is valid. The two copies of <code>one(G)</code> and the two copies of <code>a</code> correspond to separate positions in the base code and therefore to separate blocks in <span>$L_A$</span>.</p><p>No symmetry condition such as</p><p class="math-container">\[A=A^{-1}\]</p><p>is required, and no total non-conjugacy condition between <span>$A$</span> and <span>$B$</span> is needed. CSS commutation instead follows from the commuting left and right regular actions.</p><h2 id="Accessing-the-code"><a class="docs-heading-anchor" href="#Accessing-the-code">Accessing the code</a><a id="Accessing-the-code-1"></a><a class="docs-heading-anchor-permalink" href="#Accessing-the-code" title="Permalink"></a></h2><p>The resulting object implements the usual <code>QECCore</code> CSS-code interface:</p><pre><code class="language-julia-repl hljs">julia&gt; hx = parity_matrix_x(c);
 
 julia&gt; hz = parity_matrix_z(c);
 
@@ -162,4 +121,4 @@ mermaid.initialize({
     startOnLoad: true,
     theme: "neutral"
 });
-</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../quantum_tanner/">« LRCC construction</a><a class="docs-footer-nextpage" href="../paper_instances/">Reconstructing instances from the manuscript »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Saturday 19 September 2026 11:39">Saturday 19 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</script></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../quantum_tanner/">« LRCC construction</a><a class="docs-footer-nextpage" href="../paper_instances/">Reconstructing instances from the manuscript »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Saturday 19 September 2026 13:25">Saturday 19 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
