@@ -31,7 +31,7 @@ Julia 1.12 or later is required.
 
 ## Quick start
 
-The following example constructs a ``[[288, 8, (≤15, ≤15)]]`` lifted QT code over $S_3$ from [mian2026quantum](@cite).
+The following example constructs a ``[[288, 8, (≤15, ≤15)]]`` lifted QT code over $S_3$ from [mian2026quantum](https://arxiv.org/pdf/2608.12509).
 
 ```julia
 julia> G = codomain(isomorphism(PermGroup, small_group(6, 1)));
@@ -104,9 +104,9 @@ to see how the inputs arguments mentioned in our paper are used to constructed t
 
 | Goal | Constructor |
 |---|---|
-| Build QT code from an explicit left-right Cayley complex (LRCC) | `QuantumTannerCode` |
-| Lift a base CSS code (a.k.a alocal template) to many |G| copies using commuting left/right group actions | `QuantumTannerViaLeftRightActions` |
-| Generate random local codes for an LRCC | `random_quantum_Tanner_code` |
+| Build QT code from an explicit left-right Cayley complex (bipartite LRCC construction) | `QuantumTannerCode` |
+| Lift a base CSS code (a.k.a a local template) to many \|G\| copies using commuting left/right group actions | `QuantumTannerViaLeftRightActions` |
+| Generate random QT codes (multigraph construction) | `random_quantum_Tanner_code` |
 | Construct a Morgenstern or LPS Ramanujan graph | `morgenstern_generators` or `LPS` |
 
 Start with the
