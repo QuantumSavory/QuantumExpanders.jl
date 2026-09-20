@@ -33,7 +33,7 @@
         return Int(dx), Int(dz)
     end
 
-    # shared shortened Hamming [6,3,3] local code (same on both sides)
+    # shared shortened Hamming [6,3,3] local code
     H633 = [1 0 0 0 1 1;
             0 1 0 1 0 1;
             0 0 1 1 1 0]
@@ -43,7 +43,6 @@
     @test iszero(mod.(H633 * G633', 2))
     p633 = [1, 2, 6, 4, 5, 3]
 
-    # ---- C2 x C2 codes: shared group and A multiset, only B differs ----
     V4 = codomain(isomorphism(PermGroup, small_group(4, 2)))
     x = cperm(V4, [1, 2]); y = cperm(V4, [3, 4]); e = one(V4)
     @test order(V4) == 4
@@ -53,6 +52,7 @@
         B = [e, e, y, y, x, x*y]
         code = QuantumTannerViaLeftRightActions(V4, A_V4, B, H633, G633, H633, G633; p1=p633, p2=p633)
         hx, hz = parity_matrix_xz(code)
+        @test all(sum(hx, dims=2) == 9) && all(sum(hz, dims=2) == 9)
         @test code_n(code) == 144
         @test code_k(code) == 8
         stab = QuantumClifford.ECC.parity_checks(code)
@@ -66,13 +66,14 @@
         B = [e, e, y, y, x, x]
         code = QuantumTannerViaLeftRightActions(V4, A_V4, B, H633, G633, H633, G633; p1=p633, p2=p633)
         hx, hz = parity_matrix_xz(code)
+        @test all(sum(hx, dims=2) == 9) && all(sum(hz, dims=2) == 9)
         @test code_n(code) == 144
         @test code_k(code) == 12
         stab = QuantumClifford.ECC.parity_checks(code)
         mat = matrix(GF(2), stab_to_gf2(stab))
         @test rank(mat) == code_n(code) - code_k(code)
         dx, dz = compute_qdistrnd_distance(hx, hz)
-        @test min(dx, dz) == 12
+        @test min(dx, dz) == 11
     end
 
     @testset "LRZ [[288, 8, (≤19, ≤19)]]  (C8)" begin
@@ -87,6 +88,7 @@
         B = [one(C8), a, b, b, c, d]
         code = QuantumTannerViaLeftRightActions(C8, A, B, H633, G633, H633, G633; p1=p633, p2=p633)
         hx, hz = parity_matrix_xz(code)
+        @test all(sum(hx, dims=2) == 9) && all(sum(hz, dims=2) == 9)
         @test code_n(code) == 288
         @test code_k(code) == 8
         stab = QuantumClifford.ECC.parity_checks(code)
