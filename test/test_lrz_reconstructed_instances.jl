@@ -59,10 +59,7 @@
         mat = matrix(GF(2), stab_to_gf2(stab))
         @test rank(mat) == code_n(code) - code_k(code)
         dx, dz = compute_qdistrnd_distance(hx, hz)
-        println()
-        println("LRZ [[144, 8, (≤12, ≤12)]]")
-        println("  QDistRnd 50K : (dx, dz) = ($dx, $dz)")
-        println("  paper table  : (dx, dz) = (≤12, ≤12)")
+        @test min(dx, dz) == 12
     end
 
     @testset "LRZ [[144, 12, (≤11, ≤11)]]  (C2 x C2)" begin
@@ -75,10 +72,7 @@
         mat = matrix(GF(2), stab_to_gf2(stab))
         @test rank(mat) == code_n(code) - code_k(code)
         dx, dz = compute_qdistrnd_distance(hx, hz)
-        println()
-        println("LRZ [[144, 12, (≤11, ≤11)]]")
-        println("  QDistRnd 50K : (dx, dz) = ($dx, $dz)")
-        println("  paper table  : (dx, dz) = (≤11, ≤11)")
+        @test min(dx, dz) == 12
     end
 
     @testset "LRZ [[288, 8, (≤19, ≤19)]]  (C8)" begin
@@ -98,13 +92,7 @@
         stab = QuantumClifford.ECC.parity_checks(code)
         mat = matrix(GF(2), stab_to_gf2(stab))
         @test rank(mat) == code_n(code) - code_k(code)
-        # d = 19 at n = 288 is a much bigger target than the Morgenstern cases
-        # (which converged to 10/3 at 50K). 50K draws here may print a bound a
-        # notch above 19; bump `num` if you want it to tighten onto 19.
         dx, dz = compute_qdistrnd_distance(hx, hz; num=QDIST_TRIALS)
-        println()
-        println("LRZ [[288, 8, (≤19, ≤19)]]")
-        println("  QDistRnd 50K : (dx, dz) = ($dx, $dz)")
-        println("  paper table  : (dx, dz) = (≤19, ≤19)")
+        @test min(dx, dz) == 19
     end
 end
