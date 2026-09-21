@@ -142,7 +142,7 @@ The explicit code instances reported in
 including their groups, generator multisets, local codes, and parity-check data,
 are collected in the companion data repository
 [**QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength**](https://github.com/QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength).
-Use it together with `QuantumExpanders.jl` to reconsttuct any published code instance from its
+Use it together with `QuantumExpanders.jl` to reconstruct any published code instance from its
 recorded constructor arguments.
 
 The documentation mention how the published code instances data correspond with constructor arguments and
