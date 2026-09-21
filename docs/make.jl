@@ -28,13 +28,14 @@ makedocs(
     format = Documenter.HTML(
         mathengine = Documenter.MathJax3(),
     ),
-    authors = "Feroz Ahmed Mian, Stefan Krastanov, Vaishnavi Addala, QuantumSavory community members",
+    authors = "Feroz Ahmed Mian",
     pages = [
         "Home" => "index.md",
         "Getting started" => "getting_started.md",
         "Quantum Tanner codes" => [
             "LRCC construction" => "quantum_tanner.md",
             "Lifted QT code via left-right actions" => "quantum_tanner_left_right_actions.md",
+            "Reproducing Leverrier--Rozendaal--Zémor instances" => "leverrier_instances.md",
             "Reconstructing instances from the manuscript" => "paper_instances.md",
         ],
         "Ramanujan graphs" => [
