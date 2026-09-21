@@ -4,7 +4,7 @@
 
 Initial registered release of QuantumExpanders.jl.
 
-## [0.1.0] - dev
+## [0.1.0] - 2026-9-21
 
 - Add `QuantumTannerCode` for constructing explicit quantum Tanner codes from left-right Cayley complexes.
 - Add `QuantumTannerViaLeftRightActions` for constructing lifted quantum Tanner codes through commuting left and right group actions.
