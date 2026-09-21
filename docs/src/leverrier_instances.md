@@ -6,7 +6,7 @@ Leverrier, Rozendaal, and Zémor reported several small quantum Tanner codes in
 resulting ``H_X`` and ``H_Z`` matrices, but not the ordered multisets ``A`` and
 ``B`` or the local-code column permutations used to construct them.
 
-We provide explicit construction data for three of the reported weight-nine parameter sets. It also demonstrates that [`QuantumTannerViaLeftRightActions`](@ref) produces codes with the same length, dimension, check weight, and observed distance bounds.
+We provide explicit construction data for three of the reported weight-nine parameter sets. It also demonstrates that [`QuantumTannerViaLeftRightActions`](@ref) produces codes with the same length, dimension, check weight, and observed distance upper bounds.
 
 !!! note "What is reproduced here?"
     The examples below reproduce the **published parameters** from explicit
@@ -17,7 +17,7 @@ We provide explicit construction data for three of the reported weight-nine para
 All three examples use the shortened Hamming ``[6,3,3]`` code on both sides,
 so every stabilizer generator has weight at most nine.
 
-| Published parameters | Group | Recovered lower bounds | [sQetch](https://github.com/a7b/yarn) trials |
+| Published parameters | Group | Recovered upper bounds | [sQetch](https://github.com/a7b/yarn) trials |
 |---|---|---|---:|
 | ``[[144,8,12]]`` | ``C_2 \times C_2`` | ``(d_X,d_Z)=(\leq 12, \leq12)`` | 50,000,000 |
 | ``[[144,12,11]]`` | ``C_2 \times C_2`` | ``(d_X,d_Z)=(\leq 11, \leq 11)`` | 50,000,000 |
