@@ -52,7 +52,8 @@
         B = [e, e, y, y, x, x*y]
         code = QuantumTannerViaLeftRightActions(V4, A_V4, B, H633, G633, H633, G633; p1=p633, p2=p633)
         hx, hz = parity_matrix_xz(code)
-        @test all(sum(hx, dims=2) == 9) && all(sum(hz, dims=2) == 9)
+        @test all(sum(hx, dims=2) .== 9)
+        @test all(sum(hz, dims=2) .== 9)
         @test code_n(code) == 144
         @test code_k(code) == 8
         stab = QuantumClifford.ECC.parity_checks(code)
@@ -66,7 +67,8 @@
         B = [e, e, y, y, x, x]
         code = QuantumTannerViaLeftRightActions(V4, A_V4, B, H633, G633, H633, G633; p1=p633, p2=p633)
         hx, hz = parity_matrix_xz(code)
-        @test all(sum(hx, dims=2) == 9) && all(sum(hz, dims=2) == 9)
+        @test all(sum(hx, dims=2) .== 9)
+        @test all(sum(hz, dims=2) .== 9)
         @test code_n(code) == 144
         @test code_k(code) == 12
         stab = QuantumClifford.ECC.parity_checks(code)
@@ -88,7 +90,8 @@
         B = [one(C8), a, b, b, c, d]
         code = QuantumTannerViaLeftRightActions(C8, A, B, H633, G633, H633, G633; p1=p633, p2=p633)
         hx, hz = parity_matrix_xz(code)
-        @test all(sum(hx, dims=2) == 9) && all(sum(hz, dims=2) == 9)
+        @test all(sum(hx, dims=2) .== 9)
+        @test all(sum(hz, dims=2) .== 9)
         @test code_n(code) == 288
         @test code_k(code) == 8
         stab = QuantumClifford.ECC.parity_checks(code)
