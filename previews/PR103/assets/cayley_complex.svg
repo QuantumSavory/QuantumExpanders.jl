@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580" height="400" viewBox="50 55 580 400" font-family="Georgia, 'Times New Roman', serif">
+  <circle cx="190" cy="145" r="62" fill="none" stroke="#333333" stroke-width="1"/>
+  <circle cx="490" cy="145" r="62" fill="none" stroke="#333333" stroke-width="1"/>
+  <circle cx="190" cy="375" r="62" fill="none" stroke="#333333" stroke-width="1"/>
+  <circle cx="490" cy="375" r="62" fill="none" stroke="#333333" stroke-width="1"/>
+
+  <path d="M215 165 Q340 120 465 165" fill="none" stroke="#1F1FCF" stroke-width="1.2"/>
+  <path d="M215 355 Q340 400 465 355" fill="none" stroke="#1F1FCF" stroke-width="1.2"/>
+  <path d="M215 165 Q168 260 215 355" fill="none" stroke="#1F1FCF" stroke-width="1.2"/>
+  <path d="M465 165 Q512 260 465 355" fill="none" stroke="#1F1FCF" stroke-width="1.2"/>
+
+  <circle cx="215" cy="165" r="4" fill="#1F1FCF"/>
+  <circle cx="465" cy="165" r="4" fill="#1F1FCF"/>
+  <circle cx="215" cy="355" r="4" fill="#1F1FCF"/>
+  <circle cx="465" cy="355" r="4" fill="#1F1FCF"/>
+
+  <text x="185" y="133" font-size="12" font-style="italic" fill="#1F1FCF" text-anchor="middle">(gb, 01)</text>
+  <text x="495" y="133" font-size="12" font-style="italic" fill="#1F1FCF" text-anchor="middle">(agb, 11)</text>
+  <text x="185" y="393" font-size="12" font-style="italic" fill="#1F1FCF" text-anchor="middle">(g, 00)</text>
+  <text x="495" y="393" font-size="12" font-style="italic" fill="#1F1FCF" text-anchor="middle">(ag, 10)</text>
+
+  <text x="112" y="149" font-size="13" font-style="italic" fill="#333333" text-anchor="end">V<tspan dy="3" font-size="9" font-style="normal">01</tspan></text>
+  <text x="112" y="379" font-size="13" font-style="italic" fill="#333333" text-anchor="end">V<tspan dy="3" font-size="9" font-style="normal">00</tspan></text>
+  <text x="568" y="149" font-size="13" font-style="italic" fill="#333333">V<tspan dy="3" font-size="9" font-style="normal">11</tspan></text>
+  <text x="568" y="379" font-size="13" font-style="italic" fill="#333333">V<tspan dy="3" font-size="9" font-style="normal">10</tspan></text>
+</svg>
