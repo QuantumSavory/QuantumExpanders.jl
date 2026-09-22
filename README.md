@@ -15,9 +15,7 @@ QuantumExpanders is a &nbsp;
 </p>
 
 The package implements two constructions of quantum Tanner codes: the
-**square-complex** construction `QuantumTannerCode` and the **lifted QT code** construction
-`QuantumTannerViaLeftRightActions`. Together they build *each and every code instance* in
-[*Quantum Tanner Codes at Moderate Blocklength*](https://arxiv.org/abs/2608.12509).
+**square-complex** construction `QuantumTannerCode` and the **lifted QT code** construction `QuantumTannerViaLeftRightActions`. Together they build *each and every code instance* in [*Quantum Tanner Codes at Moderate Blocklength*](https://arxiv.org/abs/2608.12509).
 
 ## Installation
 
@@ -90,14 +88,26 @@ flowchart TD
 ```
 
 The **lifted QT code** construction is equivalent to the **square-complex**
-construction of Leverrier & Zémor, but presents the lifted QT code via commuting
-left and right actions rather than as classical Tanner codes on a square complex.
-This is much more convenient for finding new instances of QT codes: multisets that
-maximise the classical Tanner distance on each `A`-slice and `B`-slice can be selected
-cheaply, before the more expensive quantum distance estimation runs. Every code in the
-main text of [our paper](https://arxiv.org/abs/2608.12509) is built through lifted QT code construction
-`QuantumTannerViaLeftRightActions`; see the [lifted construction guide](https://quantumsavory.github.io/QuantumExpanders.jl/dev/quantum_tanner_left_right_actions/) for a worked `[[756, 10, (≤9, ≤42)]]` example and
-to see how the inputs arguments mentioned in our paper are used to constructed this code.
+construction of Leverrier & Zémor, but presents the code construction through
+commuting left and right multiplication of a group element rather than as
+classical Tanner codes on a square complex. The construction starts from a
+**finite** group $G$ together with two ordered **multisets**
+$A = (a_1, \\ldots, a_{n_A})$ and $B = (b_1, \\ldots, b_{n_B})$ of elements
+of $G$. Elements of $A$ multiply a group element $g \\in G$ from the
+**left**, while elements of $B$ multiply it from the **right**.
+
+This viewpoint is much more convenient for finding new instances of QT codes.
+Viewing the qubits as indexed by $(i, j, g)$, where $i$ indexes an element
+of $A$, $j$ indexes an element of $B$, and $g \\in G$, fixing the
+$B$-index $j$ gives an $A$-slice, while fixing the $A$-index $i$
+gives a $B$-slice. The resulting slices support much smaller classical Tanner
+codes whose distances can be used to screen candidate multisets $A$ and $B$
+before the more expensive quantum-distance estimation runs.
+
+Every code in the main text of [our paper](https://arxiv.org/abs/2608.12509) is
+constructed using `QuantumTannerViaLeftRightActions`; see the
+[lifted construction guide](https://quantumsavory.github.io/QuantumExpanders.jl/dev/quantum_tanner_left_right_actions/) for the full construction details.
+
 
 ## Which constructor should I use?
 
@@ -141,13 +151,9 @@ The explicit code instances reported in
 including their groups, generator multisets, local codes, and parity-check data,
 are collected in the companion data repository
 [**QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength**](https://github.com/QuantumSavory/Quantum-Tanner-Codes-at-Moderate-Blocklength).
-Use it together with `QuantumExpanders.jl` to reconstruct any published code instance from its
-recorded constructor arguments.
+Use it together with `QuantumExpanders.jl` to reconstruct any published code instance from its recorded constructor arguments.
 
-The documentation mention how the published code instances data correspond with constructor arguments and
-how to verify blocklength, dimension, CSS orthogonality, stabilizer rank, and check
-weights. Randomized distance estimates are reported as upper bounds. See
-[Reproducing the manuscript instances](https://quantumsavory.github.io/QuantumExpanders.jl/dev/paper_instances/).
+The documentation mention how the published code instances data correspond with constructor arguments and how to verify blocklength, dimension, CSS orthogonality, stabilizer rank, and check weights. Randomized distance estimates are reported as upper bounds. See [Reproducing the manuscript instances](https://quantumsavory.github.io/QuantumExpanders.jl/dev/paper_instances/).
 
 Distance estimation on the larger codes uses powerful external tools such as
 [sqetch](https://github.com/a7b/yarn) (GPU random-ISD estimator) or
