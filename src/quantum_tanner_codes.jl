@@ -382,7 +382,7 @@ For the dihedral group ``D_{2p}`` with ``p \\geq 11``, this bound specializes to
 \\end{aligned}
 ```
 
-Thus, [radebold2025explicit](@cite) uses such dihedral groups $D_{2p}$ and their symmetric generating
+Thus, [radebold2025explicit](@cite) uses such dihedral groups ``D_{2p}`` and their symmetric generating
 sets to construct the underlying expander graphs for the quantum Tanner code.
 
 # Examples
