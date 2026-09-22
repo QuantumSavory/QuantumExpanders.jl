@@ -64,7 +64,6 @@ flowchart TD
     QT --> Search["Randomized search helpers"]
 
     LRCC --> QTC["QuantumTannerCode"]
-    LRCC --> GQTC["GeneralizedQuantumTannerCode"]
 
     Lifted --> LRA["QuantumTannerViaLeftRightActions"]
 
