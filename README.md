@@ -88,14 +88,21 @@ flowchart TD
 ```
 
 The **lifted QT code** construction is equivalent to the **square-complex**
-construction of Leverrier & Zémor, but presents the code construction through commuting left and right multiplication of a group element rather than as classical Tanner codes on a square complex. The construction starts from a **finite** group `G` together with two ordered **multisets** ``A = (a₁, ..., aₙₐ)`` and `B = (b₁, ..., bₙᵦ)` of elements of `G`. Elements of `A` multiply the group element from the **left**, while elements of `B` multiply it from the **right**.
+construction of Leverrier & Zémor, but presents the code construction through
+commuting left and right multiplication of a group element rather than as
+classical Tanner codes on a square complex. The construction starts from a
+**finite** group ``G`` together with two ordered **multisets**
+``A = (a_1, \ldots, a_{n_A})`` and ``B = (b_1, \ldots, b_{n_B})`` of elements
+of ``G``. Elements of ``A`` multiply a group element ``g \in G`` from the
+**left**, while elements of ``B`` multiply it from the **right**.
 
-This is much more convenient for finding new instances of QT codes: viewing the
-qubits as indexed by `(i, j, g)`, where `i` indexes an element of `A`, `j` indexes
-an element of `B`, and `g ∈ G`, fixing the `B`-index `j` gives an `A`-slice, while
-fixing the `A`-index `i` gives a `B`-slice. The resulting slices support much
-smaller classical Tanner codes whose distances can be used to screen candidate
-multisets `A` and `B` before the more expensive quantum-distance estimation runs.
+This viewpoint is much more convenient for finding new instances of QT codes.
+Viewing the qubits as indexed by ``(i, j, g)``, where ``i`` indexes an element
+of ``A``, ``j`` indexes an element of ``B``, and ``g \in G``, fixing the
+``B``-index ``j`` gives an ``A``-slice, while fixing the ``A``-index ``i``
+gives a ``B``-slice. The resulting slices support much smaller classical Tanner
+codes whose distances can be used to screen candidate multisets ``A`` and ``B``
+before the more expensive quantum-distance estimation runs.
 
 Every code in the main text of [our paper](https://arxiv.org/abs/2608.12509) is
 constructed using `QuantumTannerViaLeftRightActions`; see the
