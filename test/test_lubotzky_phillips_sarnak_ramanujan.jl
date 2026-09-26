@@ -116,4 +116,48 @@
             @test length(SL_center) == expected_sl_size
         end
     end
+
+    @testset "Quantum Tanner codes based on LPS Ramanujan Graphs" begin
+        test_pairs = [( 5, 29),
+                      (13, 17)]
+        for (p, q) in test_pairs
+            @info "Testing with p = $p, q = $q"
+            @test is_prime(p) && p % 4 == 1
+            @test is_prime(q) && q % 4 == 1 && p != q
+            # Build the finite field
+            F = GF(q)
+            # Compute the Legendre symbol (p/q)
+            symbol = legendre_symbol(p, q)
+            if symbol == -1
+                n = q*(q^2-1)
+                F = GF(q)
+                GL2 = GL(2, F)
+                Z = scalar_matrices_GL(GL2)
+                PG, morphism = quo(GL2, Z)
+                solutions = solve_four_squares(p)
+                solutions_processed = process_solutions(solutions, p)
+                generators = lps_generators(solutions_processed, F, p)
+                gl_gens = [GL2(mat) for mat in generators]
+                PG_gens = [morphism(gen) for gen in gl_gens]
+                PG_group = projective_special_linear_group(2, q)
+                hx, hz = gen_code(0.4, PG_group, PG_gens, PG_gens, bipartite=false)
+            elseif symbol == 1
+                F = GF(q)
+                SL2 = SL(2, F)
+                Z = scalar_matrices_SL(SL2)
+                PG, morphism = quo(SL2, Z)
+                solutions = solve_four_squares(p)
+                solutions_processed = process_solutions(solutions, p)
+                generators = lps_generators(solutions_processed, F, p)
+                # det((1/√p)*[a+ib  c+id; -c+id  a-ib]) = (1/p)*p = 1
+                s = sqrt(F(p))
+                s_inv = inv(s)
+                generators_scaled = [s_inv * mat for mat in generators]
+                sl_gens = [SL2(mat) for mat in generators_scaled]
+                PG_gens = [morphism(gen) for gen in sl_gens]
+                PG_group = projective_special_linear_group(2, q)
+                hx, hz = gen_code(0.4, PG_group, PG_gens, PG_gens, bipartite=false)
+            end
+        end
+    end
 end
