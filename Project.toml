@@ -21,7 +21,7 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-DocStringExtensions = "0.9.5"
+DocStringExtensions = "0.9.5, 0.10"
 Graphs = "1.12"
 LinearAlgebra = "1.10"
 Multigraphs = "0.3.0"
